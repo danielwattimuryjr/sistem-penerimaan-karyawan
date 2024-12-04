@@ -1,3 +1,8 @@
+<?php
+    require_once ('./../../../functions/init-session.php');
+    require_once ('./../../../functions/page-protection.php');
+?>
+
 <!doctype html>
 <html lang="en">
 <head>
