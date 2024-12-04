@@ -32,9 +32,9 @@ CREATE TABLE IF NOT EXISTS user (
     password VARCHAR(255),
     PRIMARY KEY (id_user),
     CONSTRAINT fk_user_jabatan
-     FOREIGN KEY (id_user)
+     FOREIGN KEY (jabatan)
      REFERENCES jabatan (id_jabatan)
-     ON DELETE CASCADE
+     ON DELETE SET NULL
      ON UPDATE CASCADE
 );
 
