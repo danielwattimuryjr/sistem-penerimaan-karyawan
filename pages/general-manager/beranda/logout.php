@@ -1,6 +1,6 @@
 <?php
 
-require_once ('./../../../functions/init-session.php');
+require_once('./../../../functions/init-session.php');
 
 session_destroy();
 

@@ -8,6 +8,13 @@ CREATE TABLE IF NOT EXISTS jabatan (
     PRIMARY KEY (id_jabatan)
 );
 
+INSERT INTO jabatan
+    (nama_jabatan)
+VALUES
+    ('J1'),
+    ('J2'),
+    ('J3');
+
 CREATE TABLE IF NOT EXISTS divisi (
     id_divisi INT(11) AUTO_INCREMENT,
     nama_divisi VARCHAR(100),
@@ -37,12 +44,19 @@ CREATE TABLE IF NOT EXISTS user (
      ON DELETE SET NULL
      ON UPDATE CASCADE
 );
+INSERT INTO user
+    (jabatan, user_name, nama_lengkap, email, role, password)
+VALUES
+    (1, 'user.general-manager', 'General Manager', 'general-manager@mail.com', 'General Manager', 'password'),
+    (2, 'user.departement', 'Departement', 'departement@mail.com', 'Departement', 'password'),
+    (3, 'user.hrd', 'HRD', 'hrd@mail.com', 'HRD', 'password'),
+    (1, 'user.pelamar', 'Pelamar', 'pelamar@mail.com', 'Pelamar', 'password');
 
 CREATE TABLE IF NOT EXISTS permintaan (
     id_permintaan INT(11) AUTO_INCREMENT,
     id_divisi INT(11),
     jumlah_permintaan INT(11),
-    status_permintaan ENUM('Pending', 'Disetujui', 'Ditolak'),
+    status_permintaan ENUM('Pending', 'Disetujui', 'Ditolak') DEFAULT 'Pending',
     PRIMARY KEY (id_permintaan),
     CONSTRAINT fk_permintaan_divisi
      FOREIGN KEY (id_divisi)
