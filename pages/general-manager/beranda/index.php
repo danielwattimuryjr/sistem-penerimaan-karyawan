@@ -1,5 +1,6 @@
 <?php
     require_once('./../../../functions/init-conn.php');
+    require_once('./../../../functions/page-protection.php');
 
     $recordsPerPage = 2;
     $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
