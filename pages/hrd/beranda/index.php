@@ -1,8 +1,22 @@
 <?php
+    require_once('./../../../functions/init-conn.php');
     require_once ('./../../../functions/init-session.php');
     if (!$_SESSION['user']) {
         header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
     }
+    
+    $recordsPerPage = 2;
+    $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+    $offset = ($page - 1) * $recordsPerPage;
+
+    $totalQuery = "SELECT COUNT(*) as total FROM lowongan";
+    $result = $conn->query($totalQuery);
+    $totalRecords = $result->fetch_assoc()['total'];
+    $totalPages = ceil($totalRecords / $recordsPerPage);
+
+    $queryStr = "SELECT id_lowongan, nama_lowongan FROM lowongan LIMIT $recordsPerPage OFFSET $offset";
+    $dataResult = $conn->query($queryStr);
+    $conn->close();
 ?>
 <!doctype html>
 <html lang="en">
@@ -23,47 +37,52 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-                <a class="navbar-brand" href="#">GrandPasundan</a>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="#">Berandan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Penerimaan Karyawan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-disabled="true">Hasil Seleksi</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center gap-1 ms-lg-3 ">
-                <p class="mb-0"><?= $_SESSION['user']['user_name'] ?></p>
-                <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle p-0 border-0 d-flex align-items-center" type="button" id="avatarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://placehold.co/100" alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px;">
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="avatarDropdown">
-                        <li><a class="dropdown-item" href="#">Profile</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="logout.php">Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <?php require_once ('./../_components/navbar.php'); ?>
 
     <div class="container-sm mt-3 mt-lg-5">
-        <div class="card p-3" style="width: 100%;">
-            HRD
+        <div class="card" style="width: 100%;">
+            <div class="card-body">
+                <div class="d-flex flex-column flex-md-row justify-content-start justify-content-md-between align-items-start align-items-md-center">
+                    <h5>Daftar Lowongan Pekerjaan</h5>
+
+                    <a href="/sistem-penerimaan-karyawan/pages/hrd/beranda/tambah-lowongan" class="btn btn-primary">
+                        Tambah Lowongan
+                    </a>
+                </div>
+                <ul class="list-group list-group-flush mt-3">
+                    <?php if ($dataResult->num_rows > 0): ?>
+                        <?php while ($row = $dataResult->fetch_assoc()): ?>
+                            <li class="list-group-item">
+                                <div class="d-flex gap-3 gap-md-4 flex-column flex-md-row align-items-center">
+                                    <img src="https://placehold.co/150" alt="" style="width: 150px">
+                                    <div class="d-flex flex-column text-center text-lg-start">
+                                        <h3><?= htmlspecialchars($row['nama_lowongan']); ?></h3>
+                                        <button type="button" class="btn btn-secondary">Lihat Selengkapnya</button>
+                                    </div>
+                                </div>
+                            </li>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <li class="list-group-item text-center text-danger">Tidak ada lowongan</li>
+                    <?php endif; ?>
+                </ul>
+            </div>
         </div>
+        <nav class="mt-2 d-flex justify-content-center justify-content-md-end">
+            <ul class="pagination">
+                <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
+                    <a class="page-link" href="?page=<?= $page - 1; ?>">Back</a>
+                </li>
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                    <li class="page-item <?= ($i == $page) ? 'active' : ''; ?>">
+                        <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
+                    </li>
+                <?php endfor; ?>
+                <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                    <a class="page-link" href="?page=<?= $page + 1; ?>">Next</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 
 
