@@ -20,6 +20,14 @@ CREATE TABLE IF NOT EXISTS divisi (
     nama_divisi VARCHAR(100),
     PRIMARY KEY (id_divisi)
 );
+INSERT INTO divisi
+    (nama_divisi)
+VALUES
+    ('D1'),
+    ('D2'),
+    ('D3'),
+    ('D4'),
+    ('D5');
 
 CREATE TABLE IF NOT EXISTS kriteria (
     id_kriteria INT(11) AUTO_INCREMENT,

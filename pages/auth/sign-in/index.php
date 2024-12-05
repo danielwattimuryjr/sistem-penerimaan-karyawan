@@ -1,6 +1,6 @@
 <?php
     require_once ('./../../../functions/init-session.php');
-    require_once ('./../../../functions/page-protection.php');
+    require_once ('./../../../functions/check-user-session.php');
 ?>
 <!doctype html>
 <html lang="en">

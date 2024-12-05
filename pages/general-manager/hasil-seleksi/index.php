@@ -19,6 +19,8 @@ $queryStr = "
 $stmt = $conn->prepare($queryStr);
 $stmt->execute();
 $result = $stmt->get_result();
+$stmt->close();
+$conn->close();
 ?>
 <!doctype html>
 <html lang="en">
@@ -100,7 +102,7 @@ $result = $stmt->get_result();
 <script src="/sistem-penerimaan-karyawan/assets/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
 <!--  Data Table  -->
-<script src="/sistem-penerimaan-karyawan/assets/js/jquery-3.7.1.slim.min.js" crossorigin="anonymous"></script>
+<script src="/sistem-penerimaan-karyawan/assets/js/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
 <script src="/sistem-penerimaan-karyawan/assets/js/datatables.min.js" crossorigin="anonymous"></script>
 <script src="/sistem-penerimaan-karyawan/assets/js/dataTables.bootstrap5.js" crossorigin="anonymous"></script>
 

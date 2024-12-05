@@ -5,9 +5,16 @@ if (!$_SESSION['user']) {
     header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
 }
 
-$queryStr = "SELECT id_permintaan, p.id_divisi, d.nama_divisi, status_permintaan 
-             FROM permintaan p 
-             JOIN divisi d ON p.id_divisi = d.id_divisi";
+$queryStr = "
+    SELECT 
+        h.id_hasil AS id,
+        h.nama_lengkap AS nama,
+        p.nilai AS nilai_akhir,
+        h.peringkat,
+        h.status
+    FROM hasil h
+    JOIN penilaian p ON h.id_penilaian = p.id_penilaian
+";
 
 $stmt = $conn->prepare($queryStr);
 $stmt->execute();
@@ -22,7 +29,7 @@ $conn->close();
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Permintaan Karyawan</title>
+    <title>Hasil Seleksi</title>
 
     <!--  Bootstrap 5.3 CSS  -->
     <link rel="stylesheet" href="/sistem-penerimaan-karyawan/assets/css/bootstrap.min.css" crossorigin="anonymous">
@@ -42,40 +49,31 @@ $conn->close();
 <div class="container-sm mt-3 mt-lg-5">
     <div class="card" style="width: 100%;">
         <div class="card-body">
-            <h5 class="card-title text-center">Daftar Permintaan Karyawan</h5>
+            <h5 class="card-title text-center">Daftar Hasil Seleksi</h5>
 
             <table class="table table-bordered" id="data-table">
                 <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Jabatan</th>
-                        <th>Status</th>
-                    </tr>
+                <tr>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Nilai Akhir</th>
+                    <th>Peringkat</th>
+                    <th>Status</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <?php $no = 1 ?>
+                    <?php $no = 1; ?>
                     <?php foreach ($result as $res) {?>
                         <tr>
                             <td><?= $no++ ?></td>
-                            <td><?= $res['nama_divisi'] ?></td>
+                            <td><?= $res['nama'] ?></td>
+                            <td><?= $res['nilai_akhir'] ?></td>
+                            <td><?= $res['peringkat'] ?></td>
                             <td>
-                                <?php if ($res['status_permintaan'] === false || $res['status_permintaan'] === 'Pending') { ?>
-                                    <form action="update-status.php" method="POST" style="display: inline;">
-                                        <input type="hidden" name="id_permintaan" value="<?= htmlspecialchars($res['id_permintaan']); ?>">
-                                        <input type="hidden" name="status_permintaan" value="Disetujui">
-                                        <button type="submit" class="btn btn-outline-success">Setuju</button>
-                                    </form>
-                                    <form action="update-status.php" method="POST" style="display: inline;">
-                                        <input type="hidden" name="id_permintaan" value="<?= htmlspecialchars($res['id_permintaan']); ?>">
-                                        <input type="hidden" name="status_permintaan" value="Ditolak">
-                                        <button type="submit" class="btn btn-outline-danger">Tolak</button>
-                                    </form>
-                                <?php } else { ?>
-                                    <span class="badge
-                                        <?= $res['status_permintaan'] === 'Disetujui' ? 'bg-success' : 'bg-danger'; ?>">
-                                        <?= htmlspecialchars(ucfirst($res['status_permintaan'])); ?>
-                                    </span>
-                                <?php } ?>
+                                <span class="badge
+                                    <?= $res['status'] === 'Diterima' ? 'bg-success' : 'bg-danger'; ?>">
+                                    <?= htmlspecialchars(ucfirst($res['status'])); ?>
+                                </span>
                             </td>
                         </tr>
                     <?php } ?>

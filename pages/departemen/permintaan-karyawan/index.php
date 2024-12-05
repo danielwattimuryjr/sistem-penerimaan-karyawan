@@ -5,7 +5,7 @@ if (!$_SESSION['user']) {
     header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
 }
 
-$queryStr = "SELECT id_permintaan, p.id_divisi, d.nama_divisi, status_permintaan 
+$queryStr = "SELECT id_permintaan, p.id_divisi, d.nama_divisi, jumlah_permintaan, status_permintaan 
              FROM permintaan p 
              JOIN divisi d ON p.id_divisi = d.id_divisi";
 
@@ -42,40 +42,47 @@ $conn->close();
 <div class="container-sm mt-3 mt-lg-5">
     <div class="card" style="width: 100%;">
         <div class="card-body">
-            <h5 class="card-title text-center">Daftar Permintaan Karyawan</h5>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="card-title text-center">Daftar Permintaan Karyawan</h5>
+
+                <a href="../form-tambah-permintaan-karyawan" class="btn btn-sm btn-primary">Tambah Permintaan</a>
+            </div>
 
             <table class="table table-bordered" id="data-table">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Jabatan</th>
+                        <th>Divisi</th>
+                        <th>Jumlah Permintaan</th>
                         <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php $no = 1 ?>
                     <?php foreach ($result as $res) {?>
+                        <?php
+                            $baseEditUrl = '/sistem-penerimaan-karyawan/pages/departemen/form-edit-permintaan-karyawan';
+                            $baseDeleteUrl = '/sistem-penerimaan-karyawan/pages/departemen/permintaan-karyawan/delete.php';
+                            $params = ['id_permintaan' => $res['id_permintaan']];
+                            $editUrl = $baseEditUrl . '?' . http_build_query($params);
+                            $deleteUrl = $baseDeleteUrl . '?' . http_build_query($params);
+                        ?>
                         <tr>
                             <td><?= $no++ ?></td>
                             <td><?= $res['nama_divisi'] ?></td>
+                            <td><?= $res['jumlah_permintaan'] ?></td>
                             <td>
-                                <?php if ($res['status_permintaan'] === false || $res['status_permintaan'] === 'Pending') { ?>
-                                    <form action="update-status.php" method="POST" style="display: inline;">
-                                        <input type="hidden" name="id_permintaan" value="<?= htmlspecialchars($res['id_permintaan']); ?>">
-                                        <input type="hidden" name="status_permintaan" value="Disetujui">
-                                        <button type="submit" class="btn btn-outline-success">Setuju</button>
-                                    </form>
-                                    <form action="update-status.php" method="POST" style="display: inline;">
-                                        <input type="hidden" name="id_permintaan" value="<?= htmlspecialchars($res['id_permintaan']); ?>">
-                                        <input type="hidden" name="status_permintaan" value="Ditolak">
-                                        <button type="submit" class="btn btn-outline-danger">Tolak</button>
-                                    </form>
-                                <?php } else { ?>
-                                    <span class="badge
-                                        <?= $res['status_permintaan'] === 'Disetujui' ? 'bg-success' : 'bg-danger'; ?>">
-                                        <?= htmlspecialchars(ucfirst($res['status_permintaan'])); ?>
-                                    </span>
-                                <?php } ?>
+                                <span class="badge
+                                    <?= $res['status_permintaan'] === 'Disetujui' ? 'bg-success' : 'bg-danger'; ?>">
+                                    <?= htmlspecialchars(ucfirst($res['status_permintaan'])); ?>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a type="button" class="btn btn-sm btn-warning" href="<?= $editUrl ?>">Update</a>
+                                    <a type="button" class="btn btn-sm btn-danger" href="<?= $deleteUrl ?>">Delete</a>
+                                </div>
                             </td>
                         </tr>
                     <?php } ?>
@@ -94,6 +101,8 @@ $conn->close();
 <script src="/sistem-penerimaan-karyawan/assets/js/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
 <script src="/sistem-penerimaan-karyawan/assets/js/datatables.min.js" crossorigin="anonymous"></script>
 <script src="/sistem-penerimaan-karyawan/assets/js/dataTables.bootstrap5.js" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     new DataTable('#data-table');
