@@ -43,7 +43,7 @@
                     <?php if ($dataResult->num_rows > 0): ?>
                         <?php while ($row = $dataResult->fetch_assoc()): ?>
                             <?php
-                                $baseDetailUrl = '/sistem-penerimaan-karyawan/pages/departemen/beranda/detail-lowongan-pekerjaan';
+                                $baseDetailUrl = '/sistem-penerimaan-karyawan/pages/departemen/detail-lowongan-pekerjaan';
                                 $params = [
                                     'id_lowongan' => $row['id_lowongan']
                                 ];
