@@ -11,7 +11,7 @@ if (!$_SESSION['user']) {
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <a class="navbar-brand" href="#">GrandPasundan</a>
+            <a class="navbar-brand" href="/sistem-penerimaan-karyawan/pages/general-manager/">GrandPasundan</a>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/general-manager/beranda">Beranda</a>

@@ -17,28 +17,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        echo "Login successful!";
-        $_SESSION['user'] = $result->fetch_assoc();
+        $user = $result->fetch_assoc();
 
-        switch ($_SESSION['user']['role']) {
+        $_SESSION['user'] = $user;
+
+        $redirectUrl = '';
+        switch ($user['role']) {
             case 'General Manager':
-                header("Location: ../../general-manager/beranda");
+                $redirectUrl = "../../general-manager/beranda";
                 break;
             case 'Departement':
-                header("Location: ../../departemen/beranda");
+                $redirectUrl = "../../departemen/beranda";
                 break;
             case 'HRD':
-                header("Location: ../../hrd/beranda");
+                $redirectUrl = "../../hrd/beranda";
                 break;
             case 'Pelamar':
-                header("Location: ../../pelamar/beranda");
+                $redirectUrl = "../../pelamar/beranda";
                 break;
             default:
-                header("Location: ../sign-in");
+                $redirectUrl = "../sign-in";
                 break;
         }
+        header("Location: " . $redirectUrl . "?type=success&message=" . urlencode("Login berhasil!"));
+        exit;
     } else {
-        header("Location: ../sign-in");
+        header("Location: ../sign-in?type=error&message=" . urlencode("Username atau password salah."));
         exit;
     }
 }
