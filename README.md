@@ -12,8 +12,8 @@ https://github.com/danielwattimuryjr/sistem-penerimaan-karyawan.git
 
 ```
 > cd sistem-penerimaan-karyawan
-> mkdir -p pages/pelamar/form-pelamaran/uploads/cv
-> chmod -R 0777 pages/pelamar/form-pelamaran/uplods/cv
+> mkdir -p assets/uploads/cv
+> chmod -R 0777 assets/uploads/cv
 ```
 
 4. Open your browser, and navigate to :
