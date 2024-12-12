@@ -3,9 +3,7 @@ require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
-// Get id_lowongan
-$id_lowongan = isset($_GET['id_lowongan']) ? $_GET['id_lowongan'] : null;
-//
+$id_lowongan = $_GET['id_lowongan'] ?? null;
 if (!$id_lowongan) {
     header("Location: /sistem-penerimaan-karyawan/pages/departemen/beranda");
 }
@@ -30,7 +28,7 @@ $persyaratan = $getPersyaratanResult->fetch_assoc();
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?= $lowongan['nama_lowongan'] ?? 'Detail Lowongan'?></title>
 
-    <?php require_once ('./../_components/styles.php'); ?>
+    <?php require_once('./../_components/styles.php'); ?>
 </head>
 <body>
     <?php require_once('./../_components/navbar.php'); ?>
@@ -58,6 +56,7 @@ $persyaratan = $getPersyaratanResult->fetch_assoc();
         </div>
     </div>
 
-    <?php require_once ('./../_components/scripts.php'); ?>
+
+    <?php require_once('./../_components/scripts.php'); ?>
 </body>
 </html>

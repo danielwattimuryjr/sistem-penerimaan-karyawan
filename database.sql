@@ -14,14 +14,6 @@ CREATE TABLE IF NOT EXISTS divisi (
     PRIMARY KEY (id_divisi)
 );
 
-CREATE TABLE IF NOT EXISTS kriteria (
-    id_kriteria INT(11) AUTO_INCREMENT,
-    nama_kriteria VARCHAR(100),
-    kode_kriteria VARCHAR(10),
-    bobot DECIMAL,
-    PRIMARY KEY (id_kriteria)
-);
-
 CREATE TABLE IF NOT EXISTS user (
     id_user INT(11) AUTO_INCREMENT,
     jabatan INT(11),
@@ -144,14 +136,13 @@ CREATE TABLE IF NOT EXISTS pelamaran (
 
 CREATE TABLE IF NOT EXISTS penilaian (
     id_penilaian INT(11) AUTO_INCREMENT,
-    id_kriteria INT(11),
-    id_pelamaran INT(11),
-    nilai FLOAT,
+    id_pelamaran INT(11) UNIQUE,
+    nilai_tes_tertulis FLOAT,
+    nilai_tes_wawancara FLOAT,
+    nilai_tes_praktek FLOAT,
+    nilai_tes_psikotes FLOAT,
+    nilai_tes_kesehatan FLOAt,
     PRIMARY KEY (id_penilaian),
-    CONSTRAINT fk_penilaian_kriteria FOREIGN KEY (id_kriteria)
-     REFERENCES kriteria (id_kriteria)
-     ON DELETE CASCADE
-     ON UPDATE CASCADE,
     CONSTRAINT fk_penilaian_pelamaran FOREIGN KEY (id_pelamaran)
      REFERENCES pelamaran (id_pelamaran)
      ON DELETE CASCADE
@@ -161,7 +152,6 @@ CREATE TABLE IF NOT EXISTS penilaian (
 CREATE TABLE IF NOT EXISTS hasil (
     id_hasil INT(11) AUTO_INCREMENT,
     id_penilaian INT(11),
-    id_divisi INT(11),
     peringkat INT(11),
     nama_lengkap VARCHAR(255),
     status ENUM('Diterima', 'Ditolak'),
@@ -169,11 +159,6 @@ CREATE TABLE IF NOT EXISTS hasil (
     CONSTRAINT fk_hasil_penilaian
      FOREIGN KEY (id_penilaian)
      REFERENCES penilaian (id_penilaian)
-     ON DELETE CASCADE
-     ON UPDATE CASCADE,
-    CONSTRAINT fk_hasil_divisi
-     FOREIGN KEY (id_divisi)
-     REFERENCES divisi (id_divisi)
      ON DELETE CASCADE
      ON UPDATE CASCADE
 );
