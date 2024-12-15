@@ -12,14 +12,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Forget Password</title>
 
-    <!--  Bootstrap 5.3 CSS  -->
-    <link rel="stylesheet" href="/sistem-penerimaan-karyawan/assets/css/bootstrap.min.css" crossorigin="anonymous">
-
-    <style>
-        body {
-            background-color: #f1f1f1f1;
-        }
-    </style>
+    <?php
+        require_once ('./../_components/styles.php');
+    ?>
 </head>
 <body>
 <div class="container-sm d-flex justify-content-center align-items-center" style="min-height: 100vh">
@@ -27,10 +22,10 @@
         <div class="card-body">
             <h5 class="card-title text-center">Lupa Password</h5>
 
-            <form action="" method="POST">
+            <form action="send-mail.php" method="POST">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="text" name="username" id="" class="form-control" autofocus>
+                    <input type="text" name="email" id="" class="form-control" autofocus>
                 </div>
 
                 <div class="d-flex justify-content-center flex-column" style="width: 100%">
@@ -47,8 +42,8 @@
     </div>
 </div>
 
-<!--  Bootstrap 5.3 JS  -->
-<script src="/sistem-penerimaan-karyawan/assets/js/popper.min.js" crossorigin="anonymous"></script>
-<script src="/sistem-penerimaan-karyawan/assets/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<?php
+require_once ('./../_components/scripts.php');
+?>
 </body>
 </html>

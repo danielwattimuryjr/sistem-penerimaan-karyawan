@@ -164,6 +164,17 @@ CREATE TABLE IF NOT EXISTS hasil (
      ON UPDATE CASCADE
 );
 
+CREATE TABLE password_resets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_user INT NOT NULL,
+    token VARCHAR(64) NOT NULL,
+    expiry DATETIME NOT NULL,
+    CONSTRAINT fk_password_reset_user
+     FOREIGN KEY (id_user)
+     REFERENCES user(id_user)
+     ON DELETE CASCADE
+);
+
 INSERT INTO divisi
 (nama_divisi)
 VALUES
