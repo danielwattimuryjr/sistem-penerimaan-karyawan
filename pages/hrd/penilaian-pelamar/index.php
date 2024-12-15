@@ -50,6 +50,7 @@ $conn->close();
             <h5 class="card-title text-center">Penilaian Pelamar</h5>
 
             <form method="POST" action="post-penilaian-request.php">
+                <input type="hidden" name="id_pelamaran" value="<?= $id_pelamaran ?>">
                 <div class="mb-3">
                     <label class="form-label">Nama Lengkap</label>
                     <input type="text" class="form-control" value="<?= $dataPelamar['nama_lengkap'] ?>" disabled>
@@ -57,18 +58,18 @@ $conn->close();
 
                 <div class="mb-3">
                     <label for="" class="form-label">Tes Tertulis</label>
-                    <input type="number" name="nilai_tes_tertulis" id="" class="form-control" min="1" max="5" required>
+                    <input type="number" name="nilai_tes_tertulis" id="" class="form-control" min="1" max="100" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Tes Wawancara</label>
                     <select class="form-select" name="nilai_tes_wawancara" required>
                         <option selected disabled>-- PILIH PENILAIAN --</option>
-                        <option value="1">Sangat Kurang</option>
-                        <option value="2">Kurang</option>
-                        <option value="3">Cukup</option>
-                        <option value="4">Baik</option>
-                        <option value="5">Sangat Baik</option>
+                        <option value="Sangat Kurang">Sangat Kurang</option>
+                        <option value="Kurang">Kurang</option>
+                        <option value="Cukup">Cukup</option>
+                        <option value="Baik">Baik</option>
+                        <option value="Sangat Baik">Sangat Baik</option>
                     </select>
                 </div>
 
@@ -76,28 +77,28 @@ $conn->close();
                     <label class="form-label">Tes Praktek</label>
                     <select class="form-select" name="nilai_tes_praktek" required>
                         <option selected disabled>-- PILIH PENILAIAN --</option>
-                        <option value="1">Sangat Kurang</option>
-                        <option value="2">Kurang</option>
-                        <option value="3">Cukup</option>
-                        <option value="4">Baik</option>
-                        <option value="5">Sangat Baik</option>
+                        <option value="Sangat Kurang">Sangat Kurang</option>
+                        <option value="Kurang">Kurang</option>
+                        <option value="Cukup">Cukup</option>
+                        <option value="Baik">Baik</option>
+                        <option value="Sangat Baik">Sangat Baik</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Tes Psikotes</label>
-                    <input type="number" name="nilai_tes_psikotes" id="" class="form-control" min="1" max="5" required>
+                    <input type="number" name="nilai_tes_psikotes" id="" class="form-control" min="1" max="100" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Tes Kesehatan</label>
                     <select class="form-select" name="nilai_tes_kesehatan" required>
                         <option selected disabled>-- PILIH PENILAIAN --</option>
-                        <option value="1">Sangat Kurang</option>
-                        <option value="2">Kurang</option>
-                        <option value="3">Cukup</option>
-                        <option value="4">Baik</option>
-                        <option value="5">Sangat Baik</option>
+                        <option value="Sangat Kurang">Sangat Kurang</option>
+                        <option value="Kurang">Kurang</option>
+                        <option value="Cukup">Cukup</option>
+                        <option value="Baik">Baik</option>
+                        <option value="Sangat Baik">Sangat Baik</option>
                     </select>
                 </div>
 

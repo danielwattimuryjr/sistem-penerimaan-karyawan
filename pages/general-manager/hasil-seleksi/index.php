@@ -1,19 +1,25 @@
 <?php
 require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
-if (!$_SESSION['user']) {
-    header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
-}
+require_once('./../../../functions/page-protection.php');
 
 $queryStr = "
-    SELECT 
-        h.id_hasil AS id,
-        h.nama_lengkap AS nama,
-        p.nilai AS nilai_akhir,
-        h.peringkat,
-        h.status
-    FROM hasil h
-    JOIN penilaian p ON h.id_penilaian = p.id_penilaian
+SELECT 
+    h.id_hasil,
+    h.hasil_akhir,
+    h.peringkat,
+    u.nama_lengkap,
+    d.nama_divisi,
+    p.id_pelamaran,
+    h.status
+FROM hasil h
+JOIN penilaian pn ON h.id_penilaian = pn.id_penilaian
+JOIN pelamaran p ON pn.id_pelamaran = p.id_pelamaran
+JOIN user u ON p.id_user = u.id_user
+JOIN lowongan l ON p.id_lowongan = l.id_lowongan
+JOIN permintaan pm ON l.id_permintaan = pm.id_permintaan
+JOIN divisi d ON pm.id_divisi = d.id_divisi
+ORDER BY h.peringkat ASC
 ";
 
 $stmt = $conn->prepare($queryStr);
@@ -31,8 +37,8 @@ $conn->close();
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Hasil Seleksi</title>
 
-    <?php require_once ('./../_components/data-table-styles.php'); ?>
-    <?php require_once ('./../_components/styles.php'); ?>
+    <?php require_once('./../_components/data-table-styles.php'); ?>
+    <?php require_once('./../_components/styles.php'); ?>
 </head>
 <body>
 <?php require_once('./../_components/navbar.php'); ?>
@@ -49,45 +55,32 @@ $conn->close();
                     <th>Nama</th>
                     <th>Nilai Akhir</th>
                     <th>Peringkat</th>
-                    <th>Status</th>
+                    <th>Aksi</th>
                 </tr>
                 </thead>
                 <tbody>
-                    <?php $no = 1; ?>
-                    <?php foreach ($result as $res) {?>
-                        <tr>
-                            <td><?= $no++ ?></td>
-                            <td><?= $res['nama'] ?></td>
-                            <td><?= $res['nilai_akhir'] ?></td>
-                            <td><?= $res['peringkat'] ?></td>
-                            <td>
-                                <?php if ($res['status'] === false) { ?>
-                                    <form action="update-status.php" method="POST" style="display: inline;">
-                                        <input type="hidden" name="id_hasil" value="<?= htmlspecialchars($res['id_hasil']); ?>">
-                                        <input type="hidden" name="status" value="Diterima">
-                                        <button type="submit" class="btn btn-outline-success">Setuju</button>
-                                    </form>
-                                    <form action="update-status.php" method="POST" style="display: inline;">
-                                        <input type="hidden" name="id_hasil" value="<?= htmlspecialchars($res['id_hasil']); ?>">
-                                        <input type="hidden" name="status" value="Ditolak">
-                                        <button type="submit" class="btn btn-outline-danger">Tolak</button>
-                                    </form>
-                                <?php } else { ?>
-                                    <span class="badge
-                                        <?= $res['status'] === 'Diterima' ? 'bg-success' : 'bg-danger'; ?>">
-                                        <?= htmlspecialchars(ucfirst($res['status'])); ?>
-                                    </span>
-                                <?php } ?>
-                            </td>
-                        </tr>
-                    <?php } ?>
+                <?php $no = 1 ?>
+                <?php foreach ($result as $res) { ?>
+                    <tr>
+                        <td><?= $no++ ?></td>
+                        <td><?= htmlspecialchars($res['nama_lengkap']) ?></td>
+                        <td><?= $res['hasil_akhir'] ?></td>
+                        <td><?= $res['peringkat'] ?></td>
+                        <td>
+                            <span class="badge
+                                <?= $res['status'] === 'Diterima' ? 'bg-success' : 'bg-danger'; ?>">
+                                <?= htmlspecialchars(ucfirst($res['status'])); ?>
+                            </span>
+                        </td>
+                    </tr>
+                <?php } ?>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<?php require_once ('./../_components/data-tables-script.php'); ?>
-<?php require_once ('./../_components/scripts.php'); ?>
+<?php require_once('./../_components/scripts.php'); ?>
+<?php require_once('./../_components/data-tables-script.php'); ?>
 </body>
 </html>

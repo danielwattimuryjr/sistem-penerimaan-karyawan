@@ -84,6 +84,6 @@ $conn->close();
 </div>
 
 <?php require_once ('./../_components/scripts.php'); ?>
-<?php require_once ('./../_components/data-tables-script.php.php'); ?>
+<?php require_once ('./../_components/data-tables-script.php'); ?>
 </body>
 </html>

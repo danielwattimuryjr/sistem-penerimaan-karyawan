@@ -138,10 +138,10 @@ CREATE TABLE IF NOT EXISTS penilaian (
     id_penilaian INT(11) AUTO_INCREMENT,
     id_pelamaran INT(11) UNIQUE,
     nilai_tes_tertulis FLOAT,
-    nilai_tes_wawancara FLOAT,
-    nilai_tes_praktek FLOAT,
+    nilai_tes_wawancara ENUM('Sangat Kurang', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'),
+    nilai_tes_praktek ENUM('Sangat Kurang', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'),
     nilai_tes_psikotes FLOAT,
-    nilai_tes_kesehatan FLOAt,
+    nilai_tes_kesehatan ENUM('Sangat Kurang', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'),
     PRIMARY KEY (id_penilaian),
     CONSTRAINT fk_penilaian_pelamaran FOREIGN KEY (id_pelamaran)
      REFERENCES pelamaran (id_pelamaran)
@@ -151,10 +151,11 @@ CREATE TABLE IF NOT EXISTS penilaian (
 
 CREATE TABLE IF NOT EXISTS hasil (
     id_hasil INT(11) AUTO_INCREMENT,
-    id_penilaian INT(11),
+    id_penilaian INT(11) UNIQUE,
+    vector_s FLOAT,
+    hasil_akhir FLOAT,
     peringkat INT(11),
-    nama_lengkap VARCHAR(255),
-    status ENUM('Diterima', 'Ditolak'),
+    status ENUM('Diterima', 'Ditolak') NULL,
     PRIMARY KEY (id_hasil),
     CONSTRAINT fk_hasil_penilaian
      FOREIGN KEY (id_penilaian)

@@ -2,7 +2,6 @@
 
 require_once ('./../../../functions/init-conn.php');
 require_once ('./../../../functions/init-session.php');
-require_once ('./../../../functions/swal.php');
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

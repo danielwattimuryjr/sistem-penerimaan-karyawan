@@ -67,7 +67,8 @@ $formPelamaranUrl = "/sistem-penerimaan-karyawan/pages/pelamar/form-pelamaran?id
                         </ul>
 
                         <a href="<?= $formPelamaranUrl ?>" class="btn btn-primary <?= $isApplied ? 'disabled' : '' ?>">Ajukan Lamaran</a>
-                        <p class="form-text <?= $isApplied ? '' : 'disabled' ?>">Kamu sudah mendaftar</p>
+
+                        <?= $isApplied ? '<p class="form-text ">Kamu sudah mendaftar</p>' : '' ?>
                     </div>
                 </div>
             </div>

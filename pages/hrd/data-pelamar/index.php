@@ -3,15 +3,19 @@ require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
-$queryStr = " SELECT
+$queryStr = "
+SELECT
   p.id_pelamaran,
   u.nama_lengkap,
-  d.nama_divisi
- FROM pelamaran p
- JOIN user u ON p.id_user = u.id_user
- JOIN lowongan l ON p.id_lowongan = l.id_lowongan
- JOIN permintaan pe ON l.id_permintaan = pe.id_permintaan
- JOIN divisi d ON pe.id_divisi = d.id_divisi ";
+  d.nama_divisi,
+  pn.id_penilaian -- Tambahkan kolom ini untuk cek penilaian
+FROM pelamaran p
+JOIN user u ON p.id_user = u.id_user
+JOIN lowongan l ON p.id_lowongan = l.id_lowongan
+JOIN permintaan pe ON l.id_permintaan = pe.id_permintaan
+JOIN divisi d ON pe.id_divisi = d.id_divisi
+LEFT JOIN penilaian pn ON p.id_pelamaran = pn.id_pelamaran -- LEFT JOIN untuk cek penilaian
+";
 
 $stmt = $conn->prepare($queryStr);
 $stmt->execute();
@@ -57,7 +61,13 @@ $conn->close();
                         <td><?= $res['nama_divisi'] ?></td>
                         <td>
                             <a href="<?= "/sistem-penerimaan-karyawan/pages/hrd/detail-pelamar?id_pelamaran=" . $res['id_pelamaran']?>" class="btn btn-sm btn-primary">Lihat Detail</a>
-                            <a href="<?= "/sistem-penerimaan-karyawan/pages/hrd/penilaian-pelamar?id_pelamaran=" . $res['id_pelamaran']?>" class="btn btn-sm btn-secondary">Nilai</a>
+                            <?php if ($res['id_penilaian']) { ?>
+                                <!-- Jika sudah dinilai -->
+                                <button class="btn btn-sm btn-success" disabled>Sudah Dinilai</button>
+                            <?php } else { ?>
+                                <!-- Jika belum dinilai -->
+                                <a href="<?= "/sistem-penerimaan-karyawan/pages/hrd/penilaian-pelamar?id_pelamaran=" . $res['id_pelamaran'] ?>" class="btn btn-sm btn-secondary">Nilai</a>
+                            <?php } ?>
                         </td>
                     </tr>
                 <?php } ?>
