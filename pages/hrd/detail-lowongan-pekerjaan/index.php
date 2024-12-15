@@ -4,21 +4,9 @@ require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
 $id_lowongan = $_GET['id_lowongan'] ?? null;
-$id_user = $_SESSION['user']['id_user'];
 if (!$id_lowongan) {
     header("Location: /sistem-penerimaan-karyawan/pages/departemen/beranda");
 }
-
-$checkPelamaranQueryStr = "
-    SELECT COUNT(*) as total
-    FROM pelamaran
-    WHERE id_user = ? AND id_lowongan = ?
-";
-$checkPelamaranStmt = $conn->prepare($checkPelamaranQueryStr);
-$checkPelamaranStmt->bind_param('ii', $id_user, $id_lowongan);
-$checkPelamaranStmt->execute();
-$checkPelamaranResult = $checkPelamaranStmt->get_result();
-$checkPelamaran = $checkPelamaranResult->fetch_assoc();
 
 $getLowonganQueryStr = "SELECT nama_lowongan, deskripsi FROM lowongan LIMIT 1";
 $getLowonganResult = $conn->query($getLowonganQueryStr);
@@ -30,9 +18,6 @@ $stmt->bind_param("i", $id_lowongan);
 $stmt->execute();
 $getPersyaratanResult = $stmt->get_result();
 $persyaratan = $getPersyaratanResult->fetch_assoc();
-
-$isApplied = ($checkPelamaran['total'] > 0);
-$formPelamaranUrl = "/sistem-penerimaan-karyawan/pages/pelamar/form-pelamaran?id_lowongan=$id_lowongan";
 ?>
 <!doctype html>
 <html lang="en">
@@ -43,7 +28,7 @@ $formPelamaranUrl = "/sistem-penerimaan-karyawan/pages/pelamar/form-pelamaran?id
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?= $lowongan['nama_lowongan'] ?? 'Detail Lowongan'?></title>
 
-    <?php require_once ('./../_components/styles.php'); ?>
+    <?php require_once('./../_components/styles.php'); ?>
 </head>
 <body>
     <?php require_once('./../_components/navbar.php'); ?>
@@ -65,10 +50,6 @@ $formPelamaranUrl = "/sistem-penerimaan-karyawan/pages/pelamar/form-pelamaran?id
                             <li>Pendidikan minimal <?= $persyaratan['pendidikan'] ?></li>
                             <li><?= $persyaratan['pengalaman_kerja'] ?></li>
                         </ul>
-
-                        <a href="<?= $formPelamaranUrl ?>" class="btn btn-primary <?= $isApplied ? 'disabled' : '' ?>">Ajukan Lamaran</a>
-
-                        <?= $isApplied ? '<p class="form-text ">Kamu sudah mendaftar</p>' : '' ?>
                     </div>
                 </div>
             </div>
@@ -76,6 +57,6 @@ $formPelamaranUrl = "/sistem-penerimaan-karyawan/pages/pelamar/form-pelamaran?id
     </div>
 
 
-    <?php require_once ('./../_components/scripts.php'); ?>
+    <?php require_once('./../_components/scripts.php'); ?>
 </body>
 </html>

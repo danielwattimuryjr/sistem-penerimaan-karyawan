@@ -39,17 +39,7 @@ $getDivisiResult = $getDivisiStmt->get_result();
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Form Permintaan Karyawan</title>
 
-    <!--  Bootstrap 5.3 CSS  -->
-    <link rel="stylesheet" href="/sistem-penerimaan-karyawan/assets/css/bootstrap.min.css" crossorigin="anonymous">
-
-    <!--  Data Table CSS  -->
-    <link rel="stylesheet" href="/sistem-penerimaan-karyawan/assets/css/datatables.min.css" crossorigin="anonymous">
-
-    <style>
-        body {
-            background-color: #f1f1f1f1;
-        }
-    </style>
+    <?php require_once ('./../_components/styles.php'); ?>
 </head>
 <body>
     <?php require_once('./../_components/navbar.php'); ?>
@@ -83,9 +73,6 @@ $getDivisiResult = $getDivisiStmt->get_result();
         </div>
     </div>
 
-
-    <!--  Bootstrap 5.3 JS  -->
-    <script src="/sistem-penerimaan-karyawan/assets/js/popper.min.js" crossorigin="anonymous"></script>
-    <script src="/sistem-penerimaan-karyawan/assets/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <?php require_once ('./../_components/scripts.php'); ?>
 </body>
 </html>

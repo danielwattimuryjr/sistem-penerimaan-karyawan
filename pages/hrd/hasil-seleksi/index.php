@@ -60,17 +60,30 @@ $conn->close();
                 </thead>
                 <tbody>
                 <?php $no = 1 ?>
-                <?php foreach ($result as $res) { ?>
+                <?php foreach ($result as $res) {?>
                     <tr>
                         <td><?= $no++ ?></td>
                         <td><?= htmlspecialchars($res['nama_lengkap']) ?></td>
                         <td><?= $res['hasil_akhir'] ?></td>
                         <td><?= $res['peringkat'] ?></td>
                         <td>
-                            <span class="badge
-                                <?= $res['status'] === 'Diterima' ? 'bg-success' : 'bg-danger'; ?>">
-                                <?= htmlspecialchars(ucfirst($res['status'])); ?>
-                            </span>
+                            <?php if (!$res['status']) { ?>
+                                <form action="update-status.php" method="POST" style="display: inline;">
+                                    <input type="hidden" name="id_hasil" value="<?= htmlspecialchars($res['id_hasil']); ?>">
+                                    <input type="hidden" name="status" value="Diterima">
+                                    <button type="submit" class="btn btn-outline-success">Terima</button>
+                                </form>
+                                <form action="update-status.php" method="POST" style="display: inline;">
+                                    <input type="hidden" name="id_hasil" value="<?= htmlspecialchars($res['id_hasil']); ?>">
+                                    <input type="hidden" name="status" value="Ditolak">
+                                    <button type="submit" class="btn btn-outline-danger">Tolak</button>
+                                </form>
+                            <?php } else { ?>
+                                <span class="badge
+                                        <?= $res['status'] === 'Diterima' ? 'bg-success' : 'bg-danger'; ?>">
+                                        <?= htmlspecialchars(ucfirst($res['status'])); ?>
+                                    </span>
+                            <?php } ?>
                         </td>
                     </tr>
                 <?php } ?>
@@ -80,7 +93,7 @@ $conn->close();
     </div>
 </div>
 
-<?php require_once('./../_components/scripts.php'); ?>
-<?php require_once('./../_components/data-tables-script.php'); ?>
+<?php require_once ('./../_components/scripts.php'); ?>
+<?php require_once ('./../_components/data-tables-script.php'); ?>
 </body>
 </html>

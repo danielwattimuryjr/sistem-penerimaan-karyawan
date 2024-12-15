@@ -24,8 +24,8 @@ $conn->close();
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Permintaan Karyawan</title>
 
-    <?php require_once ('./../_components/data-table-styles.php'); ?>
-    <?php require_once ('./../_components/styles.php'); ?>
+    <?php require_once('./../_components/data-table-styles.php'); ?>
+    <?php require_once('./../_components/styles.php'); ?>
 </head>
 <body>
 <?php require_once('./../_components/navbar.php'); ?>
@@ -33,11 +33,7 @@ $conn->close();
 <div class="container-sm mt-3 mt-lg-5">
     <div class="card" style="width: 100%;">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="card-title text-center">Daftar Permintaan Karyawan</h5>
-
-                <a href="../form-tambah-permintaan-karyawan" class="btn btn-sm btn-primary">Tambah Permintaan</a>
-            </div>
+            <h5 class="card-title text-center">Daftar Permintaan Karyawan</h5>
 
             <table class="table table-bordered" id="data-table">
                 <thead>
@@ -46,19 +42,11 @@ $conn->close();
                         <th>Divisi</th>
                         <th>Jumlah Permintaan</th>
                         <th>Status</th>
-                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php $no = 1 ?>
                     <?php foreach ($result as $res) {?>
-                        <?php
-                            $baseEditUrl = '/sistem-penerimaan-karyawan/pages/departemen/form-edit-permintaan-karyawan';
-                            $baseDeleteUrl = '/sistem-penerimaan-karyawan/pages/departemen/permintaan-karyawan/delete.php';
-                            $params = ['id_permintaan' => $res['id_permintaan']];
-                            $editUrl = $baseEditUrl . '?' . http_build_query($params);
-                            $deleteUrl = $baseDeleteUrl . '?' . http_build_query($params);
-                        ?>
                         <tr>
                             <td><?= $no++ ?></td>
                             <td><?= $res['nama_divisi'] ?></td>
@@ -68,12 +56,6 @@ $conn->close();
                                     <?= $res['status_permintaan'] === 'Disetujui' ? 'bg-success' : 'bg-danger'; ?>">
                                     <?= htmlspecialchars(ucfirst($res['status_permintaan'])); ?>
                                 </span>
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <a type="button" class="btn btn-sm btn-warning" href="<?= $editUrl ?>">Update</a>
-                                    <a type="button" class="btn btn-sm btn-danger" href="<?= $deleteUrl ?>">Delete</a>
-                                </div>
                             </td>
                         </tr>
                     <?php } ?>

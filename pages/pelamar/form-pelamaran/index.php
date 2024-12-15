@@ -2,36 +2,25 @@
 require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
-//
-//// Get id_lowongan
-//$id_lowongan = isset($_GET['id_lowongan']) ? $_GET['id_lowongan'] : null;
-////
-//if (!$id_lowongan) {
-//    header("Location: /sistem-penerimaan-karyawan/pages/departemen/beranda");
-//}
-//
-//$getLowonganQueryStr = "SELECT nama_lowongan, deskripsi FROM lowongan LIMIT 1";
-//$getLowonganResult = $conn->query($getLowonganQueryStr);
-//$lowongan = $getLowonganResult->fetch_assoc();
-//
-//$getPersyaratanStr = "SELECT pengalaman_kerja, umur, pendidikan FROM persyaratan WHERE id_lowongan = ? LIMIT 1";
-//$stmt = $conn->prepare($getPersyaratanStr);
-//$stmt->bind_param("i", $id_lowongan);
-//$stmt->execute();
-//$getPersyaratanResult = $stmt->get_result();
-//$persyaratan = $getPersyaratanResult->fetch_assoc();
 
-$persyaratan = [
-    'umur' => 37,
-    'pendidikan' => 'SMA',
-    'pengalaman_kerja' => '3 tahun sebagai office boy'
-];
+// Get id_lowongan
+$id_lowongan = isset($_GET['id_lowongan']) ? $_GET['id_lowongan'] : null;
+//
+if (!$id_lowongan) {
+    header("Location: /sistem-penerimaan-karyawan/pages/departemen/beranda");
+}
 
-$lowongan = [
-    'nama_lowongan' => 'office boy',
-    'deskripsi' => 'test'
-];
-$id_lowongan = 1;
+$getLowonganQueryStr = "SELECT nama_lowongan, deskripsi FROM lowongan LIMIT 1";
+$getLowonganResult = $conn->query($getLowonganQueryStr);
+$lowongan = $getLowonganResult->fetch_assoc();
+
+$getPersyaratanStr = "SELECT pengalaman_kerja, umur, pendidikan FROM persyaratan WHERE id_lowongan = ? LIMIT 1";
+$stmt = $conn->prepare($getPersyaratanStr);
+$stmt->bind_param("i", $id_lowongan);
+$stmt->execute();
+$getPersyaratanResult = $stmt->get_result();
+$persyaratan = $getPersyaratanResult->fetch_assoc();
+
 
 $user = $_SESSION['user'];
 $queryProfile = "SELECT * FROM profile WHERE id_user = ?";
@@ -57,14 +46,7 @@ $userData = $resultUser->fetch_assoc();
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?= $lowongan['nama_lowongan']  . ' | Form Pelamaran' ?></title>
 
-    <!--  Bootstrap 5.3 CSS  -->
-    <link rel="stylesheet" href="/sistem-penerimaan-karyawan/assets/css/bootstrap.min.css" crossorigin="anonymous">
-
-    <style>
-        body {
-            background-color: #f1f1f1f1;
-        }
-    </style>
+    <?php require_once ('./../_components/styles.php'); ?>
 </head>
 <body>
 <?php require_once('./../_components/navbar.php'); ?>
@@ -170,11 +152,6 @@ $userData = $resultUser->fetch_assoc();
 </div>
 
 
-<!--  Bootstrap 5.3 JS  -->
-<script src="/sistem-penerimaan-karyawan/assets/js/popper.min.js" crossorigin="anonymous"></script>
-<script src="/sistem-penerimaan-karyawan/assets/js/bootstrap.min.js" crossorigin="anonymous"></script>
-
-<!--  SweetAlert2  -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php require_once ('./../_components/scripts.php'); ?>
 </body>
 </html>

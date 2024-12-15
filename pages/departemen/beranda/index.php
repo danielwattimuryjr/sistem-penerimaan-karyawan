@@ -24,14 +24,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Beranda</title>
 
-    <!--  Bootstrap 5.3 CSS  -->
-    <link rel="stylesheet" href="/sistem-penerimaan-karyawan/assets/css/bootstrap.min.css" crossorigin="anonymous">
-
-    <style>
-        body {
-            background-color: #f1f1f1f1;
-        }
-    </style>
+    <?php require_once ('./../_components/styles.php'); ?>
 </head>
 <body>
     <?php require_once ('./../_components/navbar.php'); ?>
@@ -82,12 +75,6 @@
         </nav>
     </div>
 
-
-    <!--  Bootstrap 5.3 JS  -->
-    <script src="/sistem-penerimaan-karyawan/assets/js/popper.min.js" crossorigin="anonymous"></script>
-    <script src="/sistem-penerimaan-karyawan/assets/js/bootstrap.min.js" crossorigin="anonymous"></script>
-
-    <!--  SweetAlert2  -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php require_once ('./../_components/scripts.php'); ?>
 </body>
 </html>

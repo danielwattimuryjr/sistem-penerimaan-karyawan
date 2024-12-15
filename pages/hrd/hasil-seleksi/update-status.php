@@ -12,16 +12,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("si", $status, $id_hasil);
 
         if ($stmt->execute()) {
-            echo "Status permintaan berhasil diperbarui.";
+            $type = 'success';
+            $message = "Status hasil berhasil diperbarui.";
         } else {
-            echo "Gagal memperbarui status: " . $stmt->error;
+            $type = 'error';
+            $message = "Gagal memperbarui status: " . $stmt->error;
         }
 
         $stmt->close();
     } else {
-        echo "ID permintaan atau status tidak valid.";
+        $type = 'error';
+        $message = "ID hasil atau status tidak valid.";
     }
+
+    header("Location: /sistem-penerimaan-karyawan/pages/hrd/hasil-seleksi?type=$type&message=" . urlencode($message));
 }
+
 
 $conn->close();
 

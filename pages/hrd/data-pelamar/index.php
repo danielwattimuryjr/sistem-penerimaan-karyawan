@@ -4,22 +4,17 @@ require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
 $queryStr = "
-SELECT 
-    h.id_hasil,
-    h.hasil_akhir,
-    h.peringkat,
-    u.nama_lengkap,
-    d.nama_divisi,
-    p.id_pelamaran,
-    h.status
-FROM hasil h
-JOIN penilaian pn ON h.id_penilaian = pn.id_penilaian
-JOIN pelamaran p ON pn.id_pelamaran = p.id_pelamaran
+SELECT
+  p.id_pelamaran,
+  u.nama_lengkap,
+  d.nama_divisi,
+  pn.id_penilaian -- Tambahkan kolom ini untuk cek penilaian
+FROM pelamaran p
 JOIN user u ON p.id_user = u.id_user
 JOIN lowongan l ON p.id_lowongan = l.id_lowongan
-JOIN permintaan pm ON l.id_permintaan = pm.id_permintaan
-JOIN divisi d ON pm.id_divisi = d.id_divisi
-ORDER BY h.peringkat ASC
+JOIN permintaan pe ON l.id_permintaan = pe.id_permintaan
+JOIN divisi d ON pe.id_divisi = d.id_divisi
+LEFT JOIN penilaian pn ON p.id_pelamaran = pn.id_pelamaran -- LEFT JOIN untuk cek penilaian
 ";
 
 $stmt = $conn->prepare($queryStr);
@@ -35,7 +30,7 @@ $conn->close();
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Hasil Seleksi</title>
+    <title>Data Pelamar</title>
 
     <?php require_once('./../_components/data-table-styles.php'); ?>
     <?php require_once('./../_components/styles.php'); ?>
@@ -46,31 +41,33 @@ $conn->close();
 <div class="container-sm mt-3 mt-lg-5">
     <div class="card" style="width: 100%;">
         <div class="card-body">
-            <h5 class="card-title text-center">Daftar Hasil Seleksi</h5>
+            <h5 class="card-title text-center">Daftar Pelamar</h5>
 
             <table class="table table-bordered" id="data-table">
                 <thead>
                 <tr>
                     <th>No</th>
                     <th>Nama</th>
-                    <th>Nilai Akhir</th>
-                    <th>Peringkat</th>
+                    <th>Divisi</th>
                     <th>Aksi</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php $no = 1 ?>
-                <?php foreach ($result as $res) { ?>
+                <?php foreach ($result as $res) {?>
                     <tr>
                         <td><?= $no++ ?></td>
-                        <td><?= htmlspecialchars($res['nama_lengkap']) ?></td>
-                        <td><?= $res['hasil_akhir'] ?></td>
-                        <td><?= $res['peringkat'] ?></td>
+                        <td><?= $res['nama_lengkap'] ?></td>
+                        <td><?= $res['nama_divisi'] ?></td>
                         <td>
-                            <span class="badge
-                                <?= $res['status'] === 'Diterima' ? 'bg-success' : 'bg-danger'; ?>">
-                                <?= htmlspecialchars(ucfirst($res['status'])); ?>
-                            </span>
+                            <a href="<?= "/sistem-penerimaan-karyawan/pages/hrd/detail-pelamar?id_pelamaran=" . $res['id_pelamaran']?>" class="btn btn-sm btn-primary">Lihat Detail</a>
+                            <?php if ($res['id_penilaian']) { ?>
+                                <!-- Jika sudah dinilai -->
+                                <button class="btn btn-sm btn-success" disabled>Sudah Dinilai</button>
+                            <?php } else { ?>
+                                <!-- Jika belum dinilai -->
+                                <a href="<?= "/sistem-penerimaan-karyawan/pages/hrd/penilaian-pelamar?id_pelamaran=" . $res['id_pelamaran'] ?>" class="btn btn-sm btn-secondary">Nilai</a>
+                            <?php } ?>
                         </td>
                     </tr>
                 <?php } ?>
@@ -80,7 +77,7 @@ $conn->close();
     </div>
 </div>
 
-<?php require_once('./../_components/scripts.php'); ?>
-<?php require_once('./../_components/data-tables-script.php'); ?>
+<?php require_once ('./../_components/scripts.php'); ?>
+<?php require_once ('./../_components/data-tables-script.php'); ?>
 </body>
 </html>

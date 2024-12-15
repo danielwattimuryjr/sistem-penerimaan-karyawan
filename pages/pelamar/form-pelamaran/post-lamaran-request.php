@@ -62,7 +62,7 @@ try {
 
     $query = "INSERT INTO pelamaran (id_user, id_lowongan, pengalaman_kerja, curiculum_vitae) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param('iiss', $idUser, $idLowongan, $pengalamanKerja, $uploadPath);
+    $stmt->bind_param('iiss', $idUser, $idLowongan, $pengalamanKerja, $uniqueFileName);
 
     if (!$stmt->execute()) {
         throw new Exception("Gagal menyimpan data: " . $stmt->error);
