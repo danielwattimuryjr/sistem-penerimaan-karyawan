@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS lowongan (
     id_lowongan INT(11) AUTO_INCREMENT,
     id_permintaan INT(11),
     nama_lowongan VARCHAR(100),
+    poster_lowongan VARCHAR(255),
     deskripsi TEXT,
     tgl_mulai DATE,
     tgl_selesai DATE,
