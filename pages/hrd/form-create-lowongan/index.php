@@ -34,7 +34,7 @@ $result = $stmt->get_result();
         <div class="card-body">
             <h5 class="card-title text-center">Tambah Lowongan Pekerjaan</h5>
 
-            <form action="post-lowongan-request.php" method="post" class="mt-4">
+            <form action="post-lowongan-request.php" method="post" class="mt-4" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="" class="form-label">Nama Lowongan</label>
                     <input type="text" name="nama_lowongan" id="" class="form-control" required>
@@ -63,6 +63,10 @@ $result = $stmt->get_result();
                             <option value="" disabled>Tidak ada permintaan yang tersedia</option>
                         <?php endif; ?>
                     </select>
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Poster Lowongan</label>
+                    <input type="file" name="poster_lowongan" id="" class="form-control" required>
                 </div>
                 <div class="mb-4">
                     <label for="" class="form-label">Deskripsi Pekerjaan</label>

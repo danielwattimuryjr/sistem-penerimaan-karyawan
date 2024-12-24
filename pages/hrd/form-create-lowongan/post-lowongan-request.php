@@ -28,11 +28,18 @@ $deskripsi = trim($_POST['deskripsi'] ?? '');
 $umur = intval($_POST['umur'] ?? 0);
 $pendidikan = trim($_POST['pendidikan'] ?? '');
 $pengalamanKerja = trim($_POST['pengalaman_kerja'] ?? '');
+$file = $_FILES['poster_lowongan'];
 
 // Ensure required fields are not empty
-if (empty($namaLowongan) || empty($tanggalMulai) || empty($tanggalSelesai) || empty($idPermintaan) || empty($umur) || empty($pendidikan)) {
+if (empty($namaLowongan) || empty($tanggalMulai) || empty($tanggalSelesai) || empty($idPermintaan) || empty($umur) || empty($pendidikan) || !$file) {
     redirectWithMessage('error', 'Semua data harus diisi.');
 }
+
+$allowedExtensions = ['png', 'jpg', 'jpeg', 'pdf'];
+$fileName = $file['name'];
+$fileSize = $file['size'];
+$fileTmp = $file['tmp_name'];
+$fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
 
 // Validate date format
 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggalMulai) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggalSelesai)) {
@@ -44,16 +51,36 @@ if (strtotime($tanggalMulai) > strtotime($tanggalSelesai)) {
     redirectWithMessage('error', 'Tanggal mulai tidak boleh setelah tanggal selesai.');
 }
 
+if (!in_array(strtolower($fileExt), $allowedExtensions)) {
+    redirectWithMessage('error', 'Format file tidak didukung');
+}
+
+if ($fileSize > 1044070) {
+    redirectWithMessage('error', 'Ukuran tidak boleh lebih besar dari 1MB');
+}
+
+$uniqueFileName = uniqid() . '_' . $fileName;
+$uploadDir = __DIR__ . '/../../../assets/uploads/poster';
+$uploadPath = $uploadDir . '/' . $uniqueFileName;
+
+if (!is_uploaded_file($fileTmp)) {
+    redirectWithMessage('error', 'File tidak valid atau tidak ditemukan');
+}
+
+if (!move_uploaded_file($fileTmp, $uploadPath)) {
+    redirectWithMessage('error', 'Gagal mengunggah file');
+}
+
 $conn->begin_transaction();
 
 try {
     // Insert data into `lowongan` table
     $insertLowonganQuery = "
-        INSERT INTO lowongan (id_permintaan, nama_lowongan, deskripsi, tgl_mulai, tgl_selesai)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO lowongan (id_permintaan, nama_lowongan, deskripsi, tgl_mulai, tgl_selesai, poster_lowongan)
+        VALUES (?, ?, ?, ?, ?, ?)
     ";
     $stmtLowongan = $conn->prepare($insertLowonganQuery);
-    $stmtLowongan->bind_param('issss', $idPermintaan, $namaLowongan, $deskripsi, $tanggalMulai, $tanggalSelesai);
+    $stmtLowongan->bind_param('isssss', $idPermintaan, $namaLowongan, $deskripsi, $tanggalMulai, $tanggalSelesai, $uniqueFileName);
     $stmtLowongan->execute();
 
     // Get the inserted `lowongan` ID

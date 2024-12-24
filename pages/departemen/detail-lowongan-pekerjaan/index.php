@@ -10,7 +10,7 @@ if (!$id_lowongan) {
     header("Location: /sistem-penerimaan-karyawan/pages/departemen/beranda");
 }
 
-$getLowonganQueryStr = "SELECT nama_lowongan, deskripsi FROM lowongan LIMIT 1";
+$getLowonganQueryStr = "SELECT nama_lowongan, deskripsi, poster_lowongan FROM lowongan LIMIT 1";
 $getLowonganResult = $conn->query($getLowonganQueryStr);
 $lowongan = $getLowonganResult->fetch_assoc();
 
@@ -39,7 +39,7 @@ $persyaratan = $getPersyaratanResult->fetch_assoc();
         <div class="card" style="width: 100%;">
             <div class="card-body">
                 <div class="d-flex flex-column flex-lg-row gap-3 align-items-center align-items-lg-start">
-                    <img src="https://placehold.co/300" alt="" style="width: 300px">
+                    <img src="<?= '/sistem-penerimaan-karyawan/assets/uploads/poster/' . $lowongan['poster_lowongan'] ?>" alt="" style="width: 300px">
 
                     <div class="d-flex flex-column text-start">
                         <h2><?= $lowongan['nama_lowongan'] ?></h2>
