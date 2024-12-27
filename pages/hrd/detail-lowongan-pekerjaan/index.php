@@ -8,7 +8,7 @@ if (!$id_lowongan) {
     header("Location: /sistem-penerimaan-karyawan/pages/departemen/beranda");
 }
 
-$getLowonganQueryStr = "SELECT nama_lowongan, deskripsi, poster_lowongan FROM lowongan LIMIT 1";
+$getLowonganQueryStr = "SELECT id_lowongan, nama_lowongan, deskripsi, poster_lowongan FROM lowongan LIMIT 1";
 $getLowonganResult = $conn->query($getLowonganQueryStr);
 $lowongan = $getLowonganResult->fetch_assoc();
 
@@ -50,6 +50,8 @@ $persyaratan = $getPersyaratanResult->fetch_assoc();
                             <li>Pendidikan minimal <?= $persyaratan['pendidikan'] ?></li>
                             <li><?= $persyaratan['pengalaman_kerja'] ?></li>
                         </ul>
+
+                        <a href="/sistem-penerimaan-karyawan/pages/hrd/form-edit-lowongan?id_lowongan=<?= $lowongan['id_lowongan'] ?>" class="btn btn-warning">Update Lamaran</a>
                     </div>
                 </div>
             </div>
