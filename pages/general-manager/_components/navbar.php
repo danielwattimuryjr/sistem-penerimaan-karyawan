@@ -32,9 +32,6 @@ if (!$_SESSION['user']) {
                     <img src="https://placehold.co/100" alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px;">
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="avatarDropdown">
-                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="../beranda/logout.php">Logout</a></li>
                 </ul>
             </div>
