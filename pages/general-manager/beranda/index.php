@@ -36,12 +36,19 @@
                 <ul class="list-group list-group-flush">
                     <?php if ($dataResult->num_rows > 0): ?>
                         <?php while ($row = $dataResult->fetch_assoc()): ?>
+                            <?php
+                                $baseDetailUrl = '/sistem-penerimaan-karyawan/pages/departemen/detail-lowongan-pekerjaan';
+                                $params = [
+                                    'id_lowongan' => $row['id_lowongan']
+                                ];
+                                $detailUrl = $baseDetailUrl . '?' . http_build_query($params);
+                            ?>
                             <li class="list-group-item">
                                 <div class="d-flex gap-3 gap-md-4 flex-column flex-md-row align-items-center">
                                     <img src="<?= '/sistem-penerimaan-karyawan/assets/uploads/poster/' . $row['poster_lowongan'] ?>" alt="" style="width: 150px">
                                     <div class="d-flex flex-column text-center text-lg-start">
                                         <h3><?= htmlspecialchars($row['nama_lowongan']); ?></h3>
-                                        <button type="button" class="btn btn-secondary">Lihat Selengkapnya</button>
+                                        <a href="<?= $detailUrl ?>" class="btn btn-secondary">Lihat Selengkapnya</a>
                                     </div>
                                 </div>
                             </li>

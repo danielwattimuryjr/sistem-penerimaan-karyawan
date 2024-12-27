@@ -20,8 +20,8 @@ $getPermintaanResult = $getPermintaanStmt->get_result()->fetch_assoc();
 
 if ($getPermintaanResult['status_permintaan'] !== 'Pending') {
     $type = 'error';
-    $message = 'Data yang telah disetujui atau dihapus, tidak bisa diubah';
-    header("Location: /sistem-penerimaan-karyawan/pages/departemen/beranda?type=$type&message=".urlencode($message));
+    $message = 'Data yang telah disetujui, tidak bisa diubah atau dihapus';
+    header("Location: /sistem-penerimaan-karyawan/pages/departemen/permintaan-karyawan?type=$type&message=".urlencode($message));
     exit();
 }
 $getDivisiQueryStr = "SELECT id_divisi, nama_divisi FROM divisi";
