@@ -23,6 +23,9 @@ require_once ('./../../../functions/init-session.php');
                     <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/hrd/data-pelamar">Data Pelamar</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/hrd/data-department">Data Departement</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/hrd/hasil-seleksi">Hasil Seleksi</a>
                 </li>
             </ul>
@@ -35,8 +38,6 @@ require_once ('./../../../functions/init-session.php');
                     <img src="https://placehold.co/100" alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px;">
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="avatarDropdown">
-                    <li><a class="dropdown-item" href="/sistem-penerimaan-karyawan/pages/pelamar/profile">Profile</a></li>
-                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="../beranda/logout.php">Logout</a></li>
                 </ul>
             </div>

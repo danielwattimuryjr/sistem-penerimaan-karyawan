@@ -33,7 +33,7 @@
                         Lupa Password
                     </button>
 
-                    <a href="../sign-in" class="mt-2 text-center" style="text-decoration: none">
+                    <a href="../sign-in" class="mt-4 text-center" style="text-decoration: none">
                         Kembali kehalaman Login
                     </a>
                 </div>

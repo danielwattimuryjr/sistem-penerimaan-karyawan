@@ -71,12 +71,12 @@ $conn->close();
                                 <form action="update-status.php" method="POST" style="display: inline;">
                                     <input type="hidden" name="id_hasil" value="<?= htmlspecialchars($res['id_hasil']); ?>">
                                     <input type="hidden" name="status" value="Diterima">
-                                    <button type="submit" class="btn btn-outline-success">Terima</button>
+                                    <button type="submit" class="btn btn-outline-success btn-sm">Terima</button>
                                 </form>
                                 <form action="update-status.php" method="POST" style="display: inline;">
                                     <input type="hidden" name="id_hasil" value="<?= htmlspecialchars($res['id_hasil']); ?>">
                                     <input type="hidden" name="status" value="Ditolak">
-                                    <button type="submit" class="btn btn-outline-danger">Tolak</button>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Tolak</button>
                                 </form>
                             <?php } else { ?>
                                 <span class="badge

@@ -20,6 +20,9 @@ if (!$_SESSION['user']) {
                     <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/general-manager/permintaan-karyawan">Permintaan Karyawan</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/general-manager/data-department">Data Departement</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/general-manager/hasil-seleksi">Hasil Seleksi</a>
                 </li>
             </ul>
@@ -32,9 +35,6 @@ if (!$_SESSION['user']) {
                     <img src="https://placehold.co/100" alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px;">
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="avatarDropdown">
-                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="../beranda/logout.php">Logout</a></li>
                 </ul>
             </div>

@@ -35,9 +35,14 @@
                     <div class="d-flex justify-content-center flex-column" style="width: 100%">
                         <button type="submit" class="btn btn-primary m-auto" style="width: 10rem">LOGIN</button>
 
-                        <a href="../forget-password" class="mt-2 text-center" style="text-decoration: none">
-                            Lupa Password?
-                        </a>
+                        <div class="d-flex flex-column flex-lg-row justify-content-center justify-content-lg-between mt-4">
+                            <a href="../register"  style="text-decoration: none">
+                                Belum punya akun? Register di sini
+                            </a>
+                            <a href="../forget-password"  style="text-decoration: none">
+                                Lupa Password?
+                            </a>
+                        </div>
                     </div>
                 </form>
             </div>

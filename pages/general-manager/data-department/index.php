@@ -4,22 +4,10 @@ require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
 $queryStr = "
-SELECT 
-    h.id_hasil,
-    h.hasil_akhir,
-    h.peringkat,
-    u.nama_lengkap,
-    d.nama_divisi,
-    p.id_pelamaran,
-    h.status
-FROM hasil h
-JOIN penilaian pn ON h.id_penilaian = pn.id_penilaian
-JOIN pelamaran p ON pn.id_pelamaran = p.id_pelamaran
-JOIN user u ON p.id_user = u.id_user
-JOIN lowongan l ON p.id_lowongan = l.id_lowongan
-JOIN permintaan pm ON l.id_permintaan = pm.id_permintaan
-JOIN divisi d ON pm.id_divisi = d.id_divisi
-ORDER BY h.peringkat ASC
+SELECT
+    id_divisi,
+    nama_divisi
+FROM divisi
 ";
 
 $stmt = $conn->prepare($queryStr);
@@ -35,7 +23,7 @@ $conn->close();
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Hasil Seleksi</title>
+    <title>Daftar Departement</title>
 
     <?php require_once('./../_components/data-table-styles.php'); ?>
     <?php require_once('./../_components/styles.php'); ?>
@@ -46,31 +34,40 @@ $conn->close();
 <div class="container-sm mt-3 mt-lg-5">
     <div class="card" style="width: 100%;">
         <div class="card-body">
-            <h5 class="card-title text-center">Daftar Hasil Seleksi</h5>
+            <div class="d-flex flex-column flex-lg-row justify-content-start justify-content-lg-between align-items-start align-items-lg-center">
+                <h5 class="card-title">Daftar Departement</h5>
+
+                <a href="/sistem-penerimaan-karyawan/pages/general-manager/form-create-department" class="btn btn-sm btn-primary">
+                    Tambah Departement
+                </a>
+            </div>
 
             <table class="table table-bordered" id="data-table">
                 <thead>
                 <tr>
                     <th>No</th>
                     <th>Nama</th>
-                    <th>Nilai Akhir</th>
-                    <th>Peringkat</th>
                     <th>Aksi</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php $no = 1 ?>
                 <?php foreach ($result as $res) { ?>
+                    <?php
+                        $baseEditUrl = '/sistem-penerimaan-karyawan/pages/general-manager/form-edit-department';
+                        $baseDeleteUrl = '/sistem-penerimaan-karyawan/pages/general-manager/data-department/delete.php';
+                        $params = ['id_divisi' => $res['id_divisi']];
+                        $editUrl = $baseEditUrl . '?' . http_build_query($params);
+                        $deleteUrl = $baseDeleteUrl . '?' . http_build_query($params);
+                    ?>
                     <tr>
                         <td><?= $no++ ?></td>
-                        <td><?= htmlspecialchars($res['nama_lengkap']) ?></td>
-                        <td><?= $res['hasil_akhir'] ?></td>
-                        <td><?= $res['peringkat'] ?></td>
+                        <td><?= htmlspecialchars($res['nama_divisi']) ?></td>
                         <td>
-                            <span class="badge
-                                <?= $res['status'] === 'Diterima' ? 'bg-success' : 'bg-danger'; ?>">
-                                <?= htmlspecialchars(ucfirst($res['status'] ?? 'Pending')); ?>
-                            </span>
+                            <div class="btn-group">
+                                <a type="button" class="btn btn-sm btn-warning" href="<?= $editUrl ?>">Update</a>
+                                <a type="button" class="btn btn-sm btn-danger" href="<?= $deleteUrl ?>">Delete</a>
+                            </div>
                         </td>
                     </tr>
                 <?php } ?>

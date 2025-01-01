@@ -54,12 +54,12 @@ $conn->close();
                                     <form action="update-status.php" method="POST" style="display: inline;">
                                         <input type="hidden" name="id_permintaan" value="<?= htmlspecialchars($res['id_permintaan']); ?>">
                                         <input type="hidden" name="status_permintaan" value="Disetujui">
-                                        <button type="submit" class="btn btn-outline-success">Setuju</button>
+                                        <button type="submit" class="btn btn-outline-success btn-sm">Setuju</button>
                                     </form>
                                     <form action="update-status.php" method="POST" style="display: inline;">
                                         <input type="hidden" name="id_permintaan" value="<?= htmlspecialchars($res['id_permintaan']); ?>">
                                         <input type="hidden" name="status_permintaan" value="Ditolak">
-                                        <button type="submit" class="btn btn-outline-danger">Tolak</button>
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Tolak</button>
                                     </form>
                                 <?php } else { ?>
                                     <span class="badge

@@ -3,12 +3,14 @@ require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
-$id_lowongan = $_GET['id_lowongan'] ?? null;
+// Get id_lowongan
+$id_lowongan = isset($_GET['id_lowongan']) ? $_GET['id_lowongan'] : null;
+//
 if (!$id_lowongan) {
     header("Location: /sistem-penerimaan-karyawan/pages/departemen/beranda");
 }
 
-$getLowonganQueryStr = "SELECT id_lowongan, nama_lowongan, deskripsi, poster_lowongan FROM lowongan LIMIT 1";
+$getLowonganQueryStr = "SELECT nama_lowongan, deskripsi, poster_lowongan FROM lowongan LIMIT 1";
 $getLowonganResult = $conn->query($getLowonganQueryStr);
 $lowongan = $getLowonganResult->fetch_assoc();
 
@@ -28,7 +30,7 @@ $persyaratan = $getPersyaratanResult->fetch_assoc();
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?= $lowongan['nama_lowongan'] ?? 'Detail Lowongan'?></title>
 
-    <?php require_once('./../_components/styles.php'); ?>
+    <?php require_once ('./../_components/styles.php'); ?>
 </head>
 <body>
     <?php require_once('./../_components/navbar.php'); ?>
@@ -50,15 +52,12 @@ $persyaratan = $getPersyaratanResult->fetch_assoc();
                             <li>Pendidikan minimal <?= $persyaratan['pendidikan'] ?></li>
                             <li><?= $persyaratan['pengalaman_kerja'] ?></li>
                         </ul>
-
-                        <a href="/sistem-penerimaan-karyawan/pages/hrd/form-edit-lowongan?id_lowongan=<?= $lowongan['id_lowongan'] ?>" class="btn btn-warning">Update Lamaran</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-
-    <?php require_once('./../_components/scripts.php'); ?>
+    <?php require_once ('./../_components/scripts.php'); ?>
 </body>
 </html>

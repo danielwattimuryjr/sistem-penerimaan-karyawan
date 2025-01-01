@@ -10,6 +10,19 @@ if (!$id_permintaan) {
     exit();
 }
 
+$getPermintaanQueryStr = "SELECT id_permintaan, id_divisi, jumlah_permintaan, status_permintaan FROM permintaan WHERE id_permintaan = ? LIMIT 1";
+$getPermintaanStmt = $conn->prepare($getPermintaanQueryStr);
+$getPermintaanStmt->bind_param("i", $id_permintaan);
+$getPermintaanStmt->execute();
+$getPermintaanResult = $getPermintaanStmt->get_result()->fetch_assoc();
+
+if ($getPermintaanResult['status_permintaan'] !== 'Pending') {
+    $type = 'error';
+    $message = 'Data yang telah disetujui, tidak bisa diubah atau dihapus';
+    header("Location: /sistem-penerimaan-karyawan/pages/departemen/permintaan-karyawan?type=$type&message=".urlencode($message));
+    exit();
+}
+
 $queryStr = "DELETE FROM permintaan WHERE id_permintaan = ?";
 $stmt = $conn->prepare($queryStr);
 $stmt->bind_param('i', $id_permintaan);
