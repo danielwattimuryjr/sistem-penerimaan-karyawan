@@ -23,6 +23,9 @@ require_once ('./../../../functions/init-session.php');
                     <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/hrd/data-pelamar">Data Pelamar</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/hrd/data-department">Data Departement</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/hrd/hasil-seleksi">Hasil Seleksi</a>
                 </li>
             </ul>

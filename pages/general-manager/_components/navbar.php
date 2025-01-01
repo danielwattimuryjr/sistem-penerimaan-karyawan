@@ -20,6 +20,9 @@ if (!$_SESSION['user']) {
                     <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/general-manager/permintaan-karyawan">Permintaan Karyawan</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/general-manager/data-department">Data Departement</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/sistem-penerimaan-karyawan/pages/general-manager/hasil-seleksi">Hasil Seleksi</a>
                 </li>
             </ul>
