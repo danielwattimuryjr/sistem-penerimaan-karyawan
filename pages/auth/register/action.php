@@ -2,7 +2,6 @@
 
 require_once ('./../../../functions/init-conn.php');
 require_once ('./../../../functions/init-session.php');
-require_once ('./../../../functions/swal.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
@@ -18,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
 
     if ($stmt->affected_rows > 0) {
-        header("Location: ../sign-in?type=success&message=" . urlencode("Berhasil login"));
+        header("Location: ../sign-in?type=success&message=" . urlencode("Register Berhasil"));
         exit;
     } else {
         // Redirect ke halaman registrasi jika gagal

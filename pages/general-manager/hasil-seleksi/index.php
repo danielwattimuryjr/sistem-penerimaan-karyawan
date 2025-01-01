@@ -69,7 +69,7 @@ $conn->close();
                         <td>
                             <span class="badge
                                 <?= $res['status'] === 'Diterima' ? 'bg-success' : 'bg-danger'; ?>">
-                                <?= htmlspecialchars(ucfirst($res['status'])); ?>
+                                <?= htmlspecialchars(ucfirst($res['status'] ?? 'Pending')); ?>
                             </span>
                         </td>
                     </tr>

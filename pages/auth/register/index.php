@@ -43,9 +43,9 @@ require_once ('./../../../functions/check-user-session.php');
                 </div>
 
                 <div class="d-flex justify-content-center flex-column" style="width: 100%">
-                    <button type="submit" class="btn btn-primary m-auto" style="width: 10rem">LOGIN</button>
+                    <button type="submit" class="btn btn-primary m-auto" style="width: 10rem">REGISTER</button>
 
-                    <a href="../sign-in" class="mt-2 text-center" style="text-decoration: none">
+                    <a href="../sign-in" class="mt-4 text-center" style="text-decoration: none">
                         Sudah punya akun? Login di sini
                     </a>
                 </div>
