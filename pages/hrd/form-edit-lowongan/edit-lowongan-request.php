@@ -66,10 +66,6 @@ try {
             redirectWithMessage('error', 'Format file tidak didukung');
         }
 
-        if ($fileSize > 1044070) {
-            redirectWithMessage('error', 'Ukuran tidak boleh lebih besar dari 1MB');
-        }
-
         $uniqueFileName = uniqid() . '_' . $fileName;
         $uploadDir = __DIR__ . '/../../../assets/uploads/poster';
         $uploadPath = $uploadDir . '/' . $uniqueFileName;

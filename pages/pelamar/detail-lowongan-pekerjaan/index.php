@@ -20,8 +20,11 @@ $checkPelamaranStmt->execute();
 $checkPelamaranResult = $checkPelamaranStmt->get_result();
 $checkPelamaran = $checkPelamaranResult->fetch_assoc();
 
-$getLowonganQueryStr = "SELECT nama_lowongan, deskripsi, poster_lowongan FROM lowongan LIMIT 1";
-$getLowonganResult = $conn->query($getLowonganQueryStr);
+$getLowonganQueryStr = "SELECT nama_lowongan, deskripsi, poster_lowongan FROM lowongan WHERE id_lowongan = ?";
+$getLowonganStmt = $conn->prepare($getLowonganQueryStr);
+$getLowonganStmt->bind_param('i', $id_lowongan);
+$getLowonganStmt->execute();
+$getLowonganResult = $getLowonganStmt->get_result();
 $lowongan = $getLowonganResult->fetch_assoc();
 
 $getPersyaratanStr = "SELECT pengalaman_kerja, umur, pendidikan FROM persyaratan WHERE id_lowongan = ? LIMIT 1";

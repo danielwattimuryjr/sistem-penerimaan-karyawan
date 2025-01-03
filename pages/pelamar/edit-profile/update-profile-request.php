@@ -27,7 +27,7 @@ $namaLengkap = $_POST['nama_lengkap'];
 $nomorTelepon = $_POST['nomor_telepon'];
 $tempatLahir = $_POST['tempat_lahir'];
 $tanggalLahir = $_POST['tanggal_lahir'];
-$jenisKelamin = $_POST['jenis_kelamin'];
+$jenisKelamin = $_POST['jenis_kelamin'] ?? null;
 $pendidikanTerakhir = $_POST['pendidikan_terakhir'];
 $alamat = $_POST['alamat'];
 
@@ -35,7 +35,7 @@ if (!$namaLengkap
     || !$nomorTelepon
     || !$tempatLahir
     || !$tanggalLahir
-    || !$jenisKelamin
+    || is_null($jenisKelamin)
     || !$pendidikanTerakhir
     || !$alamat
 ) {

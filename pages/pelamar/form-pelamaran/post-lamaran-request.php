@@ -40,10 +40,6 @@ if (!in_array(strtolower($fileExt), $allowedExtensions)) {
     redirectWithMessage('error', 'Format file tidak didukung', $idLowongan);
 }
 
-if ($fileSize > 1044070) {
-    redirectWithMessage('error', 'Ukuran tidak boleh lebih besar dari 1MB', $idLowongan);
-}
-
 $uniqueFileName = uniqid() . '_' . $fileName;
 $uploadDir = __DIR__ . '/../../../assets/uploads/cv';
 $uploadPath = $uploadDir . '/' . $uniqueFileName;
