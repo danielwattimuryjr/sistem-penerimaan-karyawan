@@ -47,6 +47,16 @@ $userData = $resultUser->fetch_assoc();
     <title><?= $lowongan['nama_lowongan']  . ' | Form Pelamaran' ?></title>
 
     <?php require_once ('./../_components/styles.php'); ?>
+    <script src="https://cdn.tiny.cloud/1/weuk5gq9uk3b6yfox67jdajpmljl7u042vnu0zhqus3u0dqg/tinymce/7/tinymce.min.js"
+        referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea#tiny',
+            plugins: 'lists, link, image, media',
+            toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link ',
+            menubar: false,
+        });
+    </script>
 </head>
 <body>
 <?php require_once('./../_components/navbar.php'); ?>
@@ -136,7 +146,7 @@ $userData = $resultUser->fetch_assoc();
 
                 <div class="mb-3">
                     <label class="form-label">Pengalaman Kerja</label>
-                    <textarea name="pengalaman_kerja" id="" cols="30" rows="5" class="form-control" required></textarea>
+                    <textarea name="pengalaman_kerja" id="tiny" required></textarea>
                     <div class="form-text">Deskripsikan pengalaman kerja mu di sini</div>
                 </div>
 

@@ -31,14 +31,14 @@ if (!$lowonganResult->num_rows) {
     exit();
 }
 
-$permintaanQuery = "SELECT 
-    p.id_permintaan, 
-    p.jumlah_permintaan, 
+$permintaanQuery = "SELECT
+    p.id_permintaan,
+    p.jumlah_permintaan,
     d.nama_divisi
 FROM permintaan p
 LEFT JOIN lowongan l ON p.id_permintaan = l.id_permintaan
 INNER JOIN divisi d ON p.id_divisi = d.id_divisi
-WHERE p.status_permintaan = ? 
+WHERE p.status_permintaan = ?
 AND (l.id_lowongan IS NULL OR l.id_lowongan = ?)";
 $permintaanStmt = $conn->prepare($permintaanQuery);
 $status = 'Disetujui';
@@ -61,100 +61,123 @@ $persyaratanData = $persyaratanResult->fetch_assoc();
 ?>
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Edit Lowongan Pekerjaan</title>
 
-    <?php require_once ('./../_components/styles.php'); ?>
+    <?php require_once('./../_components/styles.php'); ?>
+    <script src="https://cdn.tiny.cloud/1/weuk5gq9uk3b6yfox67jdajpmljl7u042vnu0zhqus3u0dqg/tinymce/7/tinymce.min.js"
+        referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea#tiny',
+            plugins: 'lists, link, image, media',
+            toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link ',
+            menubar: false,
+        });
+    </script>
 </head>
+
 <body>
-<?php require_once ('./../_components/navbar.php'); ?>
+    <?php require_once('./../_components/navbar.php'); ?>
 
-<div class="container-sm mt-3 mt-lg-5">
-    <div class="card" style="width: 100%;">
-        <div class="card-body">
-            <h5 class="card-title text-center">Edit Lowongan Pekerjaan</h5>
+    <div class="container-sm mt-3 mt-lg-5">
+        <div class="card" style="width: 100%;">
+            <div class="card-body">
+                <h5 class="card-title text-center">Edit Lowongan Pekerjaan</h5>
 
-            <form action="edit-lowongan-request.php" method="post" class="mt-4" enctype="multipart/form-data">
-                <input type="hidden" name="id_lowongan" value="<?= $lowonganData['id_lowongan'] ?>">
-                <div class="mb-3">
-                    <label for="" class="form-label">Nama Lowongan</label>
-                    <input type="text" name="nama_lowongan" id="" class="form-control" value="<?= $lowonganData['nama_lowongan'] ?>" required>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-12 col-lg-6">
-                        <label for="" class="form-label">Tanggal Mulai</label>
-                        <input type="date" name="tanggal_mulai" id="" class="form-control" value="<?= $lowonganData['tgl_mulai'] ?>" required>
+                <form action="edit-lowongan-request.php" method="post" class="mt-4" enctype="multipart/form-data">
+                    <input type="hidden" name="id_lowongan" value="<?= $lowonganData['id_lowongan'] ?>">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Nama Lowongan</label>
+                        <input type="text" name="nama_lowongan" id="" class="form-control"
+                            value="<?= $lowonganData['nama_lowongan'] ?>" required>
                     </div>
-                    <div class="col-12 col-lg-6">
-                        <label for="" class="form-label">Tanggal Selesai</label>
-                        <input type="date" name="tanggal_selesai" id="" class="form-control" value="<?= $lowonganData['tgl_selesai'] ?>" required>
+                    <div class="row mb-3">
+                        <div class="col-12 col-lg-6">
+                            <label for="" class="form-label">Tanggal Mulai</label>
+                            <input type="date" name="tanggal_mulai" id="" class="form-control"
+                                value="<?= $lowonganData['tgl_mulai'] ?>" required>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <label for="" class="form-label">Tanggal Selesai</label>
+                            <input type="date" name="tanggal_selesai" id="" class="form-control"
+                                value="<?= $lowonganData['tgl_selesai'] ?>" required>
+                        </div>
                     </div>
-                </div>
-                <div class="mb-3">
-                    <label for="" class="form-label">Permintaan</label>
-                    <select name="id_permintaan" id="" class="form-control">
-                        <option value="" selected disabled>-- PILIH PERMINTAAN --</option>
-                        <?php if (!empty($permintaanData)) { ?>
-                            <?php foreach ($permintaanData as $pd) { ?>
-                                <option value="<?= $pd['id_permintaan']; ?>" <?= ($pd['id_permintaan'] === $lowonganData['id_permintaan']) ? 'selected' : ''; ?>>
-                                    [<?= htmlspecialchars($pd['nama_divisi']); ?>] - (<?= $pd['jumlah_permintaan']; ?> orang)
-                                </option>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Permintaan</label>
+                        <select name="id_permintaan" id="" class="form-control">
+                            <option value="" selected disabled>-- PILIH PERMINTAAN --</option>
+                            <?php if (!empty($permintaanData)) { ?>
+                                <?php foreach ($permintaanData as $pd) { ?>
+                                    <option value="<?= $pd['id_permintaan']; ?>"
+                                        <?= ($pd['id_permintaan'] === $lowonganData['id_permintaan']) ? 'selected' : ''; ?>>
+                                        [<?= htmlspecialchars($pd['nama_divisi']); ?>] - (<?= $pd['jumlah_permintaan']; ?>
+                                        orang)
+                                    </option>
+                                <?php } ?>
+                            <?php } else { ?>
+                                <option value="">Tidak ada data permintaan</option>
                             <?php } ?>
-                        <?php } else { ?>
-                            <option value="">Tidak ada data permintaan</option>
-                        <?php } ?>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="" class="form-label">Poster Lowongan</label>
-                    <input type="file" name="poster_lowongan" id="" class="form-control">
-                    <div class="form-text">Poster saat ini: <a href="/sistem-penerimaan-karyawan/assets/uploads/poster/<?= $lowonganData['poster_lowongan'] ?>" target="_blank"><?= $lowonganData['poster_lowongan'] ?></a></div>
-                </div>
-                <div class="mb-4">
-                    <label for="" class="form-label">Deskripsi Pekerjaan</label>
-                    <textarea name="deskripsi" id="" cols="30" rows="5" class="form-control" required><?= $lowonganData['deskripsi'] ?></textarea>
-                </div>
-
-                <p>Isi persyaratan untuk lowongan, pada bagian di bawah ini:</p>
-
-                <div class="row mb-3">
-                    <div class="col-12 col-lg-6">
-                        <label for="" class="form-label">Umur</label>
-                        <input type="number" name="umur" id="" class="form-control" value="<?= $persyaratanData['umur'] ?>" required>
-                    </div>
-                    <div class="col-12 col-lg-6">
-                        <label for="" class="form-label">Pendidikan Terakhir</label>
-                        <select name="pendidikan" class="form-select" required>
-                            <option selected disabled>-- PILIH PENDIDIKAN TERAKHIR --</option>
-                            <option value="SMA/SMK" <?php echo ($persyaratanData['pendidikan'] === 'SMA/SMK') ? 'selected' : ''; ?>>
-                                SMA/SMK
-                            </option>
-                            <option value="Diploma" <?php echo ($persyaratanData['pendidikan'] === 'Diploma') ? 'selected' : ''; ?>>
-                                Diploma
-                            </option>
-                            <option value="Sarjana" <?php echo ($persyaratanData['pendidikan'] === 'Sarjana') ? 'selected' : ''; ?>>
-                                Sarjana
-                            </option>
                         </select>
                     </div>
-                </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Poster Lowongan</label>
+                        <input type="file" name="poster_lowongan" id="" class="form-control">
+                        <div class="form-text">Poster saat ini: <a
+                                href="/sistem-penerimaan-karyawan/assets/uploads/poster/<?= $lowonganData['poster_lowongan'] ?>"
+                                target="_blank"><?= $lowonganData['poster_lowongan'] ?></a></div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="" class="form-label">Deskripsi Pekerjaan</label>
+                        <textarea name="deskripsi" id="" cols="30" rows="5" class="form-control"
+                            required><?= $lowonganData['deskripsi'] ?></textarea>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="" class="form-label">Pengalaman Kerja</label>
-                    <textarea name="pengalaman_kerja" id="" cols="30" rows="5" class="form-control"><?= $persyaratanData['pengalaman_kerja'] ?></textarea>
-                </div>
+                    <p>Isi persyaratan untuk lowongan, pada bagian di bawah ini:</p>
 
-                <button type="submit" class="btn btn-warning">Update</button>
-            </form>
+                    <div class="row mb-3">
+                        <div class="col-12 col-lg-6">
+                            <label for="" class="form-label">Umur</label>
+                            <input type="number" name="umur" id="" class="form-control"
+                                value="<?= $persyaratanData['umur'] ?>" required>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <label for="" class="form-label">Pendidikan Terakhir</label>
+                            <select name="pendidikan" class="form-select" required>
+                                <option selected disabled>-- PILIH PENDIDIKAN TERAKHIR --</option>
+                                <option value="SMA/SMK" <?php echo ($persyaratanData['pendidikan'] === 'SMA/SMK') ? 'selected' : ''; ?>>
+                                    SMA/SMK
+                                </option>
+                                <option value="Diploma" <?php echo ($persyaratanData['pendidikan'] === 'Diploma') ? 'selected' : ''; ?>>
+                                    Diploma
+                                </option>
+                                <option value="Sarjana" <?php echo ($persyaratanData['pendidikan'] === 'Sarjana') ? 'selected' : ''; ?>>
+                                    Sarjana
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="" class="form-label">Pengalaman Kerja</label>
+                        <textarea name="pengalaman_kerja"
+                            id="tiny"><?= $persyaratanData['pengalaman_kerja'] ?></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning">Update</button>
+                </form>
+            </div>
         </div>
+
     </div>
 
-</div>
-
-<?php require_once ('./../_components/scripts.php'); ?>
+    <?php require_once('./../_components/scripts.php'); ?>
 </body>
+
 </html>
