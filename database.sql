@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS lowongan (
     id_permintaan INT(11),
     nama_lowongan VARCHAR(100),
     poster_lowongan VARCHAR(255),
-    deskripsi TEXT,
+    deskripsi LONGTEXT,
     tgl_mulai DATE,
     tgl_selesai DATE,
     PRIMARY KEY (id_lowongan),
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS pelamaran (
     id_pelamaran INT(11) AUTO_INCREMENT,
     id_user INT(11),
     id_lowongan INT(11),
-    pengalaman_kerja VARCHAR(255),
+    pengalaman_kerja LONGTEXT,
     curiculum_vitae VARCHAR(255),
     PRIMARY KEY (id_pelamaran),
     CONSTRAINT fk_pelamaran_user
