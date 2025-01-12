@@ -57,9 +57,11 @@ $conn->close();
                             <?php
                             $baseEditUrl = '/sistem-penerimaan-karyawan/pages/departemen/form-edit-permintaan-karyawan';
                             $baseDeleteUrl = '/sistem-penerimaan-karyawan/pages/departemen/permintaan-karyawan/delete.php';
+                            $baseDetailUrl = '/sistem-penerimaan-karyawan/pages/departemen/detail-permintaan';
                             $params = ['id_permintaan' => $res['id_permintaan']];
                             $editUrl = $baseEditUrl . '?' . http_build_query($params);
                             $deleteUrl = $baseDeleteUrl . '?' . http_build_query($params);
+                            $detailUrl = $baseDetailUrl . '?' . http_build_query($params);
                             ?>
                             <tr>
                                 <td><?= $no++ ?></td>
@@ -74,12 +76,15 @@ $conn->close();
                                 <td>
                                     <?php if ($res['status_permintaan'] === 'Disetujui'): ?>
                                         <p class="text-success">Permintaan ini telah disetujui.</p>
+                                        <a href="<?= $detailUrl ?>">Detail</a>
                                     <?php elseif ($res['status_permintaan'] === 'Ditolak'): ?>
                                         <p class="text-danger">Permintaan ini telah ditolak.</p>
+                                        <a href="<?= $detailUrl ?>">Detail</a>
                                     <?php else: ?>
                                         <div class="btn-group">
                                             <a type="button" class="btn btn-sm btn-warning" href="<?= $editUrl ?>">Update</a>
                                             <a type="button" class="btn btn-sm btn-danger" href="<?= $deleteUrl ?>">Delete</a>
+                                            <a type="button" class="btn btn-sm btn-primary" href="<?= $detailUrl ?>">Detail</a>
                                         </div>
                                     <?php endif; ?>
                                 </td>

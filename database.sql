@@ -33,14 +33,19 @@ CREATE TABLE IF NOT EXISTS user (
 CREATE TABLE IF NOT EXISTS permintaan (
     id_permintaan INT(11) AUTO_INCREMENT,
     id_divisi INT(11),
+    posisi VARCHAR(50),
+    -- TRUE = PRIA
+    -- FALSE = WANITA
+    jenis_kelamin BOOLEAN,
+    tanggal_mulai DATE NOT NULL,
+    tanggal_selesai DATE NULL,
     jumlah_permintaan INT(11),
+    status_kerja ENUM('daily-worker', 'karyawan-kontrak'),
     status_permintaan ENUM('Pending', 'Disetujui', 'Ditolak') DEFAULT 'Pending',
+    keperluan LONGTEXT,
+    tanggal_permintaan DATE,
     PRIMARY KEY (id_permintaan),
-    CONSTRAINT fk_permintaan_divisi
-     FOREIGN KEY (id_divisi)
-     REFERENCES divisi (id_divisi)
-     ON DELETE CASCADE
-     ON UPDATE CASCADE
+    CONSTRAINT fk_permintaan_divisi FOREIGN KEY (id_divisi) REFERENCES divisi (id_divisi) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS lowongan (
