@@ -23,69 +23,100 @@ $getPermintaanStmt->bind_param("i", $id_permintaan);
 $getPermintaanStmt->execute();
 $permintaan = $getPermintaanStmt->get_result()->fetch_assoc();
 ?>
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Permintaan Karyawan</title>
 
-    <?php require_once('./../_components/styles.php'); ?>
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
+        type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app-dark.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
 </head>
 
 <body>
-    <?php require_once('./../_components/navbar.php'); ?>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/initTheme.js"></script>
+    <!-- Start content here -->
 
-    <div class="container-sm mt-3 mt-lg-5">
-        <div class="card" style="width: 100%;">
-            <div class="card-body">
-                <h5 class="card-title text-center mb-3">Detail Permintaan Karyawan</h5>
-
-                <dl class="row">
-                    <dt class="col-sm-3">Tanggal Permintaan</dt>
-                    <dd class="col-sm-9"><?= $permintaan['tanggal_permintaan'] ?></dd>
-
-                    <dt class="col-sm-3">Status</dt>
-                    <dd class="col-sm-9"><span
-                            class="badge
-                                    <?= $permintaan['status_permintaan'] === 'Disetujui' ? 'bg-success' : 'bg-danger'; ?>">
-                            <?= htmlspecialchars(ucfirst($permintaan['status_permintaan'])); ?>
-                        </span></dd>
-
-                    <dt class="col-sm-3">Departement</dt>
-                    <dd class="col-sm-9"><?= $permintaan['nama_divisi'] ?></dd>
-
-                    <dt class="col-sm-3">Untuk Posisi</dt>
-                    <dd class="col-sm-9"><?= $permintaan['posisi'] ?></dd>
-
-                    <dt class="col-sm-3">Jumlah</dt>
-                    <dd class="col-sm-9"><?= $permintaan['jumlah_permintaan'] ?></dd>
-
-                    <dt class="col-sm-3">Jenis Kelamin</dt>
-                    <dd class="col-sm-9">
-                        <?= is_null($permintaan['jenis_kelamin']) ? '-' : ($permintaan['jenis_kelamin'] ? 'Laki-laki' : 'Perempuan') ?>
-                    </dd>
-
-                    <dt class="col-sm-3">Status Kerja</dt>
-                    <dd class="col-sm-9"><?= toTitleCase($permintaan['status_kerja']) ?> </dd>
-
-                    <dt class="col-sm-3">Tanggal Mulai</dt>
-                    <dd class="col-sm-9"><?= $permintaan['tanggal_mulai'] ?> </dd>
-
-                    <dt class="col-sm-3">Tanggal Selesai</dt>
-                    <dd class="col-sm-9"><?= $permintaan['tanggal_selesai'] ?? '-' ?> </dd>
-
-                    <dt class="col-sm-3">Keperluan</dt>
-                    <dd class="col-sm-9"><?= $permintaan['keperluan'] ?? '-' ?> </dd>
-                </dl>
+    <div id="app">
+        <div id="sidebar">
+            <?php require_once('./../_components/sidebar.php'); ?>
+        </div>
+        <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+            <!-- Content -->
+            <div class="page-heading">
+                <h3>Permintaan Karyawan</h3>
             </div>
+            <div class="page-content">
+                <section class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <dl class="row">
+                                    <dt class="col-sm-3">Tanggal Permintaan</dt>
+                                    <dd class="col-sm-9"><?= $permintaan['tanggal_permintaan'] ?></dd>
+
+                                    <dt class="col-sm-3">Status</dt>
+                                    <dd class="col-sm-9"><span
+                                            class="badge
+                                                                    <?= $permintaan['status_permintaan'] === 'Disetujui' ? 'bg-success' : 'bg-danger'; ?>">
+                                            <?= htmlspecialchars(ucfirst($permintaan['status_permintaan'])); ?>
+                                        </span></dd>
+
+                                    <dt class="col-sm-3">Departement</dt>
+                                    <dd class="col-sm-9"><?= $permintaan['nama_divisi'] ?></dd>
+
+                                    <dt class="col-sm-3">Untuk Posisi</dt>
+                                    <dd class="col-sm-9"><?= $permintaan['posisi'] ?></dd>
+
+                                    <dt class="col-sm-3">Jumlah</dt>
+                                    <dd class="col-sm-9"><?= $permintaan['jumlah_permintaan'] ?></dd>
+
+                                    <dt class="col-sm-3">Jenis Kelamin</dt>
+                                    <dd class="col-sm-9">
+                                        <?= is_null($permintaan['jenis_kelamin']) ? '-' : ($permintaan['jenis_kelamin'] ? 'Laki-laki' : 'Perempuan') ?>
+                                    </dd>
+
+                                    <dt class="col-sm-3">Status Kerja</dt>
+                                    <dd class="col-sm-9"><?= toTitleCase($permintaan['status_kerja']) ?> </dd>
+
+                                    <dt class="col-sm-3">Tanggal Mulai</dt>
+                                    <dd class="col-sm-9"><?= $permintaan['tanggal_mulai'] ?> </dd>
+
+                                    <dt class="col-sm-3">Tanggal Selesai</dt>
+                                    <dd class="col-sm-9"><?= $permintaan['tanggal_selesai'] ?? '-' ?> </dd>
+
+                                    <dt class="col-sm-3">Keperluan</dt>
+                                    <dd class="col-sm-9"><?= $permintaan['keperluan'] ?? '-' ?> </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Content -->
         </div>
     </div>
 
-    <?php require_once('./../_components/scripts.php'); ?>
+    <!-- End content -->
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/components/dark.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
 </body>
 
 </html>
