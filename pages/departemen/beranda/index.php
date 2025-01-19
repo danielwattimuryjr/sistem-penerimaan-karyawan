@@ -54,12 +54,15 @@ $conn->close();
                 <section class="row">
                     <div class="col-12">
                         <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Daftar Lowongan Pekerjaan</h5>
+                            </div>
                             <div class="card-body">
                                 <ul class="list-group list-group-flush">
                                     <?php if ($dataResult->num_rows > 0): ?>
                                         <?php while ($row = $dataResult->fetch_assoc()): ?>
                                             <?php
-                                            $baseDetailUrl = '/sistem-penerimaan-karyawan/pages/pelamar/detail-lowongan-pekerjaan';
+                                            $baseDetailUrl = '/sistem-penerimaan-karyawan/pages/departemen/detail-lowongan-pekerjaan';
                                             $params = [
                                                 'id_lowongan' => $row['id_lowongan']
                                             ];

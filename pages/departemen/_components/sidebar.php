@@ -22,8 +22,8 @@ $menuItem = [
     ],
     [
         'isTitle' => false,
-        'name' => 'Seleksi',
-        'url' => '/beranda',
+        'name' => 'Hasil Seleksi',
+        'url' => '/hasil-seleksi',
         'icon' => 'newspaper',
         'submenu' => [],
     ],

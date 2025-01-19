@@ -21,43 +21,78 @@ $stmt->execute();
 $getPersyaratanResult = $stmt->get_result();
 $persyaratan = $getPersyaratanResult->fetch_assoc();
 ?>
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title><?= $lowongan['nama_lowongan'] ?? 'Detail Lowongan'?></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $lowongan['nama_lowongan'] ?? 'Detail' ?></title>
 
-    <?php require_once ('./../_components/styles.php'); ?>
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
+        type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app-dark.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
 </head>
+
 <body>
-    <?php require_once('./../_components/navbar.php'); ?>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/initTheme.js"></script>
+    <!-- Start content here -->
 
-    <div class="container-sm mt-3 mt-lg-5">
-        <div class="card" style="width: 100%;">
-            <div class="card-body">
-                <div class="d-flex flex-column flex-lg-row gap-3 align-items-center align-items-lg-start">
-                    <img src="<?= '/sistem-penerimaan-karyawan/assets/uploads/poster/' . $lowongan['poster_lowongan'] ?>" alt="" style="width: 300px">
-
-                    <div class="d-flex flex-column text-start">
-                        <h2><?= $lowongan['nama_lowongan'] ?></h2>
-                        <h5>Deskripsi Pekerjaan :</h5>
-                        <p><?= $lowongan['deskripsi'] ?></p>
-
-                        <h5>Persyaratan :</h5>
-                        <ul>
-                            <li>Pria/Wanita usia maksimal <?= $persyaratan['umur'] ?> tahun</li>
-                            <li>Pendidikan minimal <?= $persyaratan['pendidikan'] ?></li>
-                            <li><?= $persyaratan['pengalaman_kerja'] ?></li>
-                        </ul>
-                    </div>
-                </div>
+    <div id="app">
+        <div id="sidebar">
+            <?php require_once('./../_components/sidebar.php'); ?>
+        </div>
+        <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+            <!-- Content -->
+            <div class="page-heading">
+                <h3>Detail Lowongan Pekerjaan</h3>
             </div>
+            <div class="page-content">
+                <section class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div
+                                    class="d-flex flex-column flex-lg-row gap-3 align-items-center align-items-lg-start">
+                                    <img src="<?= '/sistem-penerimaan-karyawan/assets/uploads/poster/' . $lowongan['poster_lowongan'] ?>"
+                                        alt="" style="width: 300px">
+
+                                    <div class="d-flex flex-column text-start">
+                                        <h2><?= $lowongan['nama_lowongan'] ?></h2>
+                                        <h5>Deskripsi Pekerjaan :</h5>
+                                        <p><?= $lowongan['deskripsi'] ?></p>
+
+                                        <h5>Persyaratan :</h5>
+                                        <ul>
+                                            <li>Pria/Wanita usia maksimal <?= $persyaratan['umur'] ?> tahun</li>
+                                            <li>Pendidikan minimal <?= $persyaratan['pendidikan'] ?></li>
+                                            <li><?= $persyaratan['pengalaman_kerja'] ?></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Content -->
         </div>
     </div>
 
-    <?php require_once ('./../_components/scripts.php'); ?>
+    <!-- End content -->
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/components/dark.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
 </body>
+
 </html>

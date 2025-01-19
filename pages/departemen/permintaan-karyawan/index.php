@@ -22,7 +22,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beranda</title>
+    <title>Permintaan Karyawan</title>
 
     <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
         type="image/x-icon">
@@ -67,7 +67,7 @@ $conn->close();
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive datatable-minimal">
-                                    <table class="table" id="table2">
+                                    <table class="table" id="data-table">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
@@ -142,7 +142,7 @@ $conn->close();
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/datatables.net/js/jquery.dataTables.min.js"></script>
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/pages/datatables.js"></script>
+    <script src="/sistem-penerimaan-karyawan/assets/js/data-table.js"></script>
 </body>
 
 </html>
