@@ -11,15 +11,15 @@ if (!isset($_GET['id_pelamaran']) || empty($_GET['id_pelamaran'])) {
 }
 $id_pelamaran = $_GET['id_pelamaran'];
 
-$queryStr = "SELECT 
+$queryStr = "SELECT
     u.nama_lengkap
-FROM 
+FROM
     user u
-JOIN 
+JOIN
     profile p ON u.id_user = p.id_user
-JOIN 
+JOIN
     pelamaran pel ON u.id_user = pel.id_user
-WHERE 
+WHERE
     pel.id_pelamaran = ?";
 $stmt = $conn->prepare($queryStr);
 $stmt->bind_param("i", $id_pelamaran);
@@ -29,86 +29,120 @@ $dataPelamar = $result->fetch_assoc();
 $stmt->close();
 $conn->close();
 ?>
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $dataPelamar['nama_lengkap'] . ' | Penilaian Pelamar' ?></title>
 
-    <?php require_once('./../_components/data-table-styles.php'); ?>
-    <?php require_once('./../_components/styles.php'); ?>
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
+        type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app-dark.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
 </head>
-<body>
-<?php require_once('./../_components/navbar.php');?>
 
-<div class="container-sm mt-3 mt-lg-5">
-    <div class="card" style="width: 100%;">
-        <div class="card-body">
-            <h5 class="card-title text-center">Penilaian Pelamar</h5>
+<>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/initTheme.js"></script>
+    <!-- Start content here -->
 
-            <form method="POST" action="post-penilaian-request.php">
-                <input type="hidden" name="id_pelamaran" value="<?= $id_pelamaran ?>">
-                <div class="mb-3">
-                    <label class="form-label">Nama Lengkap</label>
-                    <input type="text" class="form-control" value="<?= $dataPelamar['nama_lengkap'] ?>" disabled>
-                </div>
+    <div id="app">
+        <div id="sidebar">
+            <?php require_once('./../_components/sidebar.php'); ?>
+        </div>
+        <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+            <!-- Content -->
+            <div class="page-heading">
+                <h3>Penilaian Pelamar</h3>
+            </div>
+            <div class="page-content">
+                <section class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="POST" action="post-penilaian-request.php">
+                                    <input type="hidden" name="id_pelamaran" value="<?= $id_pelamaran ?>">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nama Lengkap</label>
+                                        <input type="text" class="form-control"
+                                            value="<?= $dataPelamar['nama_lengkap'] ?>" disabled>
+                                    </div>
 
-                <div class="mb-3">
-                    <label for="" class="form-label">Tes Tertulis</label>
-                    <input type="number" name="nilai_tes_tertulis" id="" class="form-control" min="1" max="100" required>
-                </div>
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Tes Tertulis</label>
+                                        <input type="number" name="nilai_tes_tertulis" id="" class="form-control"
+                                            min="1" max="100" required>
+                                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Tes Wawancara</label>
-                    <select class="form-select" name="nilai_tes_wawancara" required>
-                        <option selected disabled>-- PILIH PENILAIAN --</option>
-                        <option value="Sangat Kurang">Sangat Kurang</option>
-                        <option value="Kurang">Kurang</option>
-                        <option value="Cukup">Cukup</option>
-                        <option value="Baik">Baik</option>
-                        <option value="Sangat Baik">Sangat Baik</option>
-                    </select>
-                </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Tes Wawancara</label>
+                                        <select class="form-select" name="nilai_tes_wawancara" required>
+                                            <option selected disabled>-- PILIH PENILAIAN --</option>
+                                            <option value="Sangat Kurang">Sangat Kurang</option>
+                                            <option value="Kurang">Kurang</option>
+                                            <option value="Cukup">Cukup</option>
+                                            <option value="Baik">Baik</option>
+                                            <option value="Sangat Baik">Sangat Baik</option>
+                                        </select>
+                                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Tes Praktek</label>
-                    <select class="form-select" name="nilai_tes_praktek" required>
-                        <option selected disabled>-- PILIH PENILAIAN --</option>
-                        <option value="Sangat Kurang">Sangat Kurang</option>
-                        <option value="Kurang">Kurang</option>
-                        <option value="Cukup">Cukup</option>
-                        <option value="Baik">Baik</option>
-                        <option value="Sangat Baik">Sangat Baik</option>
-                    </select>
-                </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Tes Praktek</label>
+                                        <select class="form-select" name="nilai_tes_praktek" required>
+                                            <option selected disabled>-- PILIH PENILAIAN --</option>
+                                            <option value="Sangat Kurang">Sangat Kurang</option>
+                                            <option value="Kurang">Kurang</option>
+                                            <option value="Cukup">Cukup</option>
+                                            <option value="Baik">Baik</option>
+                                            <option value="Sangat Baik">Sangat Baik</option>
+                                        </select>
+                                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Tes Psikotes</label>
-                    <input type="number" name="nilai_tes_psikotes" id="" class="form-control" min="1" max="100" required>
-                </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Tes Psikotes</label>
+                                        <input type="number" name="nilai_tes_psikotes" id="" class="form-control"
+                                            min="1" max="100" required>
+                                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Tes Kesehatan</label>
-                    <select class="form-select" name="nilai_tes_kesehatan" required>
-                        <option selected disabled>-- PILIH PENILAIAN --</option>
-                        <option value="Sangat Kurang">Sangat Kurang</option>
-                        <option value="Kurang">Kurang</option>
-                        <option value="Cukup">Cukup</option>
-                        <option value="Baik">Baik</option>
-                        <option value="Sangat Baik">Sangat Baik</option>
-                    </select>
-                </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Tes Kesehatan</label>
+                                        <select class="form-select" name="nilai_tes_kesehatan" required>
+                                            <option selected disabled>-- PILIH PENILAIAN --</option>
+                                            <option value="Sangat Kurang">Sangat Kurang</option>
+                                            <option value="Kurang">Kurang</option>
+                                            <option value="Cukup">Cukup</option>
+                                            <option value="Baik">Baik</option>
+                                            <option value="Sangat Baik">Sangat Baik</option>
+                                        </select>
+                                    </div>
 
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </form>
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Content -->
         </div>
     </div>
-</div>
 
-<?php require_once ('./../_components/scripts.php'); ?>
-<?php require_once ('./../_components/data-tables-script.php'); ?>
-</body>
+    <!-- End content -->
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/components/dark.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/tinymce/tinymce.min.js"></script>
+    <script src="/sistem-penerimaan-karyawan/assets/js/tiny-mce.js"></script>
+    </body>
+
 </html>

@@ -23,61 +23,104 @@ $result = $stmt->get_result();
 $stmt->close();
 $conn->close();
 ?>
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Pelamar</title>
 
-    <?php require_once('./../_components/data-table-styles.php'); ?>
-    <?php require_once('./../_components/styles.php'); ?>
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
+        type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app-dark.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/scss/pages/datatables.scss">
 </head>
+
 <body>
-<?php require_once('./../_components/navbar.php'); ?>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/initTheme.js"></script>
+    <!-- Start content here -->
 
-<div class="container-sm mt-3 mt-lg-5">
-    <div class="card" style="width: 100%;">
-        <div class="card-body">
-            <h5 class="card-title text-center">Daftar Pelamar</h5>
-
-            <table class="table table-bordered" id="data-table">
-                <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Divisi</th>
-                    <th>Aksi</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php $no = 1 ?>
-                <?php foreach ($result as $res) {?>
-                    <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= $res['nama_lengkap'] ?></td>
-                        <td><?= $res['nama_divisi'] ?></td>
-                        <td>
-                            <a href="<?= "/sistem-penerimaan-karyawan/pages/hrd/detail-pelamar?id_pelamaran=" . $res['id_pelamaran']?>" class="btn btn-sm btn-primary">Lihat Detail</a>
-                            <?php if ($res['id_penilaian']) { ?>
-                                <!-- Jika sudah dinilai -->
-                                <button class="btn btn-sm btn-success" disabled>Sudah Dinilai</button>
-                            <?php } else { ?>
-                                <!-- Jika belum dinilai -->
-                                <a href="<?= "/sistem-penerimaan-karyawan/pages/hrd/penilaian-pelamar?id_pelamaran=" . $res['id_pelamaran'] ?>" class="btn btn-sm btn-secondary">Nilai</a>
-                            <?php } ?>
-                        </td>
-                    </tr>
-                <?php } ?>
-                </tbody>
-            </table>
+    <div id="app">
+        <div id="sidebar">
+            <?php require_once('./../_components/sidebar.php'); ?>
+        </div>
+        <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+            <!-- Content -->
+            <div class="page-heading">
+                <h3>Daftar Pelamar</h3>
+            </div>
+            <div class="page-content">
+                <section class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive datatable-minimal">
+                                    <table class="table" id="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Nama</th>
+                                                <th>Divisi</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php $no = 1 ?>
+                                            <?php foreach ($result as $res) { ?>
+                                                <tr>
+                                                    <td><?= $no++ ?></td>
+                                                    <td><?= $res['nama_lengkap'] ?></td>
+                                                    <td><?= $res['nama_divisi'] ?></td>
+                                                    <td>
+                                                        <a href="<?= "/sistem-penerimaan-karyawan/pages/hrd/detail-pelamar?id_pelamaran=" . $res['id_pelamaran'] ?>"
+                                                            class="btn btn-sm btn-primary">Lihat Detail</a>
+                                                        <?php if ($res['id_penilaian']) { ?>
+                                                            <!-- Jika sudah dinilai -->
+                                                            <button class="btn btn-sm btn-success" disabled>Sudah
+                                                                Dinilai</button>
+                                                        <?php } else { ?>
+                                                            <!-- Jika belum dinilai -->
+                                                            <a href="<?= "/sistem-penerimaan-karyawan/pages/hrd/penilaian-pelamar?id_pelamaran=" . $res['id_pelamaran'] ?>"
+                                                                class="btn btn-sm btn-secondary">Nilai</a>
+                                                        <?php } ?>
+                                                    </td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Content -->
         </div>
     </div>
-</div>
 
-<?php require_once ('./../_components/scripts.php'); ?>
-<?php require_once ('./../_components/data-tables-script.php'); ?>
+    <!-- End content -->
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/components/dark.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/jquery/jquery.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="/sistem-penerimaan-karyawan/assets/js/data-table.js"></script>
 </body>
+
 </html>
