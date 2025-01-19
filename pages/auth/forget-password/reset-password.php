@@ -1,5 +1,5 @@
 <?php
-require_once ('./../../../functions/init-conn.php');
+require_once('./../../../functions/init-conn.php');
 
 if (!isset($_GET['token'])) {
     echo "Token tidak valid.";
@@ -28,44 +28,57 @@ if ($result->num_rows === 1) {
     exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
 
-    <?php
-    require_once ('./../_components/styles.php');
-    ?>
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
+        type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app-dark.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
 </head>
+
 <body>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/initTheme.js"></script>
+    <!-- Start content here -->
 
-<div class="container-sm d-flex justify-content-center align-items-center" style="min-height: 100vh">
-    <div class="card" style="width: 60%;">
-        <div class="card-body">
-            <h5 class="card-title text-center">Reset Password Anda</h5>
-
-            <form action="process-reset-password.php" method="POST">
-                <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
-                <div class="mb-3">
-                    <label class="form-label">Password Baru</label>
-                    <input type="password" name="password" id="password" class="form-control" required autofocus>
+    <div id="app">
+        <div class="container-sm d-flex justify-content-center align-items-center" style="min-height: 100vh">
+            <div class="card" style="width: 50%;">
+                <div class="card-header">
+                    <h5 class="card-title text-center">Reset Password</h5>
                 </div>
+                <div class="card-body">
+                    <form action="process-reset-password.php" method="POST">
+                        <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
+                        <div class="mb-3">
+                            <label class="form-label">Password Baru</label>
+                            <input type="password" name="password" id="password" class="form-control" required
+                                autofocus>
+                        </div>
 
-                <div class="d-flex justify-content-center flex-column" style="width: 100%">
-                    <button type="submit" class="btn btn-primary m-auto" style="width: 10rem">
-                        Lupa Password
-                    </button>
+                        <div class="d-flex justify-content-center flex-column" style="width: 100%">
+                            <button type="submit" class="btn btn-primary m-auto" style="width: 10rem">
+                                Lupa Password
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
-</div>
 
-<?php
-require_once ('./../_components/scripts.php');
-?>
+    <!-- End content -->
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/components/dark.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
 </body>
+
 </html>
