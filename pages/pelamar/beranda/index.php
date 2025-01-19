@@ -54,6 +54,9 @@ $conn->close();
                 <section class="row">
                     <div class="col-12">
                         <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Daftar Lowongan Pekerjaan</h5>
+                            </div>
                             <div class="card-body">
                                 <ul class="list-group list-group-flush">
                                     <?php if ($dataResult->num_rows > 0): ?>
