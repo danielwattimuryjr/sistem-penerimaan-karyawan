@@ -10,6 +10,16 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
   tinymce.init({
+    selector: "#test",
+    plugins: "lists, link, image, media",
+    toolbar:
+      "h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link ",
+    menubar: false,
+    editable_root: false,
+    ...themeOptions,
+  });
+
+  tinymce.init({
     selector: "#default",
     plugins: "lists, link, image, media",
     toolbar:
