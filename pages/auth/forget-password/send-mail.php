@@ -1,12 +1,12 @@
 <?php
-require_once ('./../../../functions/init-conn.php');
-require_once ('./../../../vendor/autoload.php');
-require_once ('./../../../functions/load-env.php');
+require_once('./../../../functions/init-conn.php');
+require_once('./../../../vendor/autoload.php');
+require_once('./../../../functions/load-env.php');
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-$MAIL_MAILER =  getenv('MAIL_MAILER');
+$MAIL_MAILER = getenv('MAIL_MAILER');
 $MAIL_USERNAME = getenv('MAIL_USERNAME');
 $MAIL_PASSWORD = getenv('MAIL_PASSWORD');
 $MAIL_PORT = getenv('MAIL_PORT');
@@ -22,7 +22,7 @@ if (!$MAIL_MAILER || !$MAIL_USERNAME || !$MAIL_PASSWORD || !$MAIL_PORT || !$MAIL
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $emailTo = trim($_POST['email']);
 
-    $query = "SELECT id_user FROM user WHERE email = ?";
+    $query = "SELECT id_user FROM user WHERE email = ? AND role != 'Pelamar'";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $emailTo);
     $stmt->execute();
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $row = $result->fetch_assoc();
         $id_user = $row['id_user'];
 
-        $query = "INSERT INTO password_resets (id_user, token, expiry) VALUES (?, ?, ?) 
+        $query = "INSERT INTO password_resets (id_user, token, expiry) VALUES (?, ?, ?)
                   ON DUPLICATE KEY UPDATE token = VALUES(token), expiry = VALUES(expiry)";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("iss", $id_user, $token, $expiry);
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $mail->isHTML(true);
             $mail->Subject = 'Password Reset Request';
-            $mail->Body = "Klik tautan berikut untuk mereset password Anda: 
+            $mail->Body = "Klik tautan berikut untuk mereset password Anda:
                 <a href='http://localhost/sistem-penerimaan-karyawan/pages/auth/forget-password/reset-password.php?token=$token'>Reset Password</a>";
             if ($mail->send()) {
                 $type = 'success';
