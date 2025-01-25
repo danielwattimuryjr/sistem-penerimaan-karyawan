@@ -1,1 +1,0 @@
-<link rel="stylesheet" href="/sistem-penerimaan-karyawan/assets/css/datatables.min.css" crossorigin="anonymous">

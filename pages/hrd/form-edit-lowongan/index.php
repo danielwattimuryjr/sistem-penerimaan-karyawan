@@ -59,125 +59,152 @@ $persyaratanStmt->execute();
 $persyaratanResult = $persyaratanStmt->get_result();
 $persyaratanData = $persyaratanResult->fetch_assoc();
 ?>
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Lowongan Pekerjaan</title>
 
-    <?php require_once('./../_components/styles.php'); ?>
-    <script src="https://cdn.tiny.cloud/1/weuk5gq9uk3b6yfox67jdajpmljl7u042vnu0zhqus3u0dqg/tinymce/7/tinymce.min.js"
-        referrerpolicy="origin"></script>
-    <script>
-        tinymce.init({
-            selector: 'textarea#tiny',
-            plugins: 'lists, link, image, media',
-            toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link ',
-            menubar: false,
-        });
-    </script>
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
+        type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app-dark.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/scss/pages/sweetalert2.scss">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.css">
 </head>
 
-<body>
-    <?php require_once('./../_components/navbar.php'); ?>
+<>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/initTheme.js"></script>
+    <!-- Start content here -->
 
-    <div class="container-sm mt-3 mt-lg-5">
-        <div class="card" style="width: 100%;">
-            <div class="card-body">
-                <h5 class="card-title text-center">Edit Lowongan Pekerjaan</h5>
-
-                <form action="edit-lowongan-request.php" method="post" class="mt-4" enctype="multipart/form-data">
-                    <input type="hidden" name="id_lowongan" value="<?= $lowonganData['id_lowongan'] ?>">
-                    <div class="mb-3">
-                        <label for="" class="form-label">Nama Lowongan</label>
-                        <input type="text" name="nama_lowongan" id="" class="form-control"
-                            value="<?= $lowonganData['nama_lowongan'] ?>" required>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-12 col-lg-6">
-                            <label for="" class="form-label">Tanggal Mulai</label>
-                            <input type="date" name="tanggal_mulai" id="" class="form-control"
-                                value="<?= $lowonganData['tgl_mulai'] ?>" required>
-                        </div>
-                        <div class="col-12 col-lg-6">
-                            <label for="" class="form-label">Tanggal Selesai</label>
-                            <input type="date" name="tanggal_selesai" id="" class="form-control"
-                                value="<?= $lowonganData['tgl_selesai'] ?>" required>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="" class="form-label">Permintaan</label>
-                        <select name="id_permintaan" id="" class="form-control">
-                            <option value="" selected disabled>-- PILIH PERMINTAAN --</option>
-                            <?php if (!empty($permintaanData)) { ?>
-                                <?php foreach ($permintaanData as $pd) { ?>
-                                    <option value="<?= $pd['id_permintaan']; ?>"
-                                        <?= ($pd['id_permintaan'] === $lowonganData['id_permintaan']) ? 'selected' : ''; ?>>
-                                        [<?= htmlspecialchars($pd['nama_divisi']); ?>] - (<?= $pd['jumlah_permintaan']; ?>
-                                        orang)
-                                    </option>
-                                <?php } ?>
-                            <?php } else { ?>
-                                <option value="">Tidak ada data permintaan</option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="" class="form-label">Poster Lowongan</label>
-                        <input type="file" name="poster_lowongan" id="" class="form-control">
-                        <div class="form-text">Poster saat ini: <a
-                                href="/sistem-penerimaan-karyawan/assets/uploads/poster/<?= $lowonganData['poster_lowongan'] ?>"
-                                target="_blank"><?= $lowonganData['poster_lowongan'] ?></a></div>
-                    </div>
-                    <div class="mb-4">
-                        <label for="" class="form-label">Deskripsi Pekerjaan</label>
-                        <textarea name="deskripsi" id="" cols="30" rows="5" class="form-control"
-                            required><?= $lowonganData['deskripsi'] ?></textarea>
-                    </div>
-
-                    <p>Isi persyaratan untuk lowongan, pada bagian di bawah ini:</p>
-
-                    <div class="row mb-3">
-                        <div class="col-12 col-lg-6">
-                            <label for="" class="form-label">Umur</label>
-                            <input type="number" name="umur" id="" class="form-control"
-                                value="<?= $persyaratanData['umur'] ?>" required>
-                        </div>
-                        <div class="col-12 col-lg-6">
-                            <label for="" class="form-label">Pendidikan Terakhir</label>
-                            <select name="pendidikan" class="form-select" required>
-                                <option selected disabled>-- PILIH PENDIDIKAN TERAKHIR --</option>
-                                <option value="SMA/SMK" <?php echo ($persyaratanData['pendidikan'] === 'SMA/SMK') ? 'selected' : ''; ?>>
-                                    SMA/SMK
-                                </option>
-                                <option value="Diploma" <?php echo ($persyaratanData['pendidikan'] === 'Diploma') ? 'selected' : ''; ?>>
-                                    Diploma
-                                </option>
-                                <option value="Sarjana" <?php echo ($persyaratanData['pendidikan'] === 'Sarjana') ? 'selected' : ''; ?>>
-                                    Sarjana
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="" class="form-label">Pengalaman Kerja</label>
-                        <textarea name="pengalaman_kerja"
-                            id="tiny"><?= $persyaratanData['pengalaman_kerja'] ?></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-warning">Update</button>
-                </form>
-            </div>
+    <div id="app">
+        <div id="sidebar">
+            <?php require_once('./../_components/sidebar.php'); ?>
         </div>
+        <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+            <!-- Content -->
+            <div class="page-heading">
+                <h3>Beranda</h3>
+            </div>
+            <div class="page-content">
+                <section class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Edit Lowongan Pekerjaan</h5>
+                            </div>
+                            <div class="card-body">
+                                <form action="edit-lowongan-request.php" method="post" class="mt-4" enctype="multipart/form-data">
+                    <input type="hidden" name="id_lowongan" value="<?= $lowonganData['id_lowongan'] ?>">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Nama Lowongan</label>
+                                        <input type="text" name="nama_lowongan" id="" class="form-control" value="<?= $lowonganData['nama_lowongan'] ?>"
+                                            required>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-12 col-lg-6">
+                                            <label for="" class="form-label">Tanggal Mulai</label>
+                                            <input type="date" name="tanggal_mulai" id="" class="form-control" value="<?= $lowonganData['tgl_mulai'] ?>"
+                                                required>
+                                        </div>
+                                        <div class="col-12 col-lg-6">
+                                            <label for="" class="form-label">Tanggal Selesai</label>
+                                            <input type="date" name="tanggal_selesai" id="" class="form-control"
+                                                value="<?= $lowonganData['tgl_selesai'] ?>" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Permintaan</label>
+                                        <select name="id_permintaan" id="" class="form-control">
+                                            <option value="" selected disabled>-- PILIH PERMINTAAN --</option>
+                                            <?php if (!empty($permintaanData)) { ?>
+                                                <?php foreach ($permintaanData as $pd) { ?>
+                                                    <option value="<?= $pd['id_permintaan']; ?>" <?= ($pd['id_permintaan'] === $lowonganData['id_permintaan']) ? 'selected' : ''; ?>>
+                                                        [<?= htmlspecialchars($pd['nama_divisi']); ?>] - (<?= $pd['jumlah_permintaan']; ?>
+                                                        orang)
+                                                    </option>
+                                                <?php } ?>
+                                            <?php } else { ?>
+                                                <option value="">Tidak ada data permintaan</option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Poster Lowongan</label>
+                                        <input type="file" name="poster_lowongan" id="" class="form-control">
+                                        <div class="form-text">Poster saat ini: <a
+                                                href="/sistem-penerimaan-karyawan/assets/uploads/poster/<?= $lowonganData['poster_lowongan'] ?>"
+                                                target="_blank"><?= $lowonganData['poster_lowongan'] ?></a></div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="" class="form-label">Deskripsi Pekerjaan</label>
+                                        <textarea name="deskripsi" id="" cols="30" rows="5" class="form-control"
+                                            required><?= $lowonganData['deskripsi'] ?></textarea>
+                                    </div>
 
+                                    <p>Isi persyaratan untuk lowongan, pada bagian di bawah ini:</p>
+
+                                    <div class="row mb-3">
+                                        <div class="col-12 col-lg-6">
+                                            <label for="" class="form-label">Umur</label>
+                                            <input type="number" name="umur" id="" class="form-control" value="<?= $persyaratanData['umur'] ?>"
+                                                required>
+                                        </div>
+                                        <div class="col-12 col-lg-6">
+                                            <label for="" class="form-label">Pendidikan Terakhir</label>
+                                            <select name="pendidikan" class="form-select" required>
+                                                <option selected disabled>-- PILIH PENDIDIKAN TERAKHIR --</option>
+                                                <option value="SMA/SMK" <?php echo ($persyaratanData['pendidikan'] === 'SMA/SMK') ? 'selected' : ''; ?>>
+                                                    SMA/SMK
+                                                </option>
+                                                <option value="Diploma" <?php echo ($persyaratanData['pendidikan'] === 'Diploma') ? 'selected' : ''; ?>>
+                                                    Diploma
+                                                </option>
+                                                <option value="Sarjana" <?php echo ($persyaratanData['pendidikan'] === 'Sarjana') ? 'selected' : ''; ?>>
+                                                    Sarjana
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Pengalaman Kerja</label>
+                                        <textarea name="pengalaman_kerja" id="default"><?= $persyaratanData['pengalaman_kerja'] ?></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-warning">Update</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Content -->
+        </div>
     </div>
 
-    <?php require_once('./../_components/scripts.php'); ?>
-</body>
+    <!-- End content -->
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/components/dark.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/tinymce/tinymce.min.js"></script>
+    <script src="/sistem-penerimaan-karyawan/assets/js/tiny-mce.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
+    <script src="/sistem-penerimaan-karyawan/assets/js/sweet-alert.js"></script>
+    </body>
 
 </html>
