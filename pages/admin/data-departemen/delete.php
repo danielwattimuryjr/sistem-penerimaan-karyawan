@@ -1,18 +1,18 @@
 <?php
 require_once('./../../../functions/init-conn.php');
 
-$id_divisi = isset($_GET['id_divisi']) ? $_GET['id_divisi'] : null;
+$id_user = isset($_GET['id_user']) ? $_GET['id_user'] : null;
 
-if (!$id_divisi) {
+if (!$id_user) {
     $type = 'error';
     $message = 'Data divisi tidak ditemukan';
-    header("Location: /sistem-penerimaan-karyawan/pages/hrd/data-department?type=$type&message=" . urlencode($message));
+    header("Location: /sistem-penerimaan-karyawan/pages/admin/data-departemen?type=$type&message=" . urlencode($message));
     exit();
 }
 
-$queryStr = "DELETE FROM divisi WHERE id_divisi = ?";
+$queryStr = "DELETE FROM user WHERE id_user = ?";
 $stmt = $conn->prepare($queryStr);
-$stmt->bind_param('i', $id_divisi);
+$stmt->bind_param('i', $id_user);
 
 if ($stmt->execute()) {
     if ($stmt->affected_rows > 0) {
@@ -21,13 +21,11 @@ if ($stmt->execute()) {
     } else {
         $type = 'error';
         $message = 'Data divisi tidak ditemukan.';
-
     }
 } else {
     $type = 'error';
     $message = 'Gagal menghapus data divisi. Silakan coba lagi.';
 }
 
-header("Location: /sistem-penerimaan-karyawan/pages/hrd/data-department?type=$type&message=" . urlencode($message));
+header("Location: /sistem-penerimaan-karyawan/pages/admin/data-departemen?type=$type&message=" . urlencode($message));
 exit();
-

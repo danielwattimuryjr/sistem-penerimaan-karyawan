@@ -4,7 +4,8 @@ require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
-function redirectWithMessage($type, $message) {
+function redirectWithMessage($type, $message)
+{
     header("Location: /sistem-penerimaan-karyawan/pages/pelamar/profile?type=$type&message=" . urlencode($message));
     exit();
 }
@@ -31,7 +32,8 @@ $jenisKelamin = $_POST['jenis_kelamin'] ?? null;
 $pendidikanTerakhir = $_POST['pendidikan_terakhir'];
 $alamat = $_POST['alamat'];
 
-if (!$namaLengkap
+if (
+    !$namaLengkap
     || !$nomorTelepon
     || !$tempatLahir
     || !$tanggalLahir
@@ -46,19 +48,14 @@ $idUser = $user['id_user'];
 
 try {
     $conn->begin_transaction();
-
-    $updateUserTableQuery = "UPDATE user SET nama_lengkap = ? WHERE id_user = ?";
-    $stmtUser = $conn->prepare($updateUserTableQuery);
-    $stmtUser->bind_param('si', $namaLengkap, $idUser);
-    $stmtUser->execute();
-
     $updateProfileTableQuery = "
-        UPDATE profile
-        SET jenis_kelamin = ?, pendidikan_terakhir = ?, nomor_telepon = ?, alamat = ?, tempat_lahir = ?, tanggal_lahir = ?
+        UPDATE user
+        SET name = ?, jenis_kelamin = ?, pendidikan_terakhir = ?, nomor_telepon = ?, alamat = ?, tempat_lahir = ?, tanggal_lahir = ?
         WHERE id_user = ?";
     $stmtProfile = $conn->prepare($updateProfileTableQuery);
     $stmtProfile->bind_param(
-        'isssssi',
+        'sisssssi',
+        $namaLengkap,
         $jenisKelamin,
         $pendidikanTerakhir,
         $nomorTelepon,

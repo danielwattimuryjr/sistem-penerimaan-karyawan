@@ -1,22 +1,9 @@
 <?php
 require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
-require_once('./../../../functions/page-protection.php');
-
-$id_divisi = isset($_GET['id_divisi']) ? $_GET['id_divisi'] : null;
-
-if (!$id_divisi) {
-    $type = 'error';
-    $message = 'Data divisi tidak ditemukan';
-    header("Location: /sistem-penerimaan-karyawan/pages/hrd/data-department?type=$type&message=" . urlencode($message));
-    exit();
+if (!$_SESSION['user']) {
+    header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
 }
-$getDivisiQueryStr = "SELECT id_divisi, nama_divisi FROM divisi WHERE id_divisi = ?";
-
-$getDivisiStmt = $conn->prepare($getDivisiQueryStr);
-$getDivisiStmt->bind_param('i', $id_divisi);
-$getDivisiStmt->execute();
-$getDivisiResult = $getDivisiStmt->get_result()->fetch_assoc();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,7 +11,7 @@ $getDivisiResult = $getDivisiStmt->get_result()->fetch_assoc();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Edit Department</title>
+    <title>Form Department</title>
 
     <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
         type="image/x-icon">
@@ -61,12 +48,22 @@ $getDivisiResult = $getDivisiStmt->get_result()->fetch_assoc();
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="update-department-request.php" method="POST">
-                                    <input type="hidden" name="id_divisi" value="<?= $id_divisi ?>">
+                                <form action="store-department-request.php" method="POST">
                                     <div class="mb-3">
                                         <label class="form-label">Nama Departement</label>
-                                        <input type="text" class="form-control" min="0" name="nama_divisi"
-                                            value="<?= $getDivisiResult['nama_divisi'] ?>" required>
+                                        <input type="text" class="form-control" name="name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" name="email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" class="form-control" name="user_name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Password</label>
+                                        <input type="password" class="form-control" name="password" required>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                 </form>
@@ -86,9 +83,9 @@ $getDivisiResult = $getDivisiStmt->get_result()->fetch_assoc();
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/tinymce/tinymce.min.js"></script>
     <script src="/sistem-penerimaan-karyawan/assets/js/tiny-mce.js"></script>
+    </body>
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
     <script src="/sistem-penerimaan-karyawan/assets/js/sweet-alert.js"></script>
-    </body>
 
 </html>

@@ -3,20 +3,20 @@ require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
-$user = $_SESSION['user'];
-if ($user['role'] !== 'Pelamar') {
-    $type = "error";
-    $message = "Anda bukan seorang pelamar";
-    header("Location: /sistem-penerimaan-karyawan/pages/pelamar/beranda?type=$type&message=" . urlencode($message));
+$id_user = isset($_GET['id_user']) ? $_GET['id_user'] : null;
+
+if (!$id_user) {
+    $type = 'error';
+    $message = 'Data General Manager tidak ditemukan';
+    header("Location: " . BASE_URL . "/data-general-manager?type=$type&message=" . urlencode($message));
     exit();
 }
+$getHrdQueryStr = "SELECT name, email, password, user_name, nomor_telepon, tempat_lahir, tanggal_lahir,jenis_kelamin, alamat FROM user WHERE id_user = ?";
 
-$queryProfile = "SELECT name, nomor_telepon, pendidikan_terakhir, jenis_kelamin, tempat_lahir, tanggal_lahir, alamat FROM user WHERE id_user = ?";
-$stmtProfile = $conn->prepare($queryProfile);
-$stmtProfile->bind_param('i', $user['id_user']);
-$stmtProfile->execute();
-$resultProfile = $stmtProfile->get_result();
-$profile = $resultProfile->fetch_assoc();
+$getHrdStmt = $conn->prepare($getHrdQueryStr);
+$getHrdStmt->bind_param('i', $id_user);
+$getHrdStmt->execute();
+$generalManager = $getHrdStmt->get_result()->fetch_assoc();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,7 +24,7 @@ $profile = $resultProfile->fetch_assoc();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile</title>
+    <title>Form General Manager</title>
 
     <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
         type="image/x-icon">
@@ -38,7 +38,7 @@ $profile = $resultProfile->fetch_assoc();
         href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.css">
 </head>
 
-<body>
+<>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/initTheme.js"></script>
     <!-- Start content here -->
 
@@ -54,26 +54,38 @@ $profile = $resultProfile->fetch_assoc();
             </header>
             <!-- Content -->
             <div class="page-heading">
-                <h3>Edit Profile</h3>
+                <h3>Formulir General Manager</h3>
             </div>
             <div class="page-content">
                 <section class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-
-                                <form action="update-profile-request.php" method="POST">
+                                <form action="update-general-manager-request.php" method="POST">
+                                    <input type="hidden" name="id_user" value="<?= $id_user ?>">
                                     <div class="mb-3">
                                         <label class="form-label">Nama Lengkap</label>
-                                        <input type="text" class="form-control" placeholder="Nama Lengkap"
-                                            name="nama_lengkap" value="<?= $profile['name'] ?>" required>
+                                        <input type="text" class="form-control" placeholder="Nama Lengkap" name="name"
+                                            required value="<?= $generalManager['name'] ?>">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" placeholder="Email" name="email"
+                                            required value="<?= $generalManager['email'] ?>">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" class="form-control" placeholder="username" name="user_name"
+                                            required value="<?= $generalManager['user_name'] ?>">
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label">Nomor Telepon</label>
                                         <input type="text" class="form-control" name="nomor_telepon"
-                                            placeholder="Nomor HP Aktif" value="<?= $profile['nomor_telepon'] ?>"
-                                            required>
+                                            placeholder="Nomor HP Aktif" required
+                                            value="<?= $generalManager['nomor_telepon'] ?>">
                                     </div>
 
                                     <div class="mb-3">
@@ -81,12 +93,12 @@ $profile = $resultProfile->fetch_assoc();
                                         <div class="row">
                                             <div class="col">
                                                 <input type="text" class="form-control" name="tempat_lahir"
-                                                    placeholder="Tempat" value="<?= $profile['tempat_lahir'] ?>"
-                                                    required>
+                                                    placeholder="Tempat" required
+                                                    value="<?= $generalManager['tempat_lahir'] ?>">
                                             </div>
                                             <div class="col">
                                                 <input type="date" name="tanggal_lahir" id="" class="form-control"
-                                                    value="<?= $profile['tanggal_lahir'] ?>" required>
+                                                    required value="<?= $generalManager['tanggal_lahir'] ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -95,14 +107,14 @@ $profile = $resultProfile->fetch_assoc();
                                         <label class="form-label">Jenis Kelamin</label>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" value="1" name="jenis_kelamin"
-                                                <?= $profile['jenis_kelamin'] ? 'checked' : '' ?>>
+                                                <?= $generalManager['jenis_kelamin'] ? 'checked' : '' ?>>
                                             <label class="form-check-label">
                                                 Laki-laki
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" value="0" name="jenis_kelamin"
-                                                <?= !is_null(['jenis_kelamin']) && !$profile['jenis_kelamin'] ? 'checked' : '' ?>>
+                                                <?= !is_null(['jenis_kelamin']) && !$generalManager['jenis_kelamin'] ? 'checked' : '' ?>>
                                             <label class="form-check-label">
                                                 Perempuan
                                             </label>
@@ -110,25 +122,9 @@ $profile = $resultProfile->fetch_assoc();
                                     </div>
 
                                     <div class="mb-3">
-                                        <label class="form-label">Pendidikan Terkahir</label>
-                                        <select class="form-select" name="pendidikan_terakhir" required>
-                                            <option selected disabled>-- PILIH PENDIDIKAN TERAKHIR --</option>
-                                            <option value="SMA/SMK" <?= isset($profile['pendidikan_terakhir']) && $profile['pendidikan_terakhir'] === 'SMA/SMK' ? 'selected' : '' ?>>
-                                                SMA/SMK
-                                            </option>
-                                            <option value="Diploma" <?= isset($profile['pendidikan_terakhir']) && $profile['pendidikan_terakhir'] === 'Diploma' ? 'selected' : '' ?>>
-                                                Diploma
-                                            </option>
-                                            <option value="Sarjana" <?= isset($profile['pendidikan_terakhir']) && $profile['pendidikan_terakhir'] === 'Sarjana' ? 'selected' : '' ?>>
-                                                Sarjana
-                                            </option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3">
                                         <label class="form-label">Alamat</label>
                                         <textarea name="alamat" id="" cols="30" rows="5" class="form-control"
-                                            required><?= $profile['alamat'] ?></textarea>
+                                            required><?= $generalManager['alamat'] ?></textarea>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary">Submit</button>
@@ -147,9 +143,11 @@ $profile = $resultProfile->fetch_assoc();
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/tinymce/tinymce.min.js"></script>
+    <script src="/sistem-penerimaan-karyawan/assets/js/tiny-mce.js"></script>
+    </body>
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
     <script src="/sistem-penerimaan-karyawan/assets/js/sweet-alert.js"></script>
-</body>
 
 </html>

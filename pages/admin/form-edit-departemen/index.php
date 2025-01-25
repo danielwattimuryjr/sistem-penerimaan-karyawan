@@ -1,17 +1,22 @@
 <?php
 require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
-if (!$_SESSION['user']) {
-    header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
+require_once('./../../../functions/page-protection.php');
+
+$id_user = isset($_GET['id_user']) ? $_GET['id_user'] : null;
+
+if (!$id_user) {
+    $type = 'error';
+    $message = 'Data divisi tidak ditemukan';
+    header("Location: " . BASE_URL . "/data-department?type=$type&message=" . urlencode($message));
+    exit();
 }
+$getDivisiQueryStr = "SELECT name, user_name, email FROM user WHERE id_user = ?";
 
-$queryStr = "SELECT id_divisi, nama_divisi FROM divisi";
-
-$stmt = $conn->prepare($queryStr);
-$stmt->execute();
-$result = $stmt->get_result();
-$stmt->close();
-$conn->close();
+$getDivisiStmt = $conn->prepare($getDivisiQueryStr);
+$getDivisiStmt->bind_param('i', $id_user);
+$getDivisiStmt->execute();
+$divisi = $getDivisiStmt->get_result()->fetch_assoc();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +24,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Department</title>
+    <title>Form Edit Department</title>
 
     <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
         type="image/x-icon">
@@ -56,11 +61,22 @@ $conn->close();
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-
-                                <form action="store-department-request.php" method="POST">
+                                <form action="update-department-request.php" method="POST">
+                                    <input type="hidden" name="id_user" value="<?= $id_user ?>">
                                     <div class="mb-3">
                                         <label class="form-label">Nama Departement</label>
-                                        <input type="text" class="form-control" min="0" name="nama_divisi" required>
+                                        <input type="text" class="form-control" name="name"
+                                            value="<?= $divisi['name'] ?>" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" name="email"
+                                            value="<?= $divisi['email'] ?>" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" class="form-control" name="user_name"
+                                            value="<?= $divisi['user_name'] ?>" required>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                 </form>
@@ -80,9 +96,9 @@ $conn->close();
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/tinymce/tinymce.min.js"></script>
     <script src="/sistem-penerimaan-karyawan/assets/js/tiny-mce.js"></script>
-    </body>
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
     <script src="/sistem-penerimaan-karyawan/assets/js/sweet-alert.js"></script>
+    </body>
 
 </html>

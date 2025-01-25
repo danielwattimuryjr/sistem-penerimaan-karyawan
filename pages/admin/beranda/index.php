@@ -1,25 +1,15 @@
 <?php
-require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
-if (!$_SESSION['user']) {
-    header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
-}
-
-$queryStr = "SELECT id_divisi, nama_divisi FROM divisi";
-
-$stmt = $conn->prepare($queryStr);
-$stmt->execute();
-$result = $stmt->get_result();
-$stmt->close();
-$conn->close();
+require_once('./../../../functions/page-protection.php');
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Department</title>
+    <title>Beranda</title>
 
     <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
         type="image/x-icon">
@@ -33,7 +23,7 @@ $conn->close();
         href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.css">
 </head>
 
-<>
+<body>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/initTheme.js"></script>
     <!-- Start content here -->
 
@@ -49,21 +39,17 @@ $conn->close();
             </header>
             <!-- Content -->
             <div class="page-heading">
-                <h3>Formulir Department</h3>
+                <h3>Beranda</h3>
             </div>
             <div class="page-content">
                 <section class="row">
                     <div class="col-12">
                         <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Welcome back, ... . 👋</h5>
+                            </div>
                             <div class="card-body">
 
-                                <form action="store-department-request.php" method="POST">
-                                    <div class="mb-3">
-                                        <label class="form-label">Nama Departement</label>
-                                        <input type="text" class="form-control" min="0" name="nama_divisi" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </form>
                             </div>
                         </div>
                     </div>
@@ -78,11 +64,9 @@ $conn->close();
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/tinymce/tinymce.min.js"></script>
-    <script src="/sistem-penerimaan-karyawan/assets/js/tiny-mce.js"></script>
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
     <script src="/sistem-penerimaan-karyawan/assets/js/sweet-alert.js"></script>
-    </body>
+</body>
 
 </html>

@@ -1,14 +1,14 @@
 <?php
 
-require_once ('./../../../functions/init-conn.php');
-require_once ('./../../../functions/init-session.php');
+require_once('./../../../functions/init-conn.php');
+require_once('./../../../functions/init-session.php');
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $queryStr = "SELECT id_user, user_name, password, email, role FROM user WHERE user_name = ? AND password = ?";
+    $queryStr = "SELECT id_user, name, role FROM user WHERE user_name = ? AND password = ?";
     $stmt = $conn->prepare($queryStr);
 
     $stmt->bind_param('ss', $username, $password);
@@ -33,6 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
             case 'Pelamar':
                 $redirectUrl = "../../pelamar/beranda";
+                break;
+            case 'Admin':
+                $redirectUrl = "../../admin/beranda";
                 break;
             default:
                 $redirectUrl = "../sign-in";

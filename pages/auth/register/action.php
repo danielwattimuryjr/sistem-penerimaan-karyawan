@@ -1,7 +1,7 @@
 <?php
 
-require_once ('./../../../functions/init-conn.php');
-require_once ('./../../../functions/init-session.php');
+require_once('./../../../functions/init-conn.php');
+require_once('./../../../functions/init-session.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     $role = 'Pelamar';
 
-    $queryStr = "INSERT INTO user (user_name, nama_lengkap, email, role, password) VALUES (?, ?, ?, ?, ?)";
+    $queryStr = "INSERT INTO user (user_name, nama, email, role, password) VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($queryStr);
 
     $stmt->bind_param('sssss', $username, $namaLengkap, $email, $role, $password);
