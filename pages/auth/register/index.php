@@ -26,7 +26,13 @@ require_once('./../../../functions/check-user-session.php');
         <div class="container-sm d-flex justify-content-center align-items-center" style="min-height: 100vh">
             <div class="card" style="width: 50%;">
                 <div class="card-header">
-                    <h5 class="card-title text-center">Register</h5>
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="logo">
+                            <img src="/sistem-penerimaan-karyawan/assets/images/app-logo.png" alt="Logo"
+                                style="width: 100px; height: 100px; object-fit: cover;">
+                        </div>
+                        <h5 class="card-title text-center">Register</h5>
+                    </div>
                 </div>
                 <div class="card-body">
                     <form action="action.php" method="POST">
