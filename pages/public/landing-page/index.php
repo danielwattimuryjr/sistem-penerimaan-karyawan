@@ -1,5 +1,17 @@
 <?php
+require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/init-session.php');
+
+$keyword = isset($_GET['search']) ? $_GET['search'] : '';
+
+if (!empty($keyword)) {
+    $keyword = htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8');
+    $query = "SELECT id_lowongan, nama_lowongan, u.name FROM lowongan l JOIN permintaan p ON l.id_permintaan = p.id_permintaan JOIN user u ON p.id_user = u.id_user WHERE nama_lowongan LIKE '%$keyword%'";
+} else {
+    $query = "SELECT id_lowongan, nama_lowongan, u.name FROM lowongan l JOIN permintaan p ON l.id_permintaan = p.id_permintaan JOIN user u ON p.id_user = u.id_user";
+}
+
+$result = $conn->query($query);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,13 +56,11 @@ require_once('./../../../functions/init-session.php');
             <div class="container">
                 <nav class="navbar navbar-expand-lg">
                     <div class="site-logo me-3">
-                        <a class="navbar-brand" href="index.html">
-                            <img class="logo-icon" src="/sistem-penerimaan-karyawan/assets/images/app-logo.png"
-                                alt="logo">
+                        <a class="navbar-brand" href="/sistem-penerimaan-karyawan">
+                            <img src="/sistem-penerimaan-karyawan/assets/images/app-logo.png" alt="logo"
+                                style="width: 100px;">
                         </a>
                     </div><!--//site-logo-->
-
-
                     <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false"
                         aria-label="Toggle navigation">
@@ -95,9 +105,10 @@ require_once('./../../../functions/init-session.php');
                         Telusuri lowongan kerja dan raih peluang karier terbaik Anda.
                     </div>
                     <div class="help-search-main pt-3 d-block mx-auto">
-                        <form class="search-form w-100">
+                        <form class="search-form w-100" method="post" action="search.php">
                             <input type="text" placeholder="Cari Lowongan Pekerjaan" name="search"
-                                class="form-control search-input">
+                                class="form-control search-input"
+                                value="<?= htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8') ?>">
                             <button type="submit" class="btn search-btn" value="Search">
                                 <i class="bi bi-search"></i>
                             </button>
@@ -116,61 +127,29 @@ require_once('./../../../functions/init-session.php');
                 <h2 class="section-title mb-3">Lowongan Pekerjaan</h2>
             </div>
             <div class="row align-content-stretch">
-                <div class="item col-12 col-md-6 col-lg-3 py-4 p-md-4">
-                    <div class="item-inner shadow rounded-4 p-4">
-                        <a class="item-link" href="help-article.html">
-                            <h3 class="item-heading">
-                                <div class="help-article-icon-holder mb-2"></div>Onboarding 101: Getting Started with
-                                Lorem Ipsum
-                            </h3>
-                            <div class="item-desc">
-                                <span class="rate-icon me-2"><i class="fa-solid fa-thumbs-up"></i></span> 56 people
-                                found this article helpful
-                            </div><!--//item-meta-->
-                        </a>
-                    </div><!--//item-inner-->
-                </div><!--//item-->
-                <div class="item col-12 col-md-6 col-lg-3 py-4 p-md-4">
-                    <div class="item-inner shadow rounded-4 p-4">
-                        <a class="item-link" href="help-article.html">
-                            <h3 class="item-heading">
-                                <div class="help-article-icon-holder mb-2"></div>Navigating the Dashboard: Key Features
-                                Explained
-                            </h3>
-                            <div class="item-desc">
-                                <span class="rate-icon me-2"><i class="fa-solid fa-thumbs-up"></i></span>25 people found
-                                this article helpful
-                            </div><!--//item-meta-->
-                        </a>
-                    </div><!--//item-inner-->
-                </div><!--//item-->
-                <div class="item col-12 col-md-6 col-lg-3 py-4 p-md-4">
-                    <div class="item-inner shadow rounded-4 p-4">
-                        <a class="item-link" href="help-article.html">
-                            <h3 class="item-heading">
-                                <div class="help-article-icon-holder mb-2"></div>Integrating Lorem Ipsum with Other
-                                Software
-                            </h3>
-                            <div class="item-desc">
-                                <span class="rate-icon me-2"><i class="fa-solid fa-thumbs-up"></i></span> 23 people
-                                found this article helpful
-                            </div><!--//item-meta-->
-                        </a>
-                    </div><!--//item-inner-->
-                </div><!--//item-->
-                <div class="item col-12 col-md-6 col-lg-3 py-4 p-md-4">
-                    <div class="item-inner shadow rounded-4 p-4">
-                        <a class="item-link" href="help-article.html">
-                            <h3 class="item-heading">
-                                <div class="help-article-icon-holder mb-2"></div>Troubleshooting Common Issues in
-                            </h3>
-                            <div class="item-desc">
-                                <span class="rate-icon me-2"><i class="fa-solid fa-thumbs-up"></i></span> 19 people
-                                found this article helpful
-                            </div><!--//item-meta-->
-                        </a>
-                    </div><!--//item-inner-->
-                </div><!--//item-->
+                <?php if ($result->num_rows === 0): ?>
+                    <div class="item col-12 text-center">
+                        <p class="text-danger">Oops.. Belum ada lowongan pekerjaan</p>
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($lowongan as $l): ?>
+                        <?php
+                        $detailUrl = '/sistem-penerimaan-karyawan/pages/public/detail-lowongan?id_lowongan=' . $l['id_lowongan']
+                            ?>
+                        <div class="item col-12 col-md-6 py-4 p-md-4">
+                            <div class="item-inner shadow rounded-4 p-4">
+                                <a class="item-link" href="<?= $detailUrl ?>">
+                                    <h3 class="item-heading">
+                                        <?= $l['nama_lowongan'] ?>
+                                    </h3>
+                                    <div class="item-desc">
+                                        <?= $l['name'] ?>
+                                    </div><!--//item-meta-->
+                                </a>
+                            </div><!--//item-inner-->
+                        </div><!--//item-->
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div><!--//row-->
         </div><!--//help-featured-articles-section-->
         </div><!--//container-->
