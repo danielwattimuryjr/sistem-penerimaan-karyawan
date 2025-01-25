@@ -29,13 +29,6 @@ $menuItem = [
     ],
     [
         'isTitle' => false,
-        'name' => 'Data Department',
-        'url' => '/data-department',
-        'icon' => 'newspaper',
-        'submenu' => [],
-    ],
-    [
-        'isTitle' => false,
         'name' => 'Hasil Seleksi',
         'url' => '/hasil-seleksi',
         'icon' => 'buildings-fill',
