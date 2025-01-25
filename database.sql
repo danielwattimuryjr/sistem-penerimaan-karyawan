@@ -8,20 +8,21 @@ CREATE TABLE IF NOT EXISTS jabatan (
     PRIMARY KEY (id_jabatan)
 );
 
-CREATE TABLE IF NOT EXISTS divisi (
-    id_divisi INT(11) AUTO_INCREMENT,
-    nama_divisi VARCHAR(100),
-    PRIMARY KEY (id_divisi)
-);
-
 CREATE TABLE IF NOT EXISTS user (
-    id_user INT(11) AUTO_INCREMENT,
+    id_user INT(11) AUTO_INCREMENT NOT NULL,
     jabatan INT(11),
-    user_name VARCHAR(50),
-    nama_lengkap VARCHAR(100),
-    email VARCHAR(100),
-    role ENUM('General Manager', 'Departement', 'HRD', 'Pelamar'),
-    password VARCHAR(255),
+    user_name VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    role ENUM('General Manager', 'Departement', 'HRD', 'Pelamar', 'Admin') NOT NULL DEFAULT 'Pelamar',
+    password VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    -- Optional Info
+    jenis_kelamin BOOLEAN NULL,
+    pendidikan_terakhir ENUM('SMA/SMK', 'Diploma', 'Sarjana') NULL,
+    nomor_telepon VARCHAR(13) NULL,
+    alamat TEXT NULL,
+    tempat_lahir VARCHAR(50) NULL,
+    tanggal_lahir DATE NULL,
     PRIMARY KEY (id_user),
     CONSTRAINT fk_user_jabatan
      FOREIGN KEY (jabatan)
@@ -32,7 +33,7 @@ CREATE TABLE IF NOT EXISTS user (
 
 CREATE TABLE IF NOT EXISTS permintaan (
     id_permintaan INT(11) AUTO_INCREMENT,
-    id_divisi INT(11),
+    id_user INT(11),
     posisi VARCHAR(50),
     -- TRUE = PRIA
     -- FALSE = WANITA
@@ -45,7 +46,7 @@ CREATE TABLE IF NOT EXISTS permintaan (
     keperluan LONGTEXT,
     tanggal_permintaan DATE,
     PRIMARY KEY (id_permintaan),
-    CONSTRAINT fk_permintaan_divisi FOREIGN KEY (id_divisi) REFERENCES divisi (id_divisi) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT fk_permintaan_user FOREIGN KEY (id_user) REFERENCES user (id_user) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS lowongan (
@@ -77,49 +78,6 @@ CREATE TABLE IF NOT EXISTS persyaratan (
      ON DELETE CASCADE
      ON UPDATE CASCADE
 );
-
-CREATE TABLE IF NOT EXISTS profile (
-    id_user INT(11),
-    jenis_kelamin BOOLEAN,
-    pendidikan_terakhir ENUM('SMA/SMK', 'Diploma', 'Sarjana'),
-    nomor_telepon VARCHAR(13),
-    alamat TEXT,
-    tempat_lahir VARCHAR(50),
-    tanggal_lahir DATE,
-    PRIMARY KEY (id_user),
-    CONSTRAINT fk_profile_user
-     FOREIGN KEY (id_user)
-     REFERENCES user (id_user)
-     ON DELETE CASCADE
-     ON UPDATE CASCADE
-);
-
-DELIMITER $$
-CREATE TRIGGER tr_generate_user_profile
-    AFTER INSERT ON user
-    FOR EACH ROW
-BEGIN
-    IF NEW.role = 'Pelamar' THEN
-        INSERT INTO profile (
-            id_user,
-            jenis_kelamin,
-            pendidikan_terakhir,
-            nomor_telepon,
-            alamat,
-            tempat_lahir,
-            tanggal_lahir
-        ) VALUES (
-            NEW.id_user,
-            NULL,
-            NULL,
-            NULL,
-            NULL,
-            NULL,
-            NULL
-        );
-    END IF;
-END $$
-DELIMITER ;
 
 CREATE TABLE IF NOT EXISTS pelamaran (
     id_pelamaran INT(11) AUTO_INCREMENT,
@@ -181,15 +139,6 @@ CREATE TABLE password_resets (
      ON DELETE CASCADE
 );
 
-INSERT INTO divisi
-(nama_divisi)
-VALUES
-    ('D1'),
-    ('D2'),
-    ('D3'),
-    ('D4'),
-    ('D5');
-
 INSERT INTO jabatan
 (nama_jabatan)
 VALUES
@@ -198,9 +147,9 @@ VALUES
     ('J3');
 
 INSERT INTO user
-(jabatan, user_name, nama_lengkap, email, role, password)
+    (user_name, email, password, role, name)
 VALUES
-    (1, 'user.general-manager', 'General Manager', 'general-manager@mail.com', 'General Manager', 'password'),
-    (2, 'user.departement', 'Departement', 'departement@mail.com', 'Departement', 'password'),
-    (3, 'user.hrd', 'HRD', 'hrd@mail.com', 'HRD', 'password'),
-    (1, 'user.pelamar', 'Pelamar', 'pelamar@mail.com', 'Pelamar', 'password');
+    ('user.admin', 'admin@app.com', 'password', 'Admin', 'Admin'),
+    ('user.hrd', 'hrd@app.com', 'password', 'HRD', 'HRD'),
+    ('user.general-manager', 'general-manager@app.com', 'password', 'General Manager', 'General Manager'),
+    ('user.pelamar', 'pelamar@app.com', 'password', 'Pelamar', 'Pelamar');
