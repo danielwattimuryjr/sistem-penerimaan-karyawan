@@ -16,6 +16,9 @@ if (isset($_SESSION['user']) && isset($_SESSION['user']['role'])) {
         case 'Pelamar':
             header("Location: /sistem-penerimaan-karyawan/pages/pelamar/beranda");
             exit();
+        case 'Admin':
+            header("Location: /sistem-penerimaan-karyawan/pages/admin/beranda");
+            exit();
         default:
             header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
             exit();

@@ -34,6 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'Pelamar':
                 $redirectUrl = "../../pelamar/beranda";
                 break;
+            case 'Admin':
+                $redirectUrl = "../../admin/beranda";
+                break;
             default:
                 $redirectUrl = "../sign-in";
                 break;

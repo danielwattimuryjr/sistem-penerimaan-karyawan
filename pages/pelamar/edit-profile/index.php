@@ -11,19 +11,12 @@ if ($user['role'] !== 'Pelamar') {
     exit();
 }
 
-$queryProfile = "SELECT * FROM profile WHERE id_user = ?";
+$queryProfile = "SELECT name, nomor_telepon, pendidikan_terakhir, jenis_kelamin, tempat_lahir, tanggal_lahir, alamat FROM user WHERE id_user = ?";
 $stmtProfile = $conn->prepare($queryProfile);
 $stmtProfile->bind_param('i', $user['id_user']);
 $stmtProfile->execute();
 $resultProfile = $stmtProfile->get_result();
 $profile = $resultProfile->fetch_assoc();
-
-$queryUser = "SELECT nama_lengkap FROM user WHERE id_user = ?";
-$stmtUser = $conn->prepare($queryUser);
-$stmtUser->bind_param('i', $user['id_user']);
-$stmtUser->execute();
-$resultUser = $stmtUser->get_result();
-$userData = $resultUser->fetch_assoc();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -73,7 +66,7 @@ $userData = $resultUser->fetch_assoc();
                                     <div class="mb-3">
                                         <label class="form-label">Nama Lengkap</label>
                                         <input type="text" class="form-control" placeholder="Nama Lengkap"
-                                            name="nama_lengkap" value="<?= $userData['nama_lengkap'] ?>" required>
+                                            name="nama_lengkap" value="<?= $profile['name'] ?>" required>
                                     </div>
 
                                     <div class="mb-3">
