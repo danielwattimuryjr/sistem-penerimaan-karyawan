@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $queryStr = "SELECT id_user, name, role FROM user WHERE user_name = ? AND password = ?";
+    $queryStr = "SELECT id_user, name, role FROM user WHERE user_name = ? AND password = ? AND role != 'Pelamar'";
     $stmt = $conn->prepare($queryStr);
 
     $stmt->bind_param('ss', $username, $password);
@@ -30,9 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
             case 'HRD':
                 $redirectUrl = "../../hrd/beranda";
-                break;
-            case 'Pelamar':
-                $redirectUrl = "../../pelamar/beranda";
                 break;
             case 'Admin':
                 $redirectUrl = "../../admin/beranda";
