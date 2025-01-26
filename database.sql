@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS permintaan (
     posisi VARCHAR(50),
     -- TRUE = PRIA
     -- FALSE = WANITA
-    jenis_kelamin BOOLEAN,
+    jenis_kelamin jenis_kelamin SET('Laki-laki', 'Perempuan') NOT NULL,
     tanggal_mulai DATE NOT NULL,
     tanggal_selesai DATE NULL,
     jumlah_permintaan INT(11),

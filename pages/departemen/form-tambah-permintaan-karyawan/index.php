@@ -5,7 +5,7 @@ if (!$_SESSION['user']) {
     header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
 }
 
-$queryStr = "SELECT id_divisi, nama_divisi FROM divisi";
+$queryStr = "SELECT id_user, name FROM user WHERE role = 'Departement'";
 
 $stmt = $conn->prepare($queryStr);
 $stmt->execute();
@@ -59,19 +59,16 @@ $conn->close();
                                 <form action="store-permintaan-request.php" method="POST">
                                     <div class="mb-3">
                                         <label class="form-label">Tanggal Permintaan</label>
-                                        <input type="date" class="form-control" name="tanggal_permintaan" required>
+                                        <input type="date" class="form-control" name="tanggal_permintaan" required
+                                            readonly value="<?php echo date('Y-m-d'); ?>">
                                     </div>
 
                                     <div class="mb-3">
-                                        <label class="form-label">Divisi</label>
-                                        <select class="form-select" name="id_divisi">
-                                            <option selected disabled>-- PILIH DIVISI --</option>
-                                            <?php foreach ($result as $res) { ?>
-                                                <option value="<?= $res['id_divisi'] ?>">
-                                                    <?= $res['nama_divisi'] ?>
-                                                </option>
-                                            <?php } ?>
-                                        </select>
+                                        <label class="form-label">Department</label>
+                                        <input type="hidden" name="id_divisi"
+                                            value="<?= $_SESSION['user']['id_user'] ?>">
+                                        <input type="text" class="form-control" readonly
+                                            value="<?= $_SESSION['user']['name'] ?>">
                                     </div>
 
                                     <div class="mb-3">
@@ -88,14 +85,16 @@ $conn->close();
                                     <div class="mb-3">
                                         <label class="form-label">Jenis Kelamin</label>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" value="1" name="jenis_kelamin">
-                                            <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox" value="Laki-laki"
+                                                name="jenis_kelamin[]" id="laki-laki">
+                                            <label class="form-check-label" for="laki-laki">
                                                 Laki-laki
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" value="0" name="jenis_kelamin">
-                                            <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox" value="Perempuan"
+                                                name="jenis_kelamin[]" id="perempuan">
+                                            <label class="form-check-label" for="perempuan">
                                                 Perempuan
                                             </label>
                                         </div>
@@ -113,11 +112,13 @@ $conn->close();
                                     <div class="row mb-3">
                                         <div class="col-12 col-lg-6">
                                             <label for="" class="form-label">Tanggal Mulai</label>
-                                            <input type="date" name="tanggal_mulai" id="" class="form-control" required>
+                                            <input type="date" name="tanggal_mulai" id="" class="form-control"
+                                                min="<?php echo date('Y-m-d'); ?>" required>
                                         </div>
                                         <div class="col-12 col-lg-6">
                                             <label for="" class="form-label">Tanggal Selesai</label>
-                                            <input type="date" name="tanggal_selesai" id="" class="form-control">
+                                            <input type="date" name="tanggal_selesai" id="" class="form-control"
+                                                min="<?php echo date('Y-m-d'); ?>">
                                             <div class="form-text">Opsional</div>
                                         </div>
                                     </div>

@@ -12,7 +12,7 @@ if (!$id_permintaan) {
     exit();
 }
 
-$getPermintaanQueryStr = "SELECT id_permintaan, tanggal_permintaan, id_divisi, posisi, jumlah_permintaan, jenis_kelamin, status_kerja, tanggal_mulai, tanggal_selesai, keperluan, status_permintaan FROM permintaan WHERE id_permintaan = ? LIMIT 1";
+$getPermintaanQueryStr = "SELECT id_permintaan, tanggal_permintaan, p.id_user, u.name, posisi, jumlah_permintaan, p.jenis_kelamin, status_kerja, tanggal_mulai, tanggal_selesai, keperluan, status_permintaan FROM permintaan p JOIN user u ON p.id_user = u.id_user WHERE id_permintaan = ? LIMIT 1";
 $getPermintaanStmt = $conn->prepare($getPermintaanQueryStr);
 $getPermintaanStmt->bind_param("i", $id_permintaan);
 $getPermintaanStmt->execute();
@@ -24,11 +24,9 @@ if ($getPermintaanResult['status_permintaan'] !== 'Pending') {
     header("Location: /sistem-penerimaan-karyawan/pages/departemen/permintaan-karyawan?type=$type&message=" . urlencode($message));
     exit();
 }
-$getDivisiQueryStr = "SELECT id_divisi, nama_divisi FROM divisi";
 
-$getDivisiStmt = $conn->prepare($getDivisiQueryStr);
-$getDivisiStmt->execute();
-$getDivisiResult = $getDivisiStmt->get_result();
+$storedJenisKelamin = $getPermintaanResult['jenis_kelamin'];
+$selectedJenisKelamin = explode(',', $storedJenisKelamin);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -79,20 +77,15 @@ $getDivisiResult = $getDivisiStmt->get_result();
                                     <div class="mb-3">
                                         <label class="form-label">Tanggal Permintaan</label>
                                         <input type="date" class="form-control" name="tanggal_permintaan"
-                                            value="<?= $getPermintaanResult['tanggal_permintaan'] ?>" required>
+                                            value="<?= $getPermintaanResult['tanggal_permintaan'] ?>" readonly>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label class="form-label">Divisi</label>
-                                        <select class="form-select" name="id_divisi">
-                                            <option selected disabled>-- PILIH DIVISI --</option>
-                                            <?php foreach ($getDivisiResult as $divisi) { ?>
-                                                <option value="<?= $divisi['id_divisi'] ?>"
-                                                    <?= $getPermintaanResult['id_divisi'] === $divisi['id_divisi'] ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($divisi['nama_divisi']) ?>
-                                                </option>
-                                            <?php } ?>
-                                        </select>
+                                        <label class="form-label">Department</label>
+                                        <input type="hidden" name="id_divisi"
+                                            value="<?= $_SESSION['user']['id_user'] ?>">
+                                        <input type="text" class="form-control" readonly
+                                            value="<?= $_SESSION['user']['name'] ?>">
                                     </div>
 
                                     <div class="mb-3">
@@ -110,16 +103,16 @@ $getDivisiResult = $getDivisiStmt->get_result();
                                     <div class="mb-3">
                                         <label class="form-label">Jenis Kelamin</label>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" value="1" name="jenis_kelamin"
-                                                <?= $getPermintaanResult['jenis_kelamin'] ? 'checked' : '' ?>>
-                                            <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox" value="Laki-laki"
+                                                name="jenis_kelamin[]" id="laki-laki" <?php echo in_array('Laki-laki', $selectedJenisKelamin) ? 'checked' : ''; ?>>
+                                            <label class="form-check-label" for="laki-laki">
                                                 Laki-laki
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" value="0" name="jenis_kelamin"
-                                                <?= !is_null(['jenis_kelamin']) && !$getPermintaanResult['jenis_kelamin'] ? 'checked' : '' ?>>
-                                            <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox" value="Perempuan"
+                                                name="jenis_kelamin[]" id="perempuan" <?php echo in_array('Perempuan', $selectedJenisKelamin) ? 'checked' : ''; ?>>
+                                            <label class="form-check-label" for="perempuan">
                                                 Perempuan
                                             </label>
                                         </div>
@@ -141,13 +134,14 @@ $getDivisiResult = $getDivisiStmt->get_result();
                                         <div class="col-12 col-lg-6">
                                             <label for="" class="form-label">Tanggal Mulai</label>
                                             <input type="date" name="tanggal_mulai" id="" class="form-control"
-                                                value="<?= $getPermintaanResult['tanggal_mulai'] ?>" required>
+                                                value="<?= $getPermintaanResult['tanggal_mulai'] ?>"
+                                                min="<?php echo date('Y-m-d'); ?>" required>
                                         </div>
                                         <div class="col-12 col-lg-6">
                                             <label for="" class="form-label">Tanggal Selesai</label>
                                             <input type="date" name="tanggal_selesai"
                                                 value="<?= $getPermintaanResult['tanggal_selesai'] ?>"
-                                                class="form-control">
+                                                class="form-control" min="<?php echo date('Y-m-d'); ?>">
                                             <div class="form-text">Opsional</div>
                                         </div>
                                     </div>

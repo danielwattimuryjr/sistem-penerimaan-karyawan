@@ -38,11 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ) {
         redirect('error', 'Input tidak valid');
     } else {
+        $jenis_kelamin = implode(',', $jenis_kelamin);
+
         if (!empty($tanggal_selesai)) {
             // Query dengan tanggal_selesai
             $query = "UPDATE permintaan SET
                 tanggal_permintaan = ?,
-                id_divisi = ?,
+                id_user = ?,
                 posisi = ?,
                 jumlah_permintaan = ?,
                 jenis_kelamin = ?,
@@ -70,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Query tanpa tanggal_selesai
             $query = "UPDATE permintaan SET
                 tanggal_permintaan = ?,
-                id_divisi = ?,
+                id_user = ?,
                 posisi = ?,
                 jumlah_permintaan = ?,
                 jenis_kelamin = ?,

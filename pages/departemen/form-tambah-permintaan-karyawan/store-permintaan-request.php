@@ -27,12 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: /sistem-penerimaan-karyawan/pages/departemen/permintaan-karyawan?type=$type&message=" . urlencode($message));
         exit();
     } else {
+        $jenis_kelamin = implode(',', $jenis_kelamin);
         // Menyiapkan query dasar dengan semua field yang diperlukan
         if (!empty($tanggal_selesai)) {
             // Query dengan tanggal_selesai jika ada
             $query = "INSERT INTO permintaan (
                 tanggal_permintaan,
-                id_divisi,
+                id_user,
                 posisi,
                 jumlah_permintaan,
                 jenis_kelamin,
@@ -58,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Query tanpa tanggal_selesai
             $query = "INSERT INTO permintaan (
                 tanggal_permintaan,
-                id_divisi,
+                id_user,
                 posisi,
                 jumlah_permintaan,
                 jenis_kelamin,
