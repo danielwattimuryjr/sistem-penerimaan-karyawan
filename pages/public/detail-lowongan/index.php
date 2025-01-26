@@ -35,7 +35,7 @@ $getPersyaratanResult = $stmt->get_result();
 $persyaratan = $getPersyaratanResult->fetch_assoc();
 
 $isApplied = ($checkPelamaran['total'] > 0);
-$formPelamaranUrl = "/sistem-penerimaan-karyawan/pages/public/form-pelamaran?id_lowongan=$id_lowongan";
+$formPelamaranUrl = "/sistem-penerimaan-karyawan/pages/pelamar/form-pelamaran?id_lowongan=$id_lowongan";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -106,7 +106,8 @@ $formPelamaranUrl = "/sistem-penerimaan-karyawan/pages/public/form-pelamaran?id_
                                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                                         aria-expanded="false"><?= $_SESSION['user']['name'] ?? 'name' ?></a>
                                     <ul class="dropdown-menu dropdown-menu-lg-end rounded shadow">
-                                        <li><a class="dropdown-item" href="help-category-alt.html">Profile</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="/sistem-penerimaan-karyawan/pages/pelamar/profile">Profile</a></li>
                                         <li><a class="dropdown-item text-danger"
                                                 href="/sistem-penerimaan-karyawan/pages/public/landing-page/logout.php">Logout</a>
                                         </li>
@@ -156,8 +157,8 @@ $formPelamaranUrl = "/sistem-penerimaan-karyawan/pages/public/form-pelamaran?id_
                                 <div class="col-12 col-lg-8">
                                     <?= $lowongan['deskripsi'] ?>
 
-                                    <h2 class="heading-level-2">Persyaratan :</h2>
-                                    <ul>
+                                    <h4 class="heading-level-4">Persyaratan :</h4>
+                                    <ul class="article-list">
                                         <li><?= str_replace(',', ' atau ', $lowongan['jenis_kelamin']) ?>
                                             usia maksimal <?= $persyaratan['umur'] ?> tahun</li>
                                         <li>Pendidikan minimal <?= $persyaratan['pendidikan'] ?></li>

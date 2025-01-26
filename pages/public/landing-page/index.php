@@ -87,7 +87,8 @@ $result = $stmt->get_result();
                                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                                         aria-expanded="false"><?= $_SESSION['user']['name'] ?? 'name' ?></a>
                                     <ul class="dropdown-menu dropdown-menu-lg-end rounded shadow">
-                                        <li><a class="dropdown-item" href="help-category-alt.html">Profile</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="/sistem-penerimaan-karyawan/pages/pelamar/profile">Profile</a></li>
                                         <li><a class="dropdown-item text-danger"
                                                 href="/sistem-penerimaan-karyawan/pages/public/landing-page/logout.php">Logout</a>
                                         </li>
@@ -135,7 +136,6 @@ $result = $stmt->get_result();
 
     <section class="help-featured-section theme-section">
         <div class="container">
-
             <div class="section-header text-center mb-5">
                 <h2 class="section-title mb-3">Lowongan Pekerjaan</h2>
             </div>
