@@ -1,7 +1,9 @@
 <?php
 require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
-require_once('./../../../functions/page-protection.php');
+if (!$_SESSION['user']) {
+    header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
+}
 
 $queryStr = "SELECT id_user, name FROM user WHERE role = 'Departement'";
 

@@ -1,7 +1,9 @@
 <?php
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
-require_once('./../../../functions/page-protection.php');
+if (!$_SESSION['user']) {
+    header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
+}
 
 $queryStr = "SELECT id_permintaan, p.id_user, u.name, jumlah_permintaan, status_permintaan
              FROM permintaan p
