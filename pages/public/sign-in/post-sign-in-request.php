@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['user_name'];
     $password = $_POST['password'];
 
-    $queryStr = "SELECT id_user, name FROM user WHERE user_name = ? AND password = ? AND role = 'Pelamar'";
+    $queryStr = "SELECT id_user, name, role FROM user WHERE user_name = ? AND password = ? AND role = 'Pelamar'";
     $stmt = $conn->prepare($queryStr);
 
     $stmt->bind_param('ss', $username, $password);

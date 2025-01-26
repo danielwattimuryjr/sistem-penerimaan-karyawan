@@ -1,28 +1,41 @@
 <?php
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/init-session.php');
+require_once('./../../../functions/string-helpers.php');
 
-$keyword = isset($_GET['search']) ? trim($_GET['search']) : '';
-
-if (!empty($keyword)) {
-    $query = "SELECT id_lowongan, nama_lowongan, u.name
-              FROM lowongan l
-              JOIN permintaan p ON l.id_permintaan = p.id_permintaan
-              JOIN user u ON p.id_user = u.id_user
-              WHERE nama_lowongan LIKE ?";
-    $stmt = $conn->prepare($query);
-    $searchParam = "%$keyword%";
-    $stmt->bind_param("s", $searchParam);
-} else {
-    $query = "SELECT id_lowongan, nama_lowongan, u.name
-              FROM lowongan l
-              JOIN permintaan p ON l.id_permintaan = p.id_permintaan
-              JOIN user u ON p.id_user = u.id_user";
-    $stmt = $conn->prepare($query);
+$id_lowongan = $_GET['id_lowongan'] ?? null;
+$id_user = $_SESSION['user']['id_user'] ?? null;
+if (!$id_lowongan) {
+    header("Location: /sistem-penerimaan-karyawan/pages/public/landing-page");
 }
 
+$checkPelamaranQueryStr = "
+    SELECT COUNT(*) as total
+    FROM pelamaran
+    WHERE id_user = ? AND id_lowongan = ?
+";
+$checkPelamaranStmt = $conn->prepare($checkPelamaranQueryStr);
+$checkPelamaranStmt->bind_param('ii', $id_user, $id_lowongan);
+$checkPelamaranStmt->execute();
+$checkPelamaranResult = $checkPelamaranStmt->get_result();
+$checkPelamaran = $checkPelamaranResult->fetch_assoc();
+
+$getLowonganQueryStr = "SELECT nama_lowongan, deskripsi, poster_lowongan, tanggal_mulai, u.name, p.jenis_kelamin FROM lowongan l JOIN permintaan p ON l.id_permintaan = p.id_permintaan JOIN user u ON p.id_user = u.id_user WHERE id_lowongan = ?";
+$getLowonganStmt = $conn->prepare($getLowonganQueryStr);
+$getLowonganStmt->bind_param('i', $id_lowongan);
+$getLowonganStmt->execute();
+$getLowonganResult = $getLowonganStmt->get_result();
+$lowongan = $getLowonganResult->fetch_assoc();
+
+$getPersyaratanStr = "SELECT pengalaman_kerja, umur, pendidikan FROM persyaratan WHERE id_lowongan = ? LIMIT 1";
+$stmt = $conn->prepare($getPersyaratanStr);
+$stmt->bind_param("i", $id_lowongan);
 $stmt->execute();
-$result = $stmt->get_result();
+$getPersyaratanResult = $stmt->get_result();
+$persyaratan = $getPersyaratanResult->fetch_assoc();
+
+$isApplied = ($checkPelamaran['total'] > 0);
+$formPelamaranUrl = "/sistem-penerimaan-karyawan/pages/public/form-pelamaran?id_lowongan=$id_lowongan";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,6 +61,10 @@ $result = $stmt->get_result();
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
+    <!-- Plugin CSS -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark-reasonable.min.css">
+
     <!-- Theme CSS -->
     <link id="theme-style" rel="stylesheet" href="/sistem-penerimaan-karyawan/assets/css/public.styles.css">
     <link rel="stylesheet"
@@ -72,6 +89,8 @@ $result = $stmt->get_result();
                                 style="width: 100px;">
                         </a>
                     </div><!--//site-logo-->
+
+
                     <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false"
                         aria-label="Toggle navigation">
@@ -108,61 +127,58 @@ $result = $stmt->get_result();
             </div><!--//container-->
 
         </header><!--//header-->
-
-        <div class="page-heading-holder">
-            <div class="container text-center">
-                <h1 class="page-heading mb-3">Jelajahi Peluang Bersama Grand Pasundan</h1>
-
-                <div class="page-heading-sub single-col-max mx-auto">
-                    <div class="help-search-intro">
-                        Telusuri lowongan kerja dan raih peluang karier terbaik Anda.
-                    </div>
-                    <div class="help-search-main pt-3 d-block mx-auto">
-                        <form class="search-form w-100" method="post" action="search.php">
-                            <input type="text" placeholder="Cari Lowongan Pekerjaan" name="search"
-                                class="form-control search-input"
-                                value="<?= htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8') ?>">
-                            <button type="submit" class="btn search-btn" value="Search">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </form>
-                    </div><!--//help-search-main-->
-                </div>
-            </div>
-
-        </div><!--//page-heading-holder-->
     </div><!--//page-header-wrapper-->
 
-    <section class="help-featured-section theme-section">
+    <div class="help-content-wrapper theme-section pt-4">
         <div class="container">
+            <div class="row">
+                <div class="col">
+                    <section class="main-section order-lg-last">
+                        <article class="help-article mb-5">
+                            <header class="article-header mb-5">
+                                <h1 class="heading-level-1 text-center mb-2">
+                                    <?= toTitleCase($lowongan['nama_lowongan']) ?>
+                                </h1>
+                                <div class="article-meta mx-auto d-flex justify-content-center align-items-center">
+                                    <div class="meta-info-wrapper text-center">
+                                        <div class="meta-author"><?= toTitleCase($lowongan['name']) ?></div>
+                                        <div class="meta-time">Tanggal Mulai:
+                                            <?= date('j F Y', strtotime($lowongan['tanggal_mulai'])) ?>
+                                        </div>
+                                    </div>
+                                </div><!--//article-meta-->
+                            </header>
+                            <div class="row">
+                                <div class="col-12 col-lg-4">
+                                    <img src="<?= '/sistem-penerimaan-karyawan/assets/uploads/poster/' . $lowongan['poster_lowongan'] ?>"
+                                        alt="" style="width: 300px">
+                                </div>
+                                <div class="col-12 col-lg-8">
+                                    <?= $lowongan['deskripsi'] ?>
 
-            <div class="section-header text-center mb-5">
-                <h2 class="section-title mb-3">Lowongan Pekerjaan</h2>
-            </div>
-            <div class="row align-content-stretch">
-                <?php if ($result->num_rows === 0): ?>
-                    <div class="item col-12 text-center">
-                        <p class="text-danger">Oops.. Belum ada lowongan pekerjaan</p>
-                    </div>
-                <?php else: ?>
-                    <?php while ($l = $result->fetch_assoc()): ?>
-                        <?php
-                        $detailUrl = '/sistem-penerimaan-karyawan/pages/public/detail-lowongan?id_lowongan=' . $l['id_lowongan'];
-                        ?>
-                        <div class="item col-12 col-md-6 py-4 p-md-4">
-                            <div class="item-inner shadow rounded-4 p-4">
-                                <a class="item-link" href="<?= $detailUrl ?>">
-                                    <h3 class="item-heading"><?= $l['nama_lowongan'] ?></h3>
-                                    <div class="item-desc"><?= $l['name'] ?></div>
-                                </a>
+                                    <h2 class="heading-level-2">Persyaratan :</h2>
+                                    <ul>
+                                        <li><?= str_replace(',', ' atau ', $lowongan['jenis_kelamin']) ?>
+                                            usia maksimal <?= $persyaratan['umur'] ?> tahun</li>
+                                        <li>Pendidikan minimal <?= $persyaratan['pendidikan'] ?></li>
+                                        <li><?= $persyaratan['pengalaman_kerja'] ?></li>
+                                    </ul>
+
+                                    <?php if (isset($_SESSION['user'])): ?>
+                                        <a href="<?= $formPelamaranUrl ?>"
+                                            class="btn btn-primary <?= $isApplied ? 'disabled' : '' ?>"><?= $isApplied ? 'Sudah Mengajukan' : 'Ajukan Lamaran' ?></a>
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                        </div>
-                    <?php endwhile; ?>
-                <?php endif; ?>
+
+                        </article><!--//help-article-->
+
+                    </section><!--//main-section-->
+                </div><!--//col-->
             </div><!--//row-->
-        </div><!--//help-featured-articles-section-->
+
         </div><!--//container-->
-    </section><!--//help-featured-section-->
+    </div><!--//help-content-wrapper-->
 
     <!-- Javascript -->
     <script src="/sistem-penerimaan-karyawan/assets/plugins/popper.min.js"></script>
