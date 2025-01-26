@@ -1,9 +1,7 @@
 <?php
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
-if (!$_SESSION['user']) {
-    header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
-}
+require_once('./../../../functions/page-protection.php');
 
 $user = $_SESSION['user'];
 
