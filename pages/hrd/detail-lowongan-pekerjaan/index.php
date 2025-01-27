@@ -78,7 +78,8 @@ $persyaratan = $getPersyaratanResult->fetch_assoc();
                                         <ul>
                                             <li>Pria/Wanita usia maksimal <?= $persyaratan['umur'] ?> tahun</li>
                                             <li>Pendidikan minimal <?= $persyaratan['pendidikan'] ?></li>
-                                            <li><?= $persyaratan['pengalaman_kerja'] ?></li>
+                                            <li>Memiliki pengalaman kerja selama <?= $persyaratan['pengalaman_kerja'] ?>
+                                                tahun</li>
                                         </ul>
 
                                         <a href="/sistem-penerimaan-karyawan/pages/hrd/form-edit-lowongan?id_lowongan=<?= $lowongan['id_lowongan'] ?>"

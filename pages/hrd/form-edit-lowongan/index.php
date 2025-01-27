@@ -184,10 +184,11 @@ $persyaratanData = $persyaratanResult->fetch_assoc();
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label for="" class="form-label">Pengalaman Kerja</label>
-                                        <textarea name="pengalaman_kerja"
-                                            id="default"><?= $persyaratanData['pengalaman_kerja'] ?></textarea>
+                                    <div class="input-group mb-3">
+                                        <label class="form-label">Pengalaman Kerja</label>
+                                        <input type="number" value="<?= $persyaratanData['pengalaman_kerja'] ?>"
+                                            name="pengalaman_kerja" min="1" class="form-control">
+                                        <span class="input-group-text" id="basic-addon2">Tahun</span>
                                     </div>
 
                                     <button type="submit" class="btn btn-warning">Update</button>

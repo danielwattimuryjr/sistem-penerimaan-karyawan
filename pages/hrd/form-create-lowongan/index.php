@@ -131,9 +131,10 @@ $result = $stmt->get_result();
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label for="" class="form-label">Pengalaman Kerja</label>
-                                        <textarea name="pengalaman_kerja" id="default"></textarea>
+                                    <div class="input-group mb-3">
+                                        <label class="form-label">Pengalaman Kerja</label>
+                                        <input type="number" name="pengalaman_kerja" min="1" class="form-control">
+                                        <span class="input-group-text" id="basic-addon2">Tahun</span>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary">Simpan</button>

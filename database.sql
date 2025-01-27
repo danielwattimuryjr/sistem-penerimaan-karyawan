@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS lowongan (
 CREATE TABLE IF NOT EXISTS persyaratan (
     id_persyaratan INT(11) AUTO_INCREMENT,
     id_lowongan INT(11),
-    pengalaman_kerja VARCHAR(255),
+    pengalaman_kerja INT(11),
     umur INT(11),
     pendidikan ENUM('SMA/SMK', 'Diploma', 'Sarjana'),
     PRIMARY KEY (id_persyaratan),

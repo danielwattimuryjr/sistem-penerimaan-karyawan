@@ -162,7 +162,8 @@ $formPelamaranUrl = "/sistem-penerimaan-karyawan/pages/pelamar/form-pelamaran?id
                                         <li><?= str_replace(',', ' atau ', $lowongan['jenis_kelamin']) ?>
                                             usia maksimal <?= $persyaratan['umur'] ?> tahun</li>
                                         <li>Pendidikan minimal <?= $persyaratan['pendidikan'] ?></li>
-                                        <li><?= $persyaratan['pengalaman_kerja'] ?></li>
+                                        <li>Memiliki pengalaman kerja selama <?= $persyaratan['pengalaman_kerja'] ?>
+                                            tahun</li>
                                     </ul>
 
                                     <?php if (isset($_SESSION['user'])): ?>
