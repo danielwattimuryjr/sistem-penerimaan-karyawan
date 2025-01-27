@@ -51,9 +51,6 @@ require_once('./../../../functions/check-user-session.php');
 
                             <div
                                 class="d-flex flex-column justify-content-center justify-content-lg-between mt-4 text-center">
-                                <a href="../register" style="text-decoration: none">
-                                    Belum punya akun? Register di sini
-                                </a>
                                 <a href="../forget-password" style="text-decoration: none">
                                     Lupa Password?
                                 </a>

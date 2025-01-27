@@ -58,6 +58,15 @@ $conn->close();
                 <section class="row">
                     <div class="col-12">
                         <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Selamat Datang, <?= $_SESSION['user']['name'] ?? 'name' ?>!!</h5>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="row">
+                    <div class="col-12">
+                        <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title">Daftar Lowongan Pekerjaan</h5>
                             </div>

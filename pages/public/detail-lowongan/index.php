@@ -1,15 +1,41 @@
 <?php
-require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
-require_once('./../../../functions/page-protection.php');
+require_once('./../../../functions/init-session.php');
+require_once('./../../../functions/string-helpers.php');
 
-$user = $_SESSION['user'];
-$queryProfile = "SELECT name, nomor_telepon, pendidikan_terakhir, jenis_kelamin, tempat_lahir, tanggal_lahir, alamat FROM user WHERE id_user = ?";
-$stmtProfile = $conn->prepare($queryProfile);
-$stmtProfile->bind_param('i', $user['id_user']);
-$stmtProfile->execute();
-$resultProfile = $stmtProfile->get_result();
-$profile = $resultProfile->fetch_assoc();
+$id_lowongan = $_GET['id_lowongan'] ?? null;
+$id_user = $_SESSION['user']['id_user'] ?? null;
+if (!$id_lowongan) {
+    header("Location: /sistem-penerimaan-karyawan/pages/public/landing-page");
+}
+
+$checkPelamaranQueryStr = "
+    SELECT COUNT(*) as total
+    FROM pelamaran
+    WHERE id_user = ? AND id_lowongan = ?
+";
+$checkPelamaranStmt = $conn->prepare($checkPelamaranQueryStr);
+$checkPelamaranStmt->bind_param('ii', $id_user, $id_lowongan);
+$checkPelamaranStmt->execute();
+$checkPelamaranResult = $checkPelamaranStmt->get_result();
+$checkPelamaran = $checkPelamaranResult->fetch_assoc();
+
+$getLowonganQueryStr = "SELECT nama_lowongan, deskripsi, poster_lowongan, tanggal_mulai, u.name, p.jenis_kelamin FROM lowongan l JOIN permintaan p ON l.id_permintaan = p.id_permintaan JOIN user u ON p.id_user = u.id_user WHERE id_lowongan = ?";
+$getLowonganStmt = $conn->prepare($getLowonganQueryStr);
+$getLowonganStmt->bind_param('i', $id_lowongan);
+$getLowonganStmt->execute();
+$getLowonganResult = $getLowonganStmt->get_result();
+$lowongan = $getLowonganResult->fetch_assoc();
+
+$getPersyaratanStr = "SELECT pengalaman_kerja, umur, pendidikan FROM persyaratan WHERE id_lowongan = ? LIMIT 1";
+$stmt = $conn->prepare($getPersyaratanStr);
+$stmt->bind_param("i", $id_lowongan);
+$stmt->execute();
+$getPersyaratanResult = $stmt->get_result();
+$persyaratan = $getPersyaratanResult->fetch_assoc();
+
+$isApplied = ($checkPelamaran['total'] > 0);
+$formPelamaranUrl = "/sistem-penerimaan-karyawan/pages/pelamar/form-pelamaran?id_lowongan=$id_lowongan";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -109,44 +135,44 @@ $profile = $resultProfile->fetch_assoc();
             <div class="row">
                 <div class="col">
                     <section class="main-section order-lg-last">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Profile Pelamar</h3>
+                        <article class="help-article mb-5">
+                            <header class="article-header mb-5">
+                                <h1 class="heading-level-1 text-center mb-2">
+                                    <?= toTitleCase($lowongan['nama_lowongan']) ?>
+                                </h1>
+                                <div class="article-meta mx-auto d-flex justify-content-center align-items-center">
+                                    <div class="meta-info-wrapper text-center">
+                                        <div class="meta-author"><?= toTitleCase($lowongan['name']) ?></div>
+                                        <div class="meta-time">Tanggal Mulai:
+                                            <?= date('j F Y', strtotime($lowongan['tanggal_mulai'])) ?>
+                                        </div>
+                                    </div>
+                                </div><!--//article-meta-->
+                            </header>
+                            <div class="row">
+                                <div class="col-12 col-lg-4">
+                                    <img src="<?= '/sistem-penerimaan-karyawan/assets/uploads/poster/' . $lowongan['poster_lowongan'] ?>"
+                                        alt="" style="width: 300px">
+                                </div>
+                                <div class="col-12 col-lg-8">
+                                    <?= $lowongan['deskripsi'] ?>
+
+                                    <h4 class="heading-level-4">Persyaratan :</h4>
+                                    <ul class="article-list">
+                                        <li><?= str_replace(',', ' atau ', $lowongan['jenis_kelamin']) ?>
+                                            usia maksimal <?= $persyaratan['umur'] ?> tahun</li>
+                                        <li>Pendidikan minimal <?= $persyaratan['pendidikan'] ?></li>
+                                        <li><?= $persyaratan['pengalaman_kerja'] ?></li>
+                                    </ul>
+
+                                    <?php if (isset($_SESSION['user'])): ?>
+                                        <a href="<?= $formPelamaranUrl ?>"
+                                            class="btn btn-primary <?= $isApplied ? 'disabled' : '' ?>"><?= $isApplied ? 'Sudah Mengajukan' : 'Ajukan Lamaran' ?></a>
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <dl class="row mt-4">
-                                    <p class="col-12">Profil tidak sesuai? <a
-                                            href="/sistem-penerimaan-karyawan/pages/pelamar/edit-profile">Edit di
-                                            sini</a></p>
-                                    <dt class="col-sm-3">Nama Lengkap</dt>
-                                    <dd class="col-sm-9"><?= $profile['name'] ?? '-' ?></dd>
 
-                                    <dt class="col-sm-3">Nomor Telepon</dt>
-                                    <dd class="col-sm-9">
-                                        <?= $profile['nomor_telepon'] ?? '-' ?>
-                                    </dd>
-
-                                    <dt class="col-sm-3 text-truncate">Jenis Kelamin</dt>
-                                    <dd class="col-sm-9">
-                                        <?=
-                                            is_null($profile['jenis_kelamin']) ? '-' :
-                                            ($profile['jenis_kelamin'] ? 'Laki- laki' : 'Perempuan')
-                                            ?>
-                                    </dd>
-
-                                    <dt class="col-sm-3">Pendidikan Terakhir</dt>
-                                    <dd class="col-sm-9"><?= $profile['pendidikan_terakhir'] ?? '-' ?></dd>
-
-                                    <dt class="col-sm-3">Tempat, Tgl. Lahir</dt>
-                                    <dd class="col-sm-9">
-                                        <?= ($profile['tempat_lahir'] ?? '-') . ', ' . ($profile['tanggal_lahir'] ?? '-') ?>
-                                    </dd>
-
-                                    <dt class="col-sm-3">Alamat</dt>
-                                    <dd class="col-sm-9"><?= $profile['alamat'] ?? '-' ?></dd>
-                                </dl>
-                            </div>
-                        </div>
+                        </article><!--//help-article-->
 
                     </section><!--//main-section-->
                 </div><!--//col-->
@@ -158,8 +184,6 @@ $profile = $resultProfile->fetch_assoc();
     <!-- Javascript -->
     <script src="/sistem-penerimaan-karyawan/assets/plugins/popper.min.js"></script>
     <script src="/sistem-penerimaan-karyawan/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/tinymce/tinymce.min.js"></script>
-    <script src="/sistem-penerimaan-karyawan/assets/js/tiny-mce.js"></script>
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
     <script src="/sistem-penerimaan-karyawan/assets/js/sweet-alert.js"></script>

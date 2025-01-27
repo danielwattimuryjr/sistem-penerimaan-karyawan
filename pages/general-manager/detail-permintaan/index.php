@@ -12,9 +12,9 @@ if (!$id_permintaan) {
     header("Location: /sistem-penerimaan-karyawan/pages/general-manager/beranda?type=$type&message=" . urlencode($message));
     exit();
 }
-$getPermintaanQueryStr = "SELECT p.id_permintaan, p.tanggal_permintaan, p.id_divisi, d.nama_divisi, p.posisi, p.jumlah_permintaan, p.jenis_kelamin, p.status_kerja, p.tanggal_mulai, p.tanggal_selesai, p.keperluan, p.status_permintaan
+$getPermintaanQueryStr = "SELECT p.id_permintaan, p.tanggal_permintaan, u.name, p.posisi, p.jumlah_permintaan, p.jenis_kelamin, p.status_kerja, p.tanggal_mulai, p.tanggal_selesai, p.keperluan, p.status_permintaan
 FROM permintaan p
-JOIN divisi d ON p.id_divisi = d.id_divisi
+JOIN user u ON p.id_user = u.id_user
 WHERE p.id_permintaan = ?
 LIMIT 1";
 
@@ -82,7 +82,7 @@ $permintaan = $getPermintaanStmt->get_result()->fetch_assoc();
                                         </span></dd>
 
                                     <dt class="col-sm-3">Departement</dt>
-                                    <dd class="col-sm-9"><?= $permintaan['nama_divisi'] ?></dd>
+                                    <dd class="col-sm-9"><?= $permintaan['name'] ?></dd>
 
                                     <dt class="col-sm-3">Untuk Posisi</dt>
                                     <dd class="col-sm-9"><?= $permintaan['posisi'] ?></dd>
@@ -92,7 +92,7 @@ $permintaan = $getPermintaanStmt->get_result()->fetch_assoc();
 
                                     <dt class="col-sm-3">Jenis Kelamin</dt>
                                     <dd class="col-sm-9">
-                                        <?= is_null($permintaan['jenis_kelamin']) ? '-' : ($permintaan['jenis_kelamin'] ? 'Laki-laki' : 'Perempuan') ?>
+                                        <?= $permintaan['jenis_kelamin'] ?>
                                     </dd>
 
                                     <dt class="col-sm-3">Status Kerja</dt>

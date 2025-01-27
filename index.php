@@ -14,16 +14,16 @@ if (isset($_SESSION['user']) && isset($_SESSION['user']['role'])) {
             header("Location: /sistem-penerimaan-karyawan/pages/hrd/beranda");
             exit();
         case 'Pelamar':
-            header("Location: /sistem-penerimaan-karyawan/pages/pelamar/beranda");
+            header("Location: /sistem-penerimaan-karyawan/pages/public/landing-page");
             exit();
         case 'Admin':
             header("Location: /sistem-penerimaan-karyawan/pages/admin/beranda");
             exit();
         default:
-            header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
+            header("Location: /sistem-penerimaan-karyawan/pages/public/landing-page");
             exit();
     }
 } else {
-    header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
+    header("Location: /sistem-penerimaan-karyawan/pages/public/landing-page");
     exit();
 }

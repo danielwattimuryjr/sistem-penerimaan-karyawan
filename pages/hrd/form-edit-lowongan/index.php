@@ -34,10 +34,10 @@ if (!$lowonganResult->num_rows) {
 $permintaanQuery = "SELECT
     p.id_permintaan,
     p.jumlah_permintaan,
-    d.nama_divisi
+    u.name
 FROM permintaan p
 LEFT JOIN lowongan l ON p.id_permintaan = l.id_permintaan
-INNER JOIN divisi d ON p.id_divisi = d.id_divisi
+INNER JOIN user u ON p.id_user = u.id_user
 WHERE p.status_permintaan = ?
 AND (l.id_lowongan IS NULL OR l.id_lowongan = ?)";
 $permintaanStmt = $conn->prepare($permintaanQuery);
@@ -106,23 +106,26 @@ $persyaratanData = $persyaratanResult->fetch_assoc();
                                 <h5 class="card-title">Edit Lowongan Pekerjaan</h5>
                             </div>
                             <div class="card-body">
-                                <form action="edit-lowongan-request.php" method="post" class="mt-4" enctype="multipart/form-data">
-                    <input type="hidden" name="id_lowongan" value="<?= $lowonganData['id_lowongan'] ?>">
+                                <form action="edit-lowongan-request.php" method="post" class="mt-4"
+                                    enctype="multipart/form-data">
+                                    <input type="hidden" name="id_lowongan" value="<?= $lowonganData['id_lowongan'] ?>">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Nama Lowongan</label>
-                                        <input type="text" name="nama_lowongan" id="" class="form-control" value="<?= $lowonganData['nama_lowongan'] ?>"
-                                            required>
+                                        <input type="text" name="nama_lowongan" id="" class="form-control"
+                                            value="<?= $lowonganData['nama_lowongan'] ?>" required>
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-12 col-lg-6">
                                             <label for="" class="form-label">Tanggal Mulai</label>
-                                            <input type="date" name="tanggal_mulai" id="" class="form-control" value="<?= $lowonganData['tgl_mulai'] ?>"
-                                                required>
+                                            <input type="date" name="tanggal_mulai" id="" class="form-control"
+                                                value="<?= $lowonganData['tgl_mulai'] ?>" required
+                                                min="<?php echo date('Y-m-d'); ?>">
                                         </div>
                                         <div class="col-12 col-lg-6">
                                             <label for="" class="form-label">Tanggal Selesai</label>
                                             <input type="date" name="tanggal_selesai" id="" class="form-control"
-                                                value="<?= $lowonganData['tgl_selesai'] ?>" required>
+                                                value="<?= $lowonganData['tgl_selesai'] ?>" required
+                                                min="<?php echo date('Y-m-d'); ?>">
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -131,8 +134,10 @@ $persyaratanData = $persyaratanResult->fetch_assoc();
                                             <option value="" selected disabled>-- PILIH PERMINTAAN --</option>
                                             <?php if (!empty($permintaanData)) { ?>
                                                 <?php foreach ($permintaanData as $pd) { ?>
-                                                    <option value="<?= $pd['id_permintaan']; ?>" <?= ($pd['id_permintaan'] === $lowonganData['id_permintaan']) ? 'selected' : ''; ?>>
-                                                        [<?= htmlspecialchars($pd['nama_divisi']); ?>] - (<?= $pd['jumlah_permintaan']; ?>
+                                                    <option value="<?= $pd['id_permintaan']; ?>"
+                                                        <?= ($pd['id_permintaan'] === $lowonganData['id_permintaan']) ? 'selected' : ''; ?>>
+                                                        [<?= htmlspecialchars($pd['name']); ?>] -
+                                                        (<?= $pd['jumlah_permintaan']; ?>
                                                         orang)
                                                     </option>
                                                 <?php } ?>
@@ -159,8 +164,8 @@ $persyaratanData = $persyaratanResult->fetch_assoc();
                                     <div class="row mb-3">
                                         <div class="col-12 col-lg-6">
                                             <label for="" class="form-label">Umur</label>
-                                            <input type="number" name="umur" id="" class="form-control" value="<?= $persyaratanData['umur'] ?>"
-                                                required>
+                                            <input type="number" name="umur" id="" class="form-control" required
+                                                value="<?= $persyaratanData['umur'] ?>">
                                         </div>
                                         <div class="col-12 col-lg-6">
                                             <label for="" class="form-label">Pendidikan Terakhir</label>
@@ -181,7 +186,8 @@ $persyaratanData = $persyaratanResult->fetch_assoc();
 
                                     <div class="mb-3">
                                         <label for="" class="form-label">Pengalaman Kerja</label>
-                                        <textarea name="pengalaman_kerja" id="default"><?= $persyaratanData['pengalaman_kerja'] ?></textarea>
+                                        <textarea name="pengalaman_kerja"
+                                            id="default"><?= $persyaratanData['pengalaman_kerja'] ?></textarea>
                                     </div>
 
                                     <button type="submit" class="btn btn-warning">Update</button>

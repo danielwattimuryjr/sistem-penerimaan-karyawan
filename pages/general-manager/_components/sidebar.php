@@ -1,5 +1,6 @@
 <?php
 require_once('menu-item.php');
+require_once('./../../../functions/init-session.php');
 
 $menuItem = [
     [
@@ -50,6 +51,11 @@ $menuItem = [
                 <a href="#" class="sidebar-hide"><i class="bi bi-x bi-middle"></i></a>
             </div>
         </div>
+
+
+        <h5 class="text-center">
+            <?= $_SESSION['user']['name'] ?>
+        </h5>
     </div>
 
     <div class="sidebar-menu">

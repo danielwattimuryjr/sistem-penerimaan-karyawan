@@ -3,10 +3,10 @@ require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
 $permintaanQuery = "
-    SELECT p.id_permintaan, p.jumlah_permintaan, d.nama_divisi
+    SELECT p.id_permintaan, p.jumlah_permintaan, u.name
     FROM permintaan p
     LEFT JOIN lowongan l ON p.id_permintaan = l.id_permintaan
-    INNER JOIN divisi d ON p.id_divisi = d.id_divisi
+    INNER JOIN user u ON p.id_user = u.id_user
     WHERE p.status_permintaan = ? AND l.id_lowongan IS NULL
 ";
 $stmt = $conn->prepare($permintaanQuery);
@@ -71,12 +71,13 @@ $result = $stmt->get_result();
                                     <div class="row mb-3">
                                         <div class="col-12 col-lg-6">
                                             <label for="" class="form-label">Tanggal Mulai</label>
-                                            <input type="date" name="tanggal_mulai" id="" class="form-control" required>
+                                            <input type="date" name="tanggal_mulai" id="" class="form-control" required
+                                                min="<?php echo date('Y-m-d'); ?>">
                                         </div>
                                         <div class="col-12 col-lg-6">
                                             <label for="" class="form-label">Tanggal Selesai</label>
                                             <input type="date" name="tanggal_selesai" id="" class="form-control"
-                                                required>
+                                                required min="<?php echo date('Y-m-d'); ?>">
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -86,7 +87,7 @@ $result = $stmt->get_result();
                                             <?php if ($result && $result->num_rows > 0): ?>
                                                 <?php while ($row = $result->fetch_assoc()): ?>
                                                     <option value="<?= $row['id_permintaan']; ?>">
-                                                        [<?= htmlspecialchars($row['nama_divisi']); ?>] -
+                                                        [<?= htmlspecialchars($row['name']); ?>] -
                                                         (<?= $row['jumlah_permintaan']; ?>
                                                         orang)
                                                     </option>

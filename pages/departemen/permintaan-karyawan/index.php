@@ -5,11 +5,15 @@ if (!$_SESSION['user']) {
     header("Location: /sistem-penerimaan-karyawan/pages/auth/sign-in");
 }
 
-$queryStr = "SELECT id_permintaan, p.id_divisi, d.nama_divisi, jumlah_permintaan, status_permintaan
+$user = $_SESSION['user'];
+
+$queryStr = "SELECT id_permintaan, p.id_user, u.name, jumlah_permintaan, status_permintaan
              FROM permintaan p
-             JOIN divisi d ON p.id_divisi = d.id_divisi";
+             JOIN user u ON p.id_user = u.id_user
+             WHERE p.id_user = ?";
 
 $stmt = $conn->prepare($queryStr);
+$stmt->bind_param('i', $user['id_user']);
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
@@ -95,7 +99,7 @@ $conn->close();
                                                 ?>
                                                 <tr>
                                                     <td><?= $no++ ?></td>
-                                                    <td><?= $res['nama_divisi'] ?></td>
+                                                    <td><?= $res['name'] ?></td>
                                                     <td><?= $res['jumlah_permintaan'] ?></td>
                                                     <td>
                                                         <span

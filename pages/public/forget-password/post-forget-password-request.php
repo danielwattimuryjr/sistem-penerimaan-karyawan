@@ -15,14 +15,14 @@ $MAIL_EMAIL = getenv('MAIL_EMAIL');
 if (!$MAIL_MAILER || !$MAIL_USERNAME || !$MAIL_PASSWORD || !$MAIL_PORT || !$MAIL_EMAIL) {
     $type = 'error';
     $message = 'Mailer belum disetup';
-    header("Location: /sistem-penerimaan-karyawan/pages/auth/forget-password?type=$type&message=" . urlencode($message));
+    header("Location: /sistem-penerimaan-karyawan/pages/public/forget-password?type=$type&message=" . urlencode($message));
     exit();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $emailTo = trim($_POST['email']);
 
-    $query = "SELECT id_user FROM user WHERE email = ? AND role != 'Pelamar'";
+    $query = "SELECT id_user FROM user WHERE email = ? AND role = 'Pelamar'";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $emailTo);
     $stmt->execute();
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->isHTML(true);
             $mail->Subject = 'Password Reset Request';
             $mail->Body = "Klik tautan berikut untuk mereset password Anda:
-                <a href='http://localhost/sistem-penerimaan-karyawan/pages/auth/forget-password/reset-password.php?token=$token'>Reset Password</a>";
+                <a href='http://localhost/sistem-penerimaan-karyawan/pages/public/reset-password?token=$token'>Reset Password</a>";
             if ($mail->send()) {
                 $type = 'success';
                 $message = "Silahkan cek email untuk mendapatkan link reset password";
@@ -76,6 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $type = 'error';
     $message = "Mwtode request tidak valid";
 }
-header("Location: /sistem-penerimaan-karyawan/pages/auth/forget-password?type=$type&message=" . urlencode($message));
+header("Location: /sistem-penerimaan-karyawan/pages/public/forget-password?type=$type&message=" . urlencode($message));
 exit();
 ?>

@@ -8,8 +8,9 @@ $idLowongan = $_POST['id_lowongan'];
 $pengalamanKerja = $_POST['pengalaman_kerja'];
 $file = $_FILES['curiculum_vitae'];
 
-function redirectWithMessage($type, $message, $idLowongan) {
-    header("Location: /sistem-penerimaan-karyawan/pages/pelamar/detail-lowongan-pekerjaan?id_lowongan=$idLowongan&type=$type&message=" . urlencode($message));
+function redirectWithMessage($type, $message, $idLowongan)
+{
+    header("Location: /sistem-penerimaan-karyawan/pages/public/detail-lowongan?id_lowongan=$idLowongan&type=$type&message=" . urlencode($message));
     exit();
 }
 
