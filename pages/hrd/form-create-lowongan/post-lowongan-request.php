@@ -2,8 +2,17 @@
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
+// if (!empty($_POST)) {
+//     // Convert $_POST to JSON
+//     header('Content-Type: application/json');
+//     echo json_encode($_POST, JSON_PRETTY_PRINT);
+// } else {
+//     echo 'No POST data received.';
+// }
+
 // Redirect helper function
-function redirectWithMessage($type, $message) {
+function redirectWithMessage($type, $message)
+{
     header("Location: /sistem-penerimaan-karyawan/pages/hrd/beranda?type=$type&message=" . urlencode($message));
     exit();
 }
@@ -29,9 +38,17 @@ $umur = intval($_POST['umur'] ?? 0);
 $pendidikan = trim($_POST['pendidikan'] ?? '');
 $pengalamanKerja = trim($_POST['pengalaman_kerja'] ?? '');
 $file = $_FILES['poster_lowongan'];
+$fpTesTertulis = $_POST["fp_tes_tertulis"] ?? 0;
+$fpTesWawancara = $_POST["fp_tes_wawancara"] ?? 0;
+$fpTesPraktek = $_POST["fp_tes_praktek"] ?? 0;
+$fpTesPsikotes = $_POST["fp_tes_psikotes"] ?? 0;
+$fpTesKesehatan = $_POST["fp_tes_kesehatan"] ?? 0;
+$fpPendidikan = $_POST["fp_pendidikan"] ?? 0;
+$fpUmur = $_POST["fp_umur"] ?? 0;
+$fpPengalamanKerja = $_POST["fp_pengalaman_kerja"] ?? 0;
 
 // Ensure required fields are not empty
-if (empty($namaLowongan) || empty($tanggalMulai) || empty($tanggalSelesai) || empty($idPermintaan) || empty($umur) || empty($pendidikan) || !$file) {
+if (empty($namaLowongan) || empty($tanggalMulai) || empty($tanggalSelesai) || empty($idPermintaan) || empty($umur) || empty($pendidikan) || !$file || ($fpTesTertulis === null || $fpTesTertulis === 0) || ($fpTesWawancara === null || $fpTesWawancara === 0) || ($fpTesPraktek === null || $fpTesPraktek === 0) || ($fpTesPsikotes === null || $fpTesPsikotes === 0) || ($fpTesKesehatan === null || $fpTesKesehatan === 0) || ($fpPendidikan === null || $fpPendidikan === 0) || ($fpUmur === null || $fpUmur === 0) || ($fpPengalamanKerja === null || $fpPengalamanKerja === 0)) {
     redirectWithMessage('error', 'Semua data harus diisi.');
 }
 
@@ -90,6 +107,29 @@ try {
     $stmtPersyaratan = $conn->prepare($insertPersyaratanQuery);
     $stmtPersyaratan->bind_param('isis', $idLowongan, $pengalamanKerja, $umur, $pendidikan);
     $stmtPersyaratan->execute();
+
+    $insertIntoFaktorPenilaianQuery = "
+    INSERT INTO faktor_penilaian (id_lowongan, nama_faktor, bobot)
+    VALUES (?, ?, ?)
+";
+    $stmtFaktorPenilaian = $conn->prepare($insertIntoFaktorPenilaianQuery);
+
+    // Bind and execute for each factor
+    $faktorPenilaian = [
+        'tes_tertulis' => $fpTesTertulis,
+        'tes_wawancara' => $fpTesWawancara,
+        'tes_praktek' => $fpTesPraktek,
+        'tes_psikotes' => $fpTesPsikotes,
+        'tes_kesehatan' => $fpTesKesehatan,
+        'pendidikan' => $fpPendidikan,
+        'umur' => $fpUmur,
+        'pengalaman_kerja' => $fpPengalamanKerja
+    ];
+
+    foreach ($faktorPenilaian as $namaFaktor => $bobot) {
+        $stmtFaktorPenilaian->bind_param('ssd', $idLowongan, $namaFaktor, $bobot);
+        $stmtFaktorPenilaian->execute();
+    }
 
     // Commit transaction
     $conn->commit();

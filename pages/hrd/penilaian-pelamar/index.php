@@ -12,11 +12,11 @@ if (!isset($_GET['id_pelamaran']) || empty($_GET['id_pelamaran'])) {
 $id_pelamaran = $_GET['id_pelamaran'];
 
 $queryStr = "SELECT
-    u.nama_lengkap
+    u.name,
+    pel.id_lowongan,
+    pel.id_user
 FROM
     user u
-JOIN
-    profile p ON u.id_user = p.id_user
 JOIN
     pelamaran pel ON u.id_user = pel.id_user
 WHERE
@@ -26,8 +26,22 @@ $stmt->bind_param("i", $id_pelamaran);
 $stmt->execute();
 $result = $stmt->get_result();
 $dataPelamar = $result->fetch_assoc();
+
+$userStr = "SELECT
+    FLOOR(DATEDIFF(CURDATE(), u.tanggal_lahir) / 365.25) as umur,
+    u.pendidikan_terakhir,
+    p.pengalaman_kerja
+FROM user u
+INNER JOIN pelamaran p ON p.id_user = u.id_user
+WHERE u.id_user = ?";
+$userStmt = $conn->prepare($userStr);
+$userStmt->bind_param('i', $dataPelamar['id_user']);
+$userStmt->execute();
+$userResult = $userStmt->get_result();
+$userData = $userResult->fetch_assoc();
+
+$userStmt->close();
 $stmt->close();
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -36,7 +50,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $dataPelamar['nama_lengkap'] . ' | Penilaian Pelamar' ?></title>
+    <title><?= $dataPelamar['name'] . ' | Penilaian Pelamar' ?></title>
 
     <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
         type="image/x-icon">
@@ -50,106 +64,385 @@ $conn->close();
         href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.css">
 </head>
 
-<>
-    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/initTheme.js"></script>
-    <!-- Start content here -->
+<script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/initTheme.js"></script>
+<!-- Start content here -->
 
-    <div id="app">
-        <div id="sidebar">
-            <?php require_once('./../_components/sidebar.php'); ?>
+<div id="app">
+    <div id="sidebar">
+        <?php require_once('./../_components/sidebar.php'); ?>
+    </div>
+    <div id="main">
+        <header class="mb-3">
+            <a href="#" class="burger-btn d-block d-xl-none">
+                <i class="bi bi-justify fs-3"></i>
+            </a>
+        </header>
+        <!-- Content -->
+        <div class="page-heading">
+            <h3>Penilaian Pelamar</h3>
         </div>
-        <div id="main">
-            <header class="mb-3">
-                <a href="#" class="burger-btn d-block d-xl-none">
-                    <i class="bi bi-justify fs-3"></i>
-                </a>
-            </header>
-            <!-- Content -->
-            <div class="page-heading">
-                <h3>Penilaian Pelamar</h3>
-            </div>
-            <div class="page-content">
-                <section class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <form method="POST" action="post-penilaian-request.php">
-                                    <input type="hidden" name="id_pelamaran" value="<?= $id_pelamaran ?>">
-                                    <div class="mb-3">
-                                        <label class="form-label">Nama Lengkap</label>
-                                        <input type="text" class="form-control"
-                                            value="<?= $dataPelamar['nama_lengkap'] ?>" disabled>
-                                    </div>
+        <div class="page-content">
+            <section class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form method="POST" action="post-penilaian-request.php">
+                                <input type="hidden" name="id_pelamaran" value="<?= $id_pelamaran ?>">
+                                <div class="mb-3">
+                                    <label class="form-label">Nama Lengkap</label>
+                                    <input type="text" class="form-control" disabled
+                                        value="<?= $dataPelamar['name'] ?>">
+                                </div>
 
-                                    <div class="mb-3">
-                                        <label for="" class="form-label">Tes Tertulis</label>
-                                        <input type="number" name="nilai_tes_tertulis" id="" class="form-control"
-                                            min="1" max="100" required>
+                                <div class="mb-5">
+                                    <label for="" class="form-label">Tes Tertulis</label>
+                                    <div class="d-flex justify-content-between align-items-center gap-2 mx-5 mt-4">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_tertulis"
+                                                    value="1" required>
+                                            </div>
+                                            <label class="form-check-label small">0 - 20</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_tertulis"
+                                                    value="2" required>
+                                            </div>
+                                            <label class="form-check-label small">21 - 40</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_tertulis"
+                                                    value="3" required>
+                                            </div>
+                                            <label class="form-check-label small">41 - 60</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_tertulis"
+                                                    value="4" required>
+                                            </div>
+                                            <label class="form-check-label small">61 - 80</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_tertulis"
+                                                    value="5" required>
+                                            </div>
+                                            <label class="form-check-label small">81 - 100</label>
+                                        </div>
                                     </div>
+                                </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label">Tes Wawancara</label>
-                                        <select class="form-select" name="nilai_tes_wawancara" required>
-                                            <option selected disabled>-- PILIH PENILAIAN --</option>
-                                            <option value="Sangat Kurang">Sangat Kurang</option>
-                                            <option value="Kurang">Kurang</option>
-                                            <option value="Cukup">Cukup</option>
-                                            <option value="Baik">Baik</option>
-                                            <option value="Sangat Baik">Sangat Baik</option>
-                                        </select>
+                                <div class="mb-5">
+                                    <label class="form-label">Tes Wawancara</label>
+                                    <div class="d-flex justify-content-between align-items-center gap-2 mx-5 mt-4">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_wawancara"
+                                                    value="1" required>
+                                            </div>
+                                            <label class="form-check-label small">Sangat Kurang</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_wawancara"
+                                                    value="2" required>
+                                            </div>
+                                            <label class="form-check-label small">Kurang</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_wawancara"
+                                                    value="3" required>
+                                            </div>
+                                            <label class="form-check-label small">Cukup</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_wawancara"
+                                                    value="4" required>
+                                            </div>
+                                            <label class="form-check-label small">Baik</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_wawancara"
+                                                    value="5" required>
+                                            </div>
+                                            <label class="form-check-label small">Sangat Baik</label>
+                                        </div>
                                     </div>
+                                </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label">Tes Praktek</label>
-                                        <select class="form-select" name="nilai_tes_praktek" required>
-                                            <option selected disabled>-- PILIH PENILAIAN --</option>
-                                            <option value="Sangat Kurang">Sangat Kurang</option>
-                                            <option value="Kurang">Kurang</option>
-                                            <option value="Cukup">Cukup</option>
-                                            <option value="Baik">Baik</option>
-                                            <option value="Sangat Baik">Sangat Baik</option>
-                                        </select>
+                                <div class="mb-5">
+                                    <label class="form-label">Tes Praktek</label>
+                                    <div class="d-flex justify-content-between align-items-center gap-2 mx-5 mt-4">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_praktek"
+                                                    value="1" required>
+                                            </div>
+                                            <label class="form-check-label small">Sangat Kurang</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_praktek"
+                                                    value="2" required>
+                                            </div>
+                                            <label class="form-check-label small">Kurang</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_praktek"
+                                                    value="3" required>
+                                            </div>
+                                            <label class="form-check-label small">Cukup</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_praktek"
+                                                    value="4" required>
+                                            </div>
+                                            <label class="form-check-label small">Baik</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_praktek"
+                                                    value="5" required>
+                                            </div>
+                                            <label class="form-check-label small">Sangat Baik</label>
+                                        </div>
                                     </div>
+                                </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label">Tes Psikotes</label>
-                                        <input type="number" name="nilai_tes_psikotes" id="" class="form-control"
-                                            min="1" max="100" required>
+                                <div class="mb-5">
+                                    <label class="form-label">Tes Psikotes</label>
+                                    <div class="d-flex justify-content-between align-items-center gap-2 mx-5 mt-4">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_psikotes"
+                                                    value="1" required>
+                                            </div>
+                                            <label class="form-check-label small">0 - 20</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_psikotes"
+                                                    value="2" required>
+                                            </div>
+                                            <label class="form-check-label small">21 - 40</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_psikotes"
+                                                    value="3" required>
+                                            </div>
+                                            <label class="form-check-label small">41 - 60</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_psikotes"
+                                                    value="4" required>
+                                            </div>
+                                            <label class="form-check-label small">61 - 80</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_psikotes"
+                                                    value="5" required>
+                                            </div>
+                                            <label class="form-check-label small">81 - 100</label>
+                                        </div>
                                     </div>
+                                </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label">Tes Kesehatan</label>
-                                        <select class="form-select" name="nilai_tes_kesehatan" required>
-                                            <option selected disabled>-- PILIH PENILAIAN --</option>
-                                            <option value="Sangat Kurang">Sangat Kurang</option>
-                                            <option value="Kurang">Kurang</option>
-                                            <option value="Cukup">Cukup</option>
-                                            <option value="Baik">Baik</option>
-                                            <option value="Sangat Baik">Sangat Baik</option>
-                                        </select>
+                                <div class="mb-5">
+                                    <label class="form-label">Tes Kesehatan</label>
+                                    <div class="d-flex justify-content-between align-items-center gap-2 mx-5 mt-4">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_kesehatan"
+                                                    value="1" required>
+                                            </div>
+                                            <label class="form-check-label small">Sangat Kurang</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_kesehatan"
+                                                    value="2" required>
+                                            </div>
+                                            <label class="form-check-label small">Kurang</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_kesehatan"
+                                                    value="3" required>
+                                            </div>
+                                            <label class="form-check-label small">Cukup</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_kesehatan"
+                                                    value="4" required>
+                                            </div>
+                                            <label class="form-check-label small">Baik</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="tes_kesehatan"
+                                                    value="5" required>
+                                            </div>
+                                            <label class="form-check-label small">Sangat Baik</label>
+                                        </div>
                                     </div>
+                                </div>
 
-                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                </form>
-                            </div>
+                                <div class="mb-5">
+                                    <label class="form-label">Pendidikan</label>
+                                    <div class="d-flex justify-content-between align-items-center gap-2 mx-5 mt-4">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pendidikan" value="1"
+                                                    required <?= $userData['pendidikan_terakhir'] === 'SMA/SMK' ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">SMA/SMK</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pendidikan" value="2"
+                                                    required <?= $userData['pendidikan_terakhir'] === 'Diploma' ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">D1/D2</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pendidikan" value="3"
+                                                    required>
+                                            </div>
+                                            <label class="form-check-label small">D3</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pendidikan" value="4"
+                                                    required <?= $userData['pendidikan_terakhir'] === 'Sarjana' ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">S1</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pendidikan" value="5"
+                                                    required>
+                                            </div>
+                                            <label class="form-check-label small">S2</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-5">
+                                    <label class="form-label">Umur</label>
+                                    <div class="d-flex justify-content-between align-items-center gap-2 mx-5 mt-4">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="umur" value="1"
+                                                    required <?= ($userData['umur'] >= 18 && $userData['umur'] <= 21) ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">18 - 21</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="umur" value="2"
+                                                    required <?= ($userData['umur'] >= 22 && $userData['umur'] <= 24) ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">22 - 24</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="umur" value="3"
+                                                    required <?= ($userData['umur'] >= 25 && $userData['umur'] <= 26) ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">25 - 26</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="umur" value="4"
+                                                    required <?= ($userData['umur'] >= 27 && $userData['umur'] <= 28) ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">27 - 28</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="umur" value="5"
+                                                    required <?= ($userData['umur'] >= 29) ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">> 29</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Pengalaman Kerja (Tahun)</label>
+                                    <div class="d-flex justify-content-between align-items-center gap-2 mx-5 mt-4">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pengalaman_kerja"
+                                                    value="1" required <?= ($userData['pengalaman_kerja'] === 1) ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">1</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pengalaman_kerja"
+                                                    value="2" required <?= ($userData['pengalaman_kerja'] >= 1 && $userData['pengalaman_kerja'] <= 2) ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">1 - 2</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pengalaman_kerja"
+                                                    value="3" required <?= ($userData['pengalaman_kerja'] >= 2 && $userData['pengalaman_kerja'] <= 4) ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">2 - 4</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pengalaman_kerja"
+                                                    value="4" required <?= ($userData['pengalaman_kerja'] >= 4 && $userData['pengalaman_kerja'] <= 6) ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">4 - 6</label>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pengalaman_kerja"
+                                                    value="5" required <?= ($userData['pengalaman_kerja'] >= 6) ? 'checked' : '' ?>>
+                                            </div>
+                                            <label class="form-check-label small">> 6</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </form>
                         </div>
                     </div>
-                </section>
-            </div>
-            <!-- End Content -->
+                </div>
+            </section>
         </div>
+        <!-- End Content -->
     </div>
+</div>
 
-    <!-- End content -->
-    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/components/dark.js"></script>
-    <script
-        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/tinymce/tinymce.min.js"></script>
-    <script src="/sistem-penerimaan-karyawan/assets/js/tiny-mce.js"></script>
-    <script
-        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
-    <script src="/sistem-penerimaan-karyawan/assets/js/sweet-alert.js"></script>
-    </body>
+<!-- End content -->
+<script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/components/dark.js"></script>
+<script
+    src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/tinymce/tinymce.min.js"></script>
+<script src="/sistem-penerimaan-karyawan/assets/js/tiny-mce.js"></script>
+<script
+    src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
+<script src="/sistem-penerimaan-karyawan/assets/js/sweet-alert.js"></script>
+</body>
 
 </html>

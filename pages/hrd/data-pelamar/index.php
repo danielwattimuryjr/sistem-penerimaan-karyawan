@@ -4,17 +4,21 @@ require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
 $queryStr = "
-SELECT
-  p.id_pelamaran,
-  u.nama_lengkap,
-  d.nama_divisi,
-  pn.id_penilaian -- Tambahkan kolom ini untuk cek penilaian
+SELECT DISTINCT
+    p.id_pelamaran,
+    u.name,
+    u2.name as nama_department,
+    CASE
+        WHEN pn.id_penilaian IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END as sudah_dinilai
 FROM pelamaran p
 JOIN user u ON p.id_user = u.id_user
 JOIN lowongan l ON p.id_lowongan = l.id_lowongan
 JOIN permintaan pe ON l.id_permintaan = pe.id_permintaan
-JOIN divisi d ON pe.id_divisi = d.id_divisi
-LEFT JOIN penilaian pn ON p.id_pelamaran = pn.id_pelamaran -- LEFT JOIN untuk cek penilaian
+JOIN user u2 ON pe.id_user = u2.id_user
+LEFT JOIN penilaian pn ON p.id_pelamaran = pn.id_pelamaran
+GROUP BY p.id_pelamaran, u.name, u2.name, pn.id_penilaian
 ";
 
 $stmt = $conn->prepare($queryStr);
@@ -75,7 +79,7 @@ $conn->close();
                                         <thead>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Nama</th>
+                                                <th>Nama Pelamar</th>
                                                 <th>Divisi</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -85,12 +89,12 @@ $conn->close();
                                             <?php foreach ($result as $res) { ?>
                                                 <tr>
                                                     <td><?= $no++ ?></td>
-                                                    <td><?= $res['nama_lengkap'] ?></td>
-                                                    <td><?= $res['nama_divisi'] ?></td>
+                                                    <td><?= $res['name'] ?></td>
+                                                    <td><?= $res['nama_department'] ?></td>
                                                     <td>
                                                         <a href="<?= "/sistem-penerimaan-karyawan/pages/hrd/detail-pelamar?id_pelamaran=" . $res['id_pelamaran'] ?>"
                                                             class="btn btn-sm btn-primary">Lihat Detail</a>
-                                                        <?php if ($res['id_penilaian']) { ?>
+                                                        <?php if ($res['sudah_dinilai']) { ?>
                                                             <!-- Jika sudah dinilai -->
                                                             <button class="btn btn-sm btn-success" disabled>Sudah
                                                                 Dinilai</button>

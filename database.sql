@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS permintaan (
     posisi VARCHAR(50),
     -- TRUE = PRIA
     -- FALSE = WANITA
-    jenis_kelamin jenis_kelamin SET('Laki-laki', 'Perempuan') NOT NULL,
+    jenis_kelamin SET('Laki-laki', 'Perempuan') NOT NULL,
     tanggal_mulai DATE NOT NULL,
     tanggal_selesai DATE NULL,
     jumlah_permintaan INT(11),
@@ -57,12 +57,25 @@ CREATE TABLE IF NOT EXISTS lowongan (
     deskripsi LONGTEXT,
     tgl_mulai DATE,
     tgl_selesai DATE,
+    closed BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (id_lowongan),
     CONSTRAINT fk_lowongan_permintaan
      FOREIGN KEY (id_permintaan)
      REFERENCES permintaan (id_permintaan)
      ON DELETE CASCADE
      ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS faktor_penilaian (
+    id_faktor INT(11) PRIMARY KEY AUTO_INCREMENT,
+    id_lowongan INT (11) NOT NULL,
+    nama_faktor VARCHAR(50) NOT NULL,
+    bobot DECIMAL(5,2) NOT NULL,
+    UNIQUE KEY (id_lowongan, nama_faktor),
+    CONSTRAINT fk_faktor_penilaian_lowongan
+     FOREIGN KEY (id_lowongan)
+     REFERENCES lowongan(id_lowongan)
+     ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS persyaratan (
@@ -100,25 +113,24 @@ CREATE TABLE IF NOT EXISTS pelamaran (
 
 CREATE TABLE IF NOT EXISTS penilaian (
     id_penilaian INT(11) AUTO_INCREMENT,
-    id_pelamaran INT(11) UNIQUE,
-    nilai_tes_tertulis FLOAT,
-    nilai_tes_wawancara ENUM('Sangat Kurang', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'),
-    nilai_tes_praktek ENUM('Sangat Kurang', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'),
-    nilai_tes_psikotes FLOAT,
-    nilai_tes_kesehatan ENUM('Sangat Kurang', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'),
+    id_pelamaran INT(11),
+    id_faktor INT(11),
+    nilai TINYINT(1),
+    UNIQUE KEY (id_pelamaran, id_faktor),
     PRIMARY KEY (id_penilaian),
     CONSTRAINT fk_penilaian_pelamaran FOREIGN KEY (id_pelamaran)
      REFERENCES pelamaran (id_pelamaran)
+     ON DELETE CASCADE
+     ON UPDATE CASCADE,
+    CONSTRAINT fk_penilaian_faktor_penilaian FOREIGN KEY (id_faktor)
+     REFERENCES faktor_penilaian (id_faktor)
      ON DELETE CASCADE
      ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS hasil (
     id_hasil INT(11) AUTO_INCREMENT,
-    id_penilaian INT(11) UNIQUE,
-    vector_s FLOAT,
-    hasil_akhir FLOAT,
-    peringkat INT(11),
+    id_pelamaran INT(11),
     status ENUM('Diterima', 'Ditolak') NULL,
     PRIMARY KEY (id_hasil),
     CONSTRAINT fk_hasil_penilaian
@@ -128,7 +140,7 @@ CREATE TABLE IF NOT EXISTS hasil (
      ON UPDATE CASCADE
 );
 
-CREATE TABLE password_resets (
+CREATE TABLE IF NOT EXISTS password_resets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_user INT NOT NULL,
     token VARCHAR(64) NOT NULL,
@@ -153,3 +165,85 @@ VALUES
     ('user.hrd', 'hrd@app.com', 'password', 'HRD', 'HRD'),
     ('user.general-manager', 'general-manager@app.com', 'password', 'General Manager', 'General Manager'),
     ('user.pelamar', 'pelamar@app.com', 'password', 'Pelamar', 'Pelamar');
+
+CREATE VIEW vektor_s_weighted_product AS
+SELECT
+   l.id_lowongan,
+   u.id_user,
+   p.id_pelamaran,
+   u.name as nama_pelamar,
+   -- Nilai asli
+   MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN COALESCE(pn.nilai, 0) END) as nilai_tes_tertulis,
+   MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN COALESCE(pn.nilai, 0) END) as nilai_tes_wawancara,
+   MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN COALESCE(pn.nilai, 0) END) as nilai_tes_praktek,
+   MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN COALESCE(pn.nilai, 0) END) as nilai_tes_psikotes,
+   MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN COALESCE(pn.nilai, 0) END) as nilai_tes_kesehatan,
+   MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN COALESCE(pn.nilai, 0) END) as nilai_pendidikan,
+   MAX(CASE WHEN fp.nama_faktor = 'umur' THEN COALESCE(pn.nilai, 0) END) as nilai_umur,
+   MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN COALESCE(pn.nilai, 0) END) as nilai_pengalaman_kerja,
+
+   -- Nilai dipangkatkan bobot
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN fp.bobot END)) as nilai_tes_tertulis_pow_bobot,
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN fp.bobot END)) as nilai_tes_wawancara_pow_bobot,
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN fp.bobot END)) as nilai_tes_praktek_pow_bobot,
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN fp.bobot END)) as nilai_tes_psikotes_pow_bobot,
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN fp.bobot END)) as nilai_tes_kesehatan_pow_bobot,
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN fp.bobot END)) as nilai_pendidikan_pow_bobot,
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'umur' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'umur' THEN fp.bobot END)) as nilai_umur_pow_bobot,
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN fp.bobot END)) as nilai_pengalaman_kerja_pow_bobot,
+
+   -- Jumlah total nilai yang sudah dipangkat bobot (Vektor S)
+   (POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN fp.bobot END)) *
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN fp.bobot END)) *
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN fp.bobot END)) *
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN fp.bobot END)) *
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN fp.bobot END)) *
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN fp.bobot END)) *
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'umur' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'umur' THEN fp.bobot END)) *
+   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN COALESCE(pn.nilai, 0) END), 0),
+         MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN fp.bobot END))) as vektor_s
+FROM lowongan l
+JOIN pelamaran p ON l.id_lowongan = p.id_lowongan
+JOIN user u ON p.id_user = u.id_user
+JOIN faktor_penilaian fp ON l.id_lowongan = fp.id_lowongan
+LEFT JOIN penilaian pn ON p.id_pelamaran = pn.id_pelamaran
+   AND fp.id_faktor = pn.id_faktor
+GROUP BY l.id_lowongan, p.id_pelamaran, u.name;
+
+CREATE VIEW vektor_v_weighted_product AS
+SELECT
+    vswp.id_lowongan,
+    p.id_pelamaran,
+    u.id_user,
+    u.name AS nama_pelamar,
+    vswp.vektor_s,
+    (SELECT SUM(vswp2.vektor_s)
+     FROM vektor_s_weighted_product vswp2
+     WHERE vswp2.id_lowongan = vswp.id_lowongan) AS jumlah_vektor_s,
+    vswp.vektor_s /
+    (SELECT SUM(vswp2.vektor_s)
+     FROM vektor_s_weighted_product vswp2
+     WHERE vswp2.id_lowongan = vswp.id_lowongan) AS vektor_y,
+    RANK() OVER (PARTITION BY vswp.id_lowongan ORDER BY
+        vswp.vektor_s /
+        (SELECT SUM(vswp2.vektor_s)
+         FROM vektor_s_weighted_product vswp2
+         WHERE vswp2.id_lowongan = vswp.id_lowongan) DESC) AS peringkat
+FROM vektor_s_weighted_product vswp
+JOIN pelamaran p ON vswp.id_lowongan = p.id_lowongan
+JOIN user u ON p.id_user = u.id_user;

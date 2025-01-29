@@ -9,7 +9,8 @@ if (!empty($keyword)) {
               FROM lowongan l
               JOIN permintaan p ON l.id_permintaan = p.id_permintaan
               JOIN user u ON p.id_user = u.id_user
-              WHERE nama_lowongan LIKE ?";
+              WHERE nama_lowongan LIKE ?
+              AND l.closed = 0";
     $stmt = $conn->prepare($query);
     $searchParam = "%$keyword%";
     $stmt->bind_param("s", $searchParam);
@@ -17,7 +18,8 @@ if (!empty($keyword)) {
     $query = "SELECT id_lowongan, nama_lowongan, u.name
               FROM lowongan l
               JOIN permintaan p ON l.id_permintaan = p.id_permintaan
-              JOIN user u ON p.id_user = u.id_user";
+              JOIN user u ON p.id_user = u.id_user
+              AND l.closed = 0";
     $stmt = $conn->prepare($query);
 }
 

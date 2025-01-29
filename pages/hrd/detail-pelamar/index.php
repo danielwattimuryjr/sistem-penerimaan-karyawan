@@ -12,19 +12,17 @@ if (!isset($_GET['id_pelamaran']) || empty($_GET['id_pelamaran'])) {
 $id_pelamaran = $_GET['id_pelamaran'];
 
 $queryStr = "SELECT
-    u.nama_lengkap,
-    p.tempat_lahir,
-    p.tanggal_lahir,
-    p.nomor_telepon,
-    p.jenis_kelamin,
-    p.pendidikan_terakhir,
-    p.alamat,
+    u.name,
+    u.tempat_lahir,
+    u.tanggal_lahir,
+    u.nomor_telepon,
+    u.jenis_kelamin,
+    u.pendidikan_terakhir,
+    u.alamat,
     pel.curiculum_vitae,
     pel.pengalaman_kerja
 FROM
     user u
-JOIN
-    profile p ON u.id_user = p.id_user
 JOIN
     pelamaran pel ON u.id_user = pel.id_user
 WHERE
@@ -85,7 +83,7 @@ $conn->close();
                                     <div class="mb-3">
                                         <label class="form-label">Nama Lengkap</label>
                                         <input type="text" class="form-control"
-                                            value="<?= $dataPelamar['nama_lengkap'] ?>" disabled>
+                                            value="<?= $dataPelamar['name'] ?>" disabled>
                                     </div>
 
                                     <div class="mb-3">

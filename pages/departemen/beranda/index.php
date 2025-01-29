@@ -11,8 +11,11 @@ $result = $conn->query($totalQuery);
 $totalRecords = $result->fetch_assoc()['total'];
 $totalPages = ceil($totalRecords / $recordsPerPage);
 
-$queryStr = "SELECT id_lowongan, nama_lowongan, poster_lowongan FROM lowongan LIMIT $recordsPerPage OFFSET $offset";
-$dataResult = $conn->query($queryStr);
+$queryStr = "SELECT id_lowongan, nama_lowongan, poster_lowongan, closed FROM lowongan l JOIN permintaan p ON l.id_permintaan = p.id_permintaan JOIN user u ON p.id_user = u.id_user WHERE p.id_user = ? LIMIT $recordsPerPage OFFSET $offset";
+$stmt = $conn->prepare($queryStr);
+$stmt->bind_param("i", $_SESSION['user']['id_user']);
+$stmt->execute();
+$dataResult = $stmt->get_result();
 $conn->close();
 ?>
 
@@ -82,11 +85,16 @@ $conn->close();
                                             $detailUrl = $baseDetailUrl . '?' . http_build_query($params);
                                             ?>
                                             <li class="list-group-item">
-                                                <div class="d-flex gap-3 gap-md-4 flex-column flex-md-row align-items-center">
+                                                <div class="d-flex gap-3 gap-md-4 flex-column flex-md-row align-items-start">
                                                     <img src="<?= '/sistem-penerimaan-karyawan/assets/uploads/poster/' . $row['poster_lowongan'] ?>"
                                                         alt="" style="width: 150px">
                                                     <div class="d-flex flex-column text-center text-lg-start">
-                                                        <h3><?= htmlspecialchars($row['nama_lowongan']); ?></h3>
+                                                        <div>
+                                                            <h3><?= htmlspecialchars($row['nama_lowongan']); ?></h3>
+                                                            <?php if ($row['closed']): ?>
+                                                                <p><i>Closed</i></p>
+                                                            <?php endif; ?>
+                                                        </div>
                                                         <a href="<?= $detailUrl ?>" class="btn btn-secondary">Lihat
                                                             Selengkapnya</a>
                                                     </div>

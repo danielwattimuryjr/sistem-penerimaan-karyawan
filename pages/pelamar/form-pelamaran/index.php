@@ -98,7 +98,9 @@ $profile = $resultProfile->fetch_assoc();
                                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                                         aria-expanded="false"><?= $_SESSION['user']['name'] ?? 'name' ?></a>
                                     <ul class="dropdown-menu dropdown-menu-lg-end rounded shadow">
-                                        <li><a class="dropdown-item" href="help-category-alt.html">Profile</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="/sistem-penerimaan-karyawan/pages/pelamar/profile">Profile</a>
+                                        </li>
                                         <li><a class="dropdown-item text-danger"
                                                 href="/sistem-penerimaan-karyawan/pages/public/landing-page/logout.php">Logout</a>
                                         </li>
@@ -199,10 +201,12 @@ $profile = $resultProfile->fetch_assoc();
                                             disabled><?= $profile['alamat'] ?></textarea>
                                     </div>
 
-                                    <div class="input-group mb-3">
+                                    <div class="mb-3">
                                         <label class="form-label">Pengalaman Kerja</label>
-                                        <input type="number" name="pengalaman_kerja" min="1" class="form-control">
-                                        <span class="input-group-text" id="basic-addon2">Tahun</span>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" name="pengalaman_kerja">
+                                            <span class="input-group-text" id="basic-addon2">Tahun</span>
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">

@@ -1,6 +1,7 @@
 <?php
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
+require_once('./../../../functions/string-helpers.php');
 
 $permintaanQuery = "
     SELECT p.id_permintaan, p.jumlah_permintaan, u.name
@@ -14,6 +15,17 @@ $status = 'Disetujui';
 $stmt->bind_param('s', $status);
 $stmt->execute();
 $result = $stmt->get_result();
+
+$faktorPenilaian = [
+    'tes_tertulis',
+    'tes_wawancara',
+    'tes_praktek',
+    'tes_psikotes',
+    'tes_kesehatan',
+    'pendidikan',
+    'umur',
+    'pengalaman_kerja'
+];
 ?>
 
 <!DOCTYPE html>
@@ -57,13 +69,13 @@ $result = $stmt->get_result();
             <div class="page-content">
                 <section class="row">
                     <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title">Tambah Lowongan Pekerjaan</h5>
-                            </div>
-                            <div class="card-body">
-                                <form action="post-lowongan-request.php" method="post" class="mt-4"
-                                    enctype="multipart/form-data">
+                        <form action="post-lowongan-request.php" method="post" class="mt-4"
+                            enctype="multipart/form-data">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Tambah Lowongan Pekerjaan</h5>
+                                </div>
+                                <div class="card-body">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Nama Lowongan</label>
                                         <input type="text" name="nama_lowongan" id="" class="form-control" required>
@@ -103,8 +115,8 @@ $result = $stmt->get_result();
                                     </div>
                                     <div class="mb-4">
                                         <label for="" class="form-label">Deskripsi Pekerjaan</label>
-                                        <textarea name="deskripsi" id="" cols="30" rows="5" class="form-control"
-                                            required></textarea>
+                                        <textarea name="deskripsi" id="default" cols="30" rows="5"
+                                            class="form-control"></textarea>
                                     </div>
 
                                     <p>Isi persyaratan untuk lowongan, pada bagian di bawah ini:</p>
@@ -131,16 +143,56 @@ $result = $stmt->get_result();
                                         </div>
                                     </div>
 
-                                    <div class="input-group mb-3">
+                                    <div class="mb-3">
                                         <label class="form-label">Pengalaman Kerja</label>
-                                        <input type="number" name="pengalaman_kerja" min="1" class="form-control">
-                                        <span class="input-group-text" id="basic-addon2">Tahun</span>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" name="pengalaman_kerja">
+                                            <span class="input-group-text" id="basic-addon2">Tahun</span>
+                                        </div>
                                     </div>
-
-                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                </form>
+                                </div>
                             </div>
-                        </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Faktor Penilaian</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nama Kriteria</th>
+                                                    <th>Bobot</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ($faktorPenilaian as $namaFaktor): ?>
+                                                    <tr>
+                                                        <td><?= toTitleCase($namaFaktor) ?></td>
+                                                        <td>
+                                                            <input type="number" name="<?= "fp_$namaFaktor" ?>"
+                                                                class="form-control bobot-input" required
+                                                                data-index="<?= $index ?>" min="0" max="1" step="0.01">
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Total Bobot</td>
+                                                    <td>
+                                                        <input type="number" id="total-bobot" class="form-control"
+                                                            disabled>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </form>
                     </div>
                 </section>
             </div>
@@ -158,6 +210,36 @@ $result = $stmt->get_result();
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
     <script src="/sistem-penerimaan-karyawan/assets/js/sweet-alert.js"></script>
+    <script>
+        const bobotInputs = document.querySelectorAll('.bobot-input');
+        const totalBobotField = document.getElementById('total-bobot');
+
+        function calculateTotal() {
+            let total = 0;
+            bobotInputs.forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                total += value;
+            });
+            return total;
+        }
+
+        function updateTotalBobot() {
+            const total = calculateTotal();
+            totalBobotField.value = total;
+
+            if (total > 1) {
+                alert('Total bobot tidak boleh lebih dari 1!');
+                this.value = '';
+                updateTotalBobot();
+            }
+        }
+
+        // Add event listeners to all inputs
+        bobotInputs.forEach(input => {
+            input.addEventListener('input', updateTotalBobot);
+        });
+    </script>
+
     </body>
 
 </html>

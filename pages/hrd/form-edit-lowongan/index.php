@@ -1,6 +1,7 @@
 <?php
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
+require_once('./../../../functions/string-helpers.php');
 
 $idLowongan = $_GET['id_lowongan'];
 if (!isset($idLowongan)) {
@@ -16,7 +17,8 @@ $lowonganQuery = "SELECT
     l.deskripsi,
     l.tgl_mulai,
     l.tgl_selesai,
-    l.id_permintaan
+    l.id_permintaan,
+    l.closed
 FROM lowongan l
 JOIN permintaan p ON l.id_permintaan = p.id_permintaan
 WHERE l.id_lowongan = ?";
@@ -25,6 +27,13 @@ $lowonganStmt->bind_param('i', $idLowongan);
 $lowonganStmt->execute();
 $lowonganResult = $lowonganStmt->get_result();
 $lowonganData = $lowonganResult->fetch_assoc();
+
+if ($lowonganData['closed']) {
+    $message = 'Lowongan ini sudah ditutup. Tidak bisa diubah lagi';
+    header("Location: /sistem-penerimaan-karyawan/pages/hrd/beranda?type=error&message=" . urlencode($message));
+    exit();
+}
+
 if (!$lowonganResult->num_rows) {
     $message = 'Lowongan tidak ditemukan';
     header("Location: /sistem-penerimaan-karyawan/pages/hrd/beranda?type=error&message=" . urlencode($message));
@@ -58,6 +67,32 @@ $persyaratanStmt->bind_param('i', $idLowongan);
 $persyaratanStmt->execute();
 $persyaratanResult = $persyaratanStmt->get_result();
 $persyaratanData = $persyaratanResult->fetch_assoc();
+
+$faktorPenilaianQuery = "SELECT
+    nama_faktor,
+    bobot
+FROM faktor_penilaian
+WHERE id_lowongan = ?";
+$faktorPenilaianStmt = $conn->prepare($faktorPenilaianQuery);
+$faktorPenilaianStmt->bind_param('i', $idLowongan);
+$faktorPenilaianStmt->execute();
+$faktorPenilaianResult = $faktorPenilaianStmt->get_result();
+
+$fpData = [];
+while ($row = $faktorPenilaianResult->fetch_assoc()) {
+    $fpData[$row['nama_faktor']] = $row['bobot'];
+}
+
+$faktorPenilaian = [
+    'tes_tertulis',
+    'tes_wawancara',
+    'tes_praktek',
+    'tes_psikotes',
+    'tes_kesehatan',
+    'pendidikan',
+    'umur',
+    'pengalaman_kerja'
+];
 ?>
 
 <!DOCTYPE html>
@@ -101,13 +136,13 @@ $persyaratanData = $persyaratanResult->fetch_assoc();
             <div class="page-content">
                 <section class="row">
                     <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title">Edit Lowongan Pekerjaan</h5>
-                            </div>
-                            <div class="card-body">
-                                <form action="edit-lowongan-request.php" method="post" class="mt-4"
-                                    enctype="multipart/form-data">
+                        <form action="edit-lowongan-request.php" method="post" class="mt-4"
+                            enctype="multipart/form-data">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Edit Lowongan Pekerjaan</h5>
+                                </div>
+                                <div class="card-body">
                                     <input type="hidden" name="id_lowongan" value="<?= $lowonganData['id_lowongan'] ?>">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Nama Lowongan</label>
@@ -155,8 +190,8 @@ $persyaratanData = $persyaratanResult->fetch_assoc();
                                     </div>
                                     <div class="mb-4">
                                         <label for="" class="form-label">Deskripsi Pekerjaan</label>
-                                        <textarea name="deskripsi" id="" cols="30" rows="5" class="form-control"
-                                            required><?= $lowonganData['deskripsi'] ?></textarea>
+                                        <textarea name="deskripsi" id="default" cols="30" rows="5"
+                                            class="form-control"><?= $lowonganData['deskripsi'] ?></textarea>
                                     </div>
 
                                     <p>Isi persyaratan untuk lowongan, pada bagian di bawah ini:</p>
@@ -184,17 +219,60 @@ $persyaratanData = $persyaratanResult->fetch_assoc();
                                         </div>
                                     </div>
 
-                                    <div class="input-group mb-3">
+                                    <div class="mb-3">
                                         <label class="form-label">Pengalaman Kerja</label>
-                                        <input type="number" value="<?= $persyaratanData['pengalaman_kerja'] ?>"
-                                            name="pengalaman_kerja" min="1" class="form-control">
-                                        <span class="input-group-text" id="basic-addon2">Tahun</span>
+                                        <div class="input-group">
+                                            <input type="number" value="<?= $persyaratanData['pengalaman_kerja'] ?>"
+                                                class="form-control" name="pengalaman_kerja">
+                                            <span class="input-group-text" id="basic-addon2">Tahun</span>
+                                        </div>
                                     </div>
 
-                                    <button type="submit" class="btn btn-warning">Update</button>
-                                </form>
+                                </div>
                             </div>
-                        </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Faktor Penilaian</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nama Kriteria</th>
+                                                    <th>Bobot</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ($faktorPenilaian as $namaFaktor): ?>
+                                                    <tr>
+                                                        <td><?= toTitleCase($namaFaktor) ?></td>
+                                                        <td>
+                                                            <input type="number" name="<?= "fp_$namaFaktor" ?>"
+                                                                class="form-control bobot-input" required
+                                                                data-index="<?= $index ?>"
+                                                                value="<?= $fpData[$namaFaktor] ?>" min="0" max="1"
+                                                                step="0.01">
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Total Bobot</td>
+                                                    <td>
+                                                        <input type="number" id="total-bobot" class="form-control"
+                                                            disabled>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-warning">Update</button>
+                        </form>
                     </div>
                 </section>
             </div>
@@ -212,6 +290,35 @@ $persyaratanData = $persyaratanResult->fetch_assoc();
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
     <script src="/sistem-penerimaan-karyawan/assets/js/sweet-alert.js"></script>
+    <script>
+        const bobotInputs = document.querySelectorAll('.bobot-input');
+        const totalBobotField = document.getElementById('total-bobot');
+
+        function calculateTotal() {
+            let total = 0;
+            bobotInputs.forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                total += value;
+            });
+            return total;
+        }
+
+        function updateTotalBobot() {
+            const total = calculateTotal();
+            totalBobotField.value = total;
+
+            if (total > 1) {
+                alert('Total bobot tidak boleh lebih dari 1!');
+                this.value = '';
+                updateTotalBobot();
+            }
+        }
+
+        // Add event listeners to all inputs
+        bobotInputs.forEach(input => {
+            input.addEventListener('input', updateTotalBobot);
+        });
+    </script>
     </body>
 
 </html>

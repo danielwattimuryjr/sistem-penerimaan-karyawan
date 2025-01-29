@@ -2,6 +2,7 @@
 require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
+require_once('./../../../functions/string-helpers.php');
 
 $id_lowongan = $_GET['id_lowongan'] ?? null;
 if (!$id_lowongan) {
@@ -18,6 +19,32 @@ $stmt->bind_param("i", $id_lowongan);
 $stmt->execute();
 $getPersyaratanResult = $stmt->get_result();
 $persyaratan = $getPersyaratanResult->fetch_assoc();
+
+$faktorPenilaianQuery = "SELECT
+    nama_faktor,
+    bobot
+FROM faktor_penilaian
+WHERE id_lowongan = ?";
+$faktorPenilaianStmt = $conn->prepare($faktorPenilaianQuery);
+$faktorPenilaianStmt->bind_param('i', $id_lowongan);
+$faktorPenilaianStmt->execute();
+$faktorPenilaianResult = $faktorPenilaianStmt->get_result();
+
+$fpData = [];
+while ($row = $faktorPenilaianResult->fetch_assoc()) {
+    $fpData[$row['nama_faktor']] = $row['bobot'];
+}
+
+$faktorPenilaian = [
+    'tes_tertulis',
+    'tes_wawancara',
+    'tes_praktek',
+    'tes_psikotes',
+    'tes_kesehatan',
+    'pendidikan',
+    'umur',
+    'pengalaman_kerja'
+];
 ?>
 
 <!DOCTYPE html>
@@ -63,6 +90,9 @@ $persyaratan = $getPersyaratanResult->fetch_assoc();
                 <section class="row">
                     <div class="col-12">
                         <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Detail Lowongan</h5>
+                            </div>
                             <div class="card-body">
                                 <div
                                     class="d-flex flex-column flex-lg-row gap-3 align-items-center align-items-lg-start">
@@ -84,6 +114,34 @@ $persyaratan = $getPersyaratanResult->fetch_assoc();
 
                                         <a href="/sistem-penerimaan-karyawan/pages/hrd/form-edit-lowongan?id_lowongan=<?= $lowongan['id_lowongan'] ?>"
                                             class="btn btn-warning">Update Lamaran</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Faktor Penilaian</h5>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nama Kriteria</th>
+                                                    <th>Bobot</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ($faktorPenilaian as $namaFaktor): ?>
+                                                    <tr>
+                                                        <td><?= toTitleCase($namaFaktor) ?></td>
+                                                        <td>
+                                                            <?= $fpData[$namaFaktor] ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>

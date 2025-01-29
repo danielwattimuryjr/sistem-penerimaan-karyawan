@@ -46,7 +46,7 @@ require_once('./../../../functions/page-protection.php');
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="card-title">Welcome back, ... . 👋</h5>
+                                <h5 class="card-title">Welcome back, <?= $_SESSION['user']['name'] ?>!! 👋</h5>
                             </div>
                             <div class="card-body">
 
