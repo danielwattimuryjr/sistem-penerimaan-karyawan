@@ -133,9 +133,9 @@ CREATE TABLE IF NOT EXISTS hasil (
     id_pelamaran INT(11),
     status ENUM('Diterima', 'Ditolak') NULL,
     PRIMARY KEY (id_hasil),
-    CONSTRAINT fk_hasil_penilaian
-     FOREIGN KEY (id_penilaian)
-     REFERENCES penilaian (id_penilaian)
+    CONSTRAINT fk_hasil_pelamaran
+     FOREIGN KEY (id_pelamaran)
+     REFERENCES pelamaran (id_pelamaran)
      ON DELETE CASCADE
      ON UPDATE CASCADE
 );
@@ -229,6 +229,7 @@ CREATE VIEW vektor_v_weighted_product AS
 SELECT
     vswp.id_lowongan,
     p.id_pelamaran,
+    h.id_hasil, -- Tambahkan id_hasil dari tabel hasil
     u.id_user,
     u.name AS nama_pelamar,
     vswp.vektor_s,
@@ -246,4 +247,5 @@ SELECT
          WHERE vswp2.id_lowongan = vswp.id_lowongan) DESC) AS peringkat
 FROM vektor_s_weighted_product vswp
 JOIN pelamaran p ON vswp.id_lowongan = p.id_lowongan
-JOIN user u ON p.id_user = u.id_user;
+JOIN user u ON p.id_user = u.id_user
+LEFT JOIN hasil h ON p.id_pelamaran = h.id_pelamaran; -- Tambahkan LEFT JOIN ke tabel hasil

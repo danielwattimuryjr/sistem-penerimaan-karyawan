@@ -3,24 +3,17 @@ require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
-$queryStr = "
-SELECT
-    h.id_hasil,
-    h.hasil_akhir,
-    h.peringkat,
-    u.nama_lengkap,
-    d.nama_divisi,
-    p.id_pelamaran,
-    h.status
-FROM hasil h
-JOIN penilaian pn ON h.id_penilaian = pn.id_penilaian
-JOIN pelamaran p ON pn.id_pelamaran = p.id_pelamaran
-JOIN user u ON p.id_user = u.id_user
-JOIN lowongan l ON p.id_lowongan = l.id_lowongan
-JOIN permintaan pm ON l.id_permintaan = pm.id_permintaan
-JOIN divisi d ON pm.id_divisi = d.id_divisi
-ORDER BY h.peringkat ASC
-";
+$queryStr = "SELECT
+	l.nama_lowongan,
+    vvwp.nama_pelamar as nama_lengkap,
+    vvwp.vektor_y as hasil_akhir,
+    vvwp.peringkat,
+    h.status,
+    vvwp.id_hasil
+FROM vektor_v_weighted_product vvwp
+JOIN lowongan l ON vvwp.id_lowongan = l.id_lowongan
+JOIN hasil h ON vvwp.id_hasil = h.id_hasil
+ORDER BY l.nama_lowongan, vvwp.peringkat;";
 
 $stmt = $conn->prepare($queryStr);
 $stmt->execute();
@@ -79,6 +72,7 @@ $conn->close();
                                         <thead>
                                             <tr>
                                                 <th>No</th>
+                                                <th>Lowongan</th>
                                                 <th>Nama</th>
                                                 <th>Nilai Akhir</th>
                                                 <th>Peringkat</th>
@@ -90,6 +84,7 @@ $conn->close();
                                             <?php foreach ($result as $res) { ?>
                                                 <tr>
                                                     <td><?= $no++ ?></td>
+                                                    <td><?= $res['nama_lowongan'] ?></td>
                                                     <td><?= htmlspecialchars($res['nama_lengkap']) ?></td>
                                                     <td><?= $res['hasil_akhir'] ?></td>
                                                     <td><?= $res['peringkat'] ?></td>
