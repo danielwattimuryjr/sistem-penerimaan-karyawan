@@ -17,14 +17,14 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 $faktorPenilaian = [
-    'tes_tertulis',
-    'tes_wawancara',
-    'tes_praktek',
-    'tes_psikotes',
-    'tes_kesehatan',
-    'pendidikan',
-    'umur',
-    'pengalaman_kerja'
+    'tes_tertulis' => 0.05,
+    'tes_wawancara' => 0.1,
+    'tes_praktek' => 0.3,
+    'tes_psikotes' => 0.1,
+    'tes_kesehatan' => 0.05,
+    'pendidikan' => 0.1,
+    'umur' => 0.1,
+    'pengalaman_kerja' => 0.2
 ];
 ?>
 
@@ -167,13 +167,14 @@ $faktorPenilaian = [
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php foreach ($faktorPenilaian as $namaFaktor): ?>
+                                                <?php foreach ($faktorPenilaian as $namaFaktor => $defaultBobot): ?>
                                                     <tr>
                                                         <td><?= toTitleCase($namaFaktor) ?></td>
                                                         <td>
                                                             <input type="number" name="<?= "fp_$namaFaktor" ?>"
                                                                 class="form-control bobot-input" required
-                                                                data-index="<?= $index ?>" min="0" max="1" step="0.01">
+                                                                data-index="<?= $index ?>" min="0"
+                                                                value="<?= $defaultBobot ?>" max="1" step="0.01">
                                                         </td>
                                                     </tr>
                                                 <?php endforeach; ?>
@@ -183,7 +184,7 @@ $faktorPenilaian = [
                                                     <td>Total Bobot</td>
                                                     <td>
                                                         <input type="number" id="total-bobot" class="form-control"
-                                                            disabled>
+                                                            value="1" disabled>
                                                     </td>
                                                 </tr>
                                             </tfoot>

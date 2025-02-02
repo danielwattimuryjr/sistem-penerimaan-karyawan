@@ -168,84 +168,79 @@ VALUES
 
 CREATE VIEW vektor_s_weighted_product AS
 SELECT
-   l.id_lowongan,
-   u.id_user,
-   p.id_pelamaran,
-   u.name as nama_pelamar,
-   -- Nilai asli
-   MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN COALESCE(pn.nilai, 0) END) as nilai_tes_tertulis,
-   MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN COALESCE(pn.nilai, 0) END) as nilai_tes_wawancara,
-   MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN COALESCE(pn.nilai, 0) END) as nilai_tes_praktek,
-   MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN COALESCE(pn.nilai, 0) END) as nilai_tes_psikotes,
-   MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN COALESCE(pn.nilai, 0) END) as nilai_tes_kesehatan,
-   MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN COALESCE(pn.nilai, 0) END) as nilai_pendidikan,
-   MAX(CASE WHEN fp.nama_faktor = 'umur' THEN COALESCE(pn.nilai, 0) END) as nilai_umur,
-   MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN COALESCE(pn.nilai, 0) END) as nilai_pengalaman_kerja,
+    l.id_lowongan,
+    u.id_user,
+    p.id_pelamaran,
+    u.name AS nama_pelamar,
 
-   -- Nilai dipangkatkan bobot
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN fp.bobot END)) as nilai_tes_tertulis_pow_bobot,
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN fp.bobot END)) as nilai_tes_wawancara_pow_bobot,
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN fp.bobot END)) as nilai_tes_praktek_pow_bobot,
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN fp.bobot END)) as nilai_tes_psikotes_pow_bobot,
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN fp.bobot END)) as nilai_tes_kesehatan_pow_bobot,
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN fp.bobot END)) as nilai_pendidikan_pow_bobot,
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'umur' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'umur' THEN fp.bobot END)) as nilai_umur_pow_bobot,
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN fp.bobot END)) as nilai_pengalaman_kerja_pow_bobot,
+    -- Nilai asli setiap faktor
+    COALESCE(MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN pn.nilai END), 0) AS nilai_tes_tertulis,
+    COALESCE(MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN pn.nilai END), 0) AS nilai_tes_wawancara,
+    COALESCE(MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN pn.nilai END), 0) AS nilai_tes_praktek,
+    COALESCE(MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN pn.nilai END), 0) AS nilai_tes_psikotes,
+    COALESCE(MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN pn.nilai END), 0) AS nilai_tes_kesehatan,
+    COALESCE(MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN pn.nilai END), 0) AS nilai_pendidikan,
+    COALESCE(MAX(CASE WHEN fp.nama_faktor = 'umur' THEN pn.nilai END), 0) AS nilai_umur,
+    COALESCE(MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN pn.nilai END), 0) AS nilai_pengalaman_kerja,
 
-   -- Jumlah total nilai yang sudah dipangkat bobot (Vektor S)
-   (POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN fp.bobot END)) *
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN fp.bobot END)) *
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN fp.bobot END)) *
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN fp.bobot END)) *
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN fp.bobot END)) *
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN fp.bobot END)) *
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'umur' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'umur' THEN fp.bobot END)) *
-   POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN COALESCE(pn.nilai, 0) END), 0),
-         MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN fp.bobot END))) as vektor_s
-FROM lowongan l
-JOIN pelamaran p ON l.id_lowongan = p.id_lowongan
+    -- Nilai dipangkatkan dengan bobot (untuk referensi)
+    POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN pn.nilai END), 0),
+          MAX(CASE WHEN fp.nama_faktor = 'tes_tertulis' THEN fp.bobot END)) AS nilai_tes_tertulis_pow_bobot,
+    POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN pn.nilai END), 0),
+          MAX(CASE WHEN fp.nama_faktor = 'tes_wawancara' THEN fp.bobot END)) AS nilai_tes_wawancara_pow_bobot,
+    POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN pn.nilai END), 0),
+          MAX(CASE WHEN fp.nama_faktor = 'tes_praktek' THEN fp.bobot END)) AS nilai_tes_praktek_pow_bobot,
+    POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN pn.nilai END), 0),
+          MAX(CASE WHEN fp.nama_faktor = 'tes_psikotes' THEN fp.bobot END)) AS nilai_tes_psikotes_pow_bobot,
+    POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN pn.nilai END), 0),
+          MAX(CASE WHEN fp.nama_faktor = 'tes_kesehatan' THEN fp.bobot END)) AS nilai_tes_kesehatan_pow_bobot,
+    POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN pn.nilai END), 0),
+          MAX(CASE WHEN fp.nama_faktor = 'pendidikan' THEN fp.bobot END)) AS nilai_pendidikan_pow_bobot,
+    POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'umur' THEN pn.nilai END), 0),
+          MAX(CASE WHEN fp.nama_faktor = 'umur' THEN fp.bobot END)) AS nilai_umur_pow_bobot,
+    POWER(NULLIF(MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN pn.nilai END), 0),
+          MAX(CASE WHEN fp.nama_faktor = 'pengalaman_kerja' THEN fp.bobot END)) AS nilai_pengalaman_kerja_pow_bobot,
+
+    -- Perhitungan vektor S menggunakan ekspresi log-sum-exp untuk stabilitas
+    EXP(SUM(
+        COALESCE(
+            CASE
+                WHEN fp.nama_faktor = 'tes_tertulis' THEN fp.bobot * LOG(NULLIF(pn.nilai, 0))
+                WHEN fp.nama_faktor = 'tes_wawancara' THEN fp.bobot * LOG(NULLIF(pn.nilai, 0))
+                WHEN fp.nama_faktor = 'tes_praktek' THEN fp.bobot * LOG(NULLIF(pn.nilai, 0))
+                WHEN fp.nama_faktor = 'tes_psikotes' THEN fp.bobot * LOG(NULLIF(pn.nilai, 0))
+                WHEN fp.nama_faktor = 'tes_kesehatan' THEN fp.bobot * LOG(NULLIF(pn.nilai, 0))
+                WHEN fp.nama_faktor = 'pendidikan' THEN fp.bobot * LOG(NULLIF(pn.nilai, 0))
+                WHEN fp.nama_faktor = 'umur' THEN fp.bobot * LOG(NULLIF(pn.nilai, 0))
+                WHEN fp.nama_faktor = 'pengalaman_kerja' THEN fp.bobot * LOG(NULLIF(pn.nilai, 0))
+            END, 0)
+    )) AS vektor_s
+
+FROM pelamaran p
+JOIN lowongan l ON p.id_lowongan = l.id_lowongan
 JOIN user u ON p.id_user = u.id_user
 JOIN faktor_penilaian fp ON l.id_lowongan = fp.id_lowongan
-LEFT JOIN penilaian pn ON p.id_pelamaran = pn.id_pelamaran
-   AND fp.id_faktor = pn.id_faktor
+LEFT JOIN penilaian pn ON p.id_pelamaran = pn.id_pelamaran AND fp.id_faktor = pn.id_faktor
 GROUP BY l.id_lowongan, p.id_pelamaran, u.name;
 
 CREATE VIEW vektor_v_weighted_product AS
 SELECT
     vswp.id_lowongan,
     p.id_pelamaran,
-    h.id_hasil, -- Tambahkan id_hasil dari tabel hasil
+    h.id_hasil,
     u.id_user,
     u.name AS nama_pelamar,
     vswp.vektor_s,
-    (SELECT SUM(vswp2.vektor_s)
-     FROM vektor_s_weighted_product vswp2
-     WHERE vswp2.id_lowongan = vswp.id_lowongan) AS jumlah_vektor_s,
-    vswp.vektor_s /
-    (SELECT SUM(vswp2.vektor_s)
-     FROM vektor_s_weighted_product vswp2
-     WHERE vswp2.id_lowongan = vswp.id_lowongan) AS vektor_y,
-    RANK() OVER (PARTITION BY vswp.id_lowongan ORDER BY
-        vswp.vektor_s /
-        (SELECT SUM(vswp2.vektor_s)
-         FROM vektor_s_weighted_product vswp2
-         WHERE vswp2.id_lowongan = vswp.id_lowongan) DESC) AS peringkat
+
+    SUM(vswp2.vektor_s) AS jumlah_vektor_s,
+
+    vswp.vektor_s / SUM(vswp2.vektor_s) AS vektor_y,
+
+    DENSE_RANK() OVER (PARTITION BY vswp.id_lowongan ORDER BY vswp.vektor_s DESC) AS peringkat
+
 FROM vektor_s_weighted_product vswp
-JOIN pelamaran p ON vswp.id_lowongan = p.id_lowongan
+JOIN pelamaran p ON vswp.id_pelamaran = p.id_pelamaran
 JOIN user u ON p.id_user = u.id_user
-LEFT JOIN hasil h ON p.id_pelamaran = h.id_pelamaran; -- Tambahkan LEFT JOIN ke tabel hasil
+LEFT JOIN hasil h ON p.id_pelamaran = h.id_pelamaran
+JOIN vektor_s_weighted_product vswp2 ON vswp.id_lowongan = vswp2.id_lowongan
+GROUP BY vswp.id_lowongan, p.id_pelamaran, h.id_hasil, u.id_user, u.name, vswp.vektor_s;
