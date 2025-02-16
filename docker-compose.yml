@@ -1,0 +1,29 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Php.Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      - db
+
+  db:
+    container_name: mysql-db
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: sistem_penerimaan_karyawan
+      MYSQL_USER: db-user
+      MYSQL_PASSWORD: db-password
+      MYSQL_RANDOM_ROOT_PASSWORD: "1"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    ports:
+      - "8181:80"
+    environment:
+      PMA_HOST: db

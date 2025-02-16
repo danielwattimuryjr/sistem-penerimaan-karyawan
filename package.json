@@ -1,0 +1,8 @@
+{
+  "name": "php-docker-template",
+  "packageManager": "yarn@4.3.1",
+  "scripts": {
+    "start": "docker-compose up --build -d",
+    "stop": "docker-compose down"
+  }
+}
