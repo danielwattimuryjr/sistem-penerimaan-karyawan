@@ -10,9 +10,9 @@ if (!$idPermintaan) {
 }
 
 $permintaanQuery = "
-    SELECT 
-        p.id_permintaan, 
-        p.jumlah_permintaan, 
+    SELECT
+        p.id_permintaan,
+        p.jumlah_permintaan,
         u.name,
         d.nama_divisi
     FROM permintaan p
@@ -53,7 +53,7 @@ $lastDayOfMonth = date('Y-m-t'); // Last day of the current month
         type="image/x-icon">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
-    
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/scss/pages/sweetalert2.scss">
@@ -62,7 +62,7 @@ $lastDayOfMonth = date('Y-m-t'); // Last day of the current month
 </head>
 
 <>
-    
+
     <!-- Start content here -->
 
     <div id="app">
@@ -92,24 +92,28 @@ $lastDayOfMonth = date('Y-m-t'); // Last day of the current month
                                     <div class="mb-3">
                                         <label for="" class="form-label">Nama Lowongan</label>
                                         <input type="hidden" name="nama_lowongan" value="<?= $result['nama_divisi'] ?>">
-                                        <input type="text" name="" id="" class="form-control"  value="<?= $result['nama_divisi'] ?>" disabled required>
+                                        <input type="text" name="" id="" class="form-control"
+                                            value="<?= $result['nama_divisi'] ?>" disabled required>
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-12 col-lg-6">
                                             <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
-                                            <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="form-control" required
-                                                min="<?= $today; ?>" max="<?= $lastDayOfMonth; ?>">
+                                            <input type="date" name="tanggal_mulai" id="tanggal_mulai"
+                                                class="form-control" min="<?= $today; ?>" max="<?= $lastDayOfMonth; ?>"
+                                                required>
                                         </div>
                                         <div class="col-12 col-lg-6">
                                             <label for="tanggal_selesai" class="form-label">Tanggal Selesai</label>
-                                            <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="form-control" required
-                                                min="<?= $today; ?>" max="<?= $lastDayOfMonth; ?>">
+                                            <input type="date" name="tanggal_selesai" id="tanggal_selesai"
+                                                class="form-control" min="<?= $today; ?>" required>
                                         </div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="" class="form-label">Permintaan</label>
                                         <input type="hidden" name="id_permintaan" value="<?= $idPermintaan ?>">
-                                        <input type="text" class="form-control" value="Department: <?= $result['name'] ?>; Divisi: <?= $result['nama_divisi'] ?>; Jumlah: <?= $result['jumlah_permintaan'] ?>"  required disabled>
+                                        <input type="text" class="form-control"
+                                            value="Department: <?= $result['name'] ?>; Divisi: <?= $result['nama_divisi'] ?>; Jumlah: <?= $result['jumlah_permintaan'] ?>"
+                                            required disabled>
                                     </div>
                                     <div class="mb-3">
                                         <label for="" class="form-label">Poster Lowongan</label>
@@ -165,15 +169,15 @@ $lastDayOfMonth = date('Y-m-t'); // Last day of the current month
                                             </thead>
                                             <tbody>
                                                 <?php foreach ($faktorPenilaian as $namaFaktor => $defaultBobot): ?>
-                                                                                                                            <tr>
-                                                                                                                                <td><?= toTitleCase($namaFaktor) ?></td>
-                                                                                                                                <td>
-                                                                                                                                    <input type="number" name="<?= "fp_$namaFaktor" ?>"
-                                                                                                                                        class="form-control bobot-input" required
-                                                                                                                                        data-index="<?= $index ?>" min="0"
-                                                                                                                                        value="<?= $defaultBobot ?>" max="1" step="0.01">
-                                                                                                                                </td>
-                                                                                                                            </tr>
+                                                    <tr>
+                                                        <td><?= toTitleCase($namaFaktor) ?></td>
+                                                        <td>
+                                                            <input type="number" name="<?= "fp_$namaFaktor" ?>"
+                                                                class="form-control bobot-input" required
+                                                                data-index="<?= $index ?>" min="0"
+                                                                value="<?= $defaultBobot ?>" max="1" step="0.01">
+                                                        </td>
+                                                    </tr>
                                                 <?php endforeach; ?>
                                             </tbody>
                                             <tfoot>
@@ -199,7 +203,7 @@ $lastDayOfMonth = date('Y-m-t'); // Last day of the current month
     </div>
 
     <!-- End content -->
-    
+
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>

@@ -4,12 +4,12 @@ require_once('./../../../functions/page-protection.php');
 
 $user = $_SESSION['user'];
 
-$queryStr = "SELECT 
-    p.id_permintaan, 
-    p.id_user, 
-    u.name, 
-    p.jumlah_permintaan, 
-    p.status_permintaan, 
+$queryStr = "SELECT
+    p.id_permintaan,
+    p.id_user,
+    u.name,
+    p.jumlah_permintaan,
+    p.status_permintaan,
     l.id_lowongan
 FROM permintaan p
 JOIN user u ON p.id_user = u.id_user
@@ -70,12 +70,7 @@ $conn->close();
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title text-center">Daftar Permintaan Karyawan</h5>
-
-                                    <a href="../form-tambah-permintaan-karyawan" class="btn btn-sm btn-primary">Tambah
-                                        Permintaan</a>
-                                </div>
+                                <h5 class="card-title text-center">Daftar Permintaan Karyawan</h5>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive datatable-minimal">

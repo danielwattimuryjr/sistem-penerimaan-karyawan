@@ -14,12 +14,12 @@ require_once('./../../../functions/check-user-session.php');
         type="image/x-icon">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
-    
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
 </head>
 
 <body>
-    
+
     <!-- Start content here -->
 
     <div id="app">
@@ -29,7 +29,7 @@ require_once('./../../../functions/check-user-session.php');
                     <div class="d-flex flex-column align-items-center">
                         <div class="logo">
                             <img src="/assets/images/app-logo.png" alt="Logo"
-                                style="width: 100px; height: 100px; object-fit: cover;">
+                                style="width: 200px; height: 200px; object-fit: cover;">
                         </div>
                         <h5 class="card-title text-center">Lupa Password</h5>
                     </div>
@@ -57,7 +57,7 @@ require_once('./../../../functions/check-user-session.php');
     </div>
 
     <!-- End content -->
-    
+
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>

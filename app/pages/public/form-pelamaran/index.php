@@ -59,24 +59,13 @@ $lowongan = $getLowonganResult->fetch_assoc();
         <header class="header">
             <div class="container">
                 <nav class="navbar navbar-expand-lg">
-                    <div class="site-logo me-3">
-                        <a class="navbar-brand" href="">
-                            <img src="/assets/images/app-logo.png" alt="logo"
-                                style="width: 100px;">
+                    <div class="d-flex align-items-center justify-content-center" style="width: 100%">
+                        <a href="/pages/public/landing-page">
+                            <img src="/assets/images/app-logo.png" alt="logo" style="width: 150px;">
                         </a>
                     </div><!--//site-logo-->
-
-
-                    <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false"
-                        aria-label="Toggle navigation">
-                        <span> </span>
-                        <span> </span>
-                        <span> </span>
-                    </button>
                 </nav>
             </div><!--//container-->
-
         </header><!--//header-->
     </div><!--//page-header-wrapper-->
 
@@ -109,8 +98,7 @@ $lowongan = $getLowonganResult->fetch_assoc();
                                                 <input type="text" class="form-control" name="tempat_lahir" required>
                                             </div>
                                             <div class="col">
-                                                <input type="date" name="tanggal_lahir"
-                                                    class="form-control" required>
+                                                <input type="date" name="tanggal_lahir" class="form-control" required>
                                             </div>
                                         </div>
                                     </div>
@@ -123,13 +111,15 @@ $lowongan = $getLowonganResult->fetch_assoc();
                                     <div class="mb-3">
                                         <label class="form-label">Jenis Kelamin</label>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" value="1" name="jenis_kelamin" required>
+                                            <input class="form-check-input" type="radio" value="1" name="jenis_kelamin"
+                                                required>
                                             <label class="form-check-label">
                                                 Laki-laki
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" value="0" name="jenis_kelamin" required>
+                                            <input class="form-check-input" type="radio" value="0" name="jenis_kelamin"
+                                                required>
                                             <label class="form-check-label">
                                                 Perempuan
                                             </label>

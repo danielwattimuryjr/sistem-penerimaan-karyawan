@@ -68,22 +68,13 @@ $result = $stmt->get_result();
         <header class="header">
             <div class="container">
                 <nav class="navbar navbar-expand-lg">
-                    <div class="site-logo me-3">
-                        <a class="navbar-brand" href="">
-                            <img src="/assets/images/app-logo.png" alt="logo"
-                                style="width: 100px;">
+                    <div class="d-flex align-items-center justify-content-center" style="width: 100%">
+                        <a href="/pages/public/landing-page">
+                            <img src="/assets/images/app-logo.png" alt="logo" style="width: 150px;">
                         </a>
                     </div><!--//site-logo-->
-                    <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false"
-                        aria-label="Toggle navigation">
-                        <span> </span>
-                        <span> </span>
-                        <span> </span>
-                    </button>
                 </nav>
             </div><!--//container-->
-
         </header><!--//header-->
 
         <div class="page-heading-holder">
@@ -125,7 +116,7 @@ $result = $stmt->get_result();
                         <?php
                         $detailUrl = '/pages/public/detail-lowongan?id_lowongan=' . $l['id_lowongan'];
                         ?>
-        
+
                         <div class="item col-12 col-md-6 py-4 p-md-4">
                             <div class="item-inner shadow rounded-4 p-4">
                                 <a class="item-link" href="<?= $detailUrl ?>">

@@ -70,24 +70,13 @@ $formPelamaranUrl = "/pages/public/form-pelamaran?id_lowongan=$id_lowongan";
         <header class="header">
             <div class="container">
                 <nav class="navbar navbar-expand-lg">
-                    <div class="site-logo me-3">
-                        <a class="navbar-brand" href="">
-                            <img src="/assets/images/app-logo.png" alt="logo"
-                                style="width: 100px;">
+                    <div class="d-flex align-items-center justify-content-center" style="width: 100%">
+                        <a href="/pages/public/landing-page">
+                            <img src="/assets/images/app-logo.png" alt="logo" style="width: 150px;">
                         </a>
                     </div><!--//site-logo-->
-
-
-                    <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false"
-                        aria-label="Toggle navigation">
-                        <span> </span>
-                        <span> </span>
-                        <span> </span>
-                    </button>
                 </nav>
             </div><!--//container-->
-
         </header><!--//header-->
     </div><!--//page-header-wrapper-->
 
@@ -112,8 +101,8 @@ $formPelamaranUrl = "/pages/public/form-pelamaran?id_lowongan=$id_lowongan";
                             </header>
                             <div class="row">
                                 <div class="col-12 col-lg-4">
-                                    <img src="<?= '/assets/uploads/poster/' . $lowongan['poster_lowongan'] ?>"
-                                        alt="" style="width: 300px">
+                                    <img src="<?= '/assets/uploads/poster/' . $lowongan['poster_lowongan'] ?>" alt=""
+                                        style="width: 300px">
                                 </div>
                                 <div class="col-12 col-lg-8">
                                     <h4 class="heading-level-4">Persyaratan :</h4>
@@ -125,8 +114,7 @@ $formPelamaranUrl = "/pages/public/form-pelamaran?id_lowongan=$id_lowongan";
                                             tahun</li>
                                     </ul>
 
-                                    <a href="<?= $formPelamaranUrl ?>"
-                                        class="btn btn-primary">Ajukan Lamaran</a>
+                                    <a href="<?= $formPelamaranUrl ?>" class="btn btn-primary">Ajukan Lamaran</a>
                                 </div>
                             </div>
 

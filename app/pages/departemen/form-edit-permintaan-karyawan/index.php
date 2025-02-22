@@ -102,7 +102,7 @@ $lastDayOfMonth = date('Y-m-t'); // Last day of the current month
                                         <select id="id_divisi" name="id_divisi" class="form-control">
                                             <option selected>-- PILIH POSISI --</option>
                                             <?php foreach ($divisiData as $dd): ?>
-                                                    <option value="<?= $dd['id_divisi'] ?>"><?= $dd['nama_divisi'] ?></option>
+                                                <option value="<?= $dd['id_divisi'] ?>"><?= $dd['nama_divisi'] ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -147,13 +147,15 @@ $lastDayOfMonth = date('Y-m-t'); // Last day of the current month
                                     <div class="row mb-3">
                                         <div class="col-12 col-lg-6">
                                             <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
-                                            <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="form-control" required
-                                                min="<?= $today; ?>" max="<?= $lastDayOfMonth; ?>" value="<?= $getPermintaanResult['tanggal_mulai'] ?>">
+                                            <input type="date" name="tanggal_mulai" id="tanggal_mulai"
+                                                class="form-control" min="<?= $today; ?>" max="<?= $lastDayOfMonth; ?>"
+                                                value="<?= $getPermintaanResult['tanggal_mulai'] ?>" required>
                                         </div>
                                         <div class="col-12 col-lg-6">
                                             <label for="tanggal_selesai" class="form-label">Tanggal Selesai</label>
-                                            <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="form-control" required
-                                                min="<?= $today; ?>" max="<?= $lastDayOfMonth; ?>" value="<?= $getPermintaanResult['tanggal_selesai'] ?>">
+                                            <input type="date" name="tanggal_selesai" id="tanggal_selesai"
+                                                class="form-control" min="<?= $today; ?>"
+                                                value="<?= $getPermintaanResult['tanggal_selesai'] ?>" required>
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Submit</button>
