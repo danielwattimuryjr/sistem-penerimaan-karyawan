@@ -13,7 +13,6 @@
 .pnp.*
 
 .env
-vendor
 .DS_Store
 app/assets/uploads/cv/*
 app/assets/uploads/poster/*
