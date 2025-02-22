@@ -33,7 +33,6 @@ $namaLowongan = trim($_POST['nama_lowongan'] ?? '');
 $tanggalMulai = trim($_POST['tanggal_mulai'] ?? '');
 $tanggalSelesai = trim($_POST['tanggal_selesai'] ?? '');
 $idPermintaan = intval($_POST['id_permintaan'] ?? 0);
-$deskripsi = trim($_POST['deskripsi'] ?? '');
 $umur = intval($_POST['umur'] ?? 0);
 $pendidikan = trim($_POST['pendidikan'] ?? '');
 $pengalamanKerja = trim($_POST['pengalaman_kerja'] ?? '');
@@ -89,11 +88,11 @@ $conn->begin_transaction();
 try {
     // Insert data into `lowongan` table
     $insertLowonganQuery = "
-        INSERT INTO lowongan (id_permintaan, nama_lowongan, deskripsi, tgl_mulai, tgl_selesai, poster_lowongan)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO lowongan (id_permintaan, nama_lowongan, tgl_mulai, tgl_selesai, poster_lowongan)
+        VALUES (?, ?, ?, ?, ?)
     ";
     $stmtLowongan = $conn->prepare($insertLowonganQuery);
-    $stmtLowongan->bind_param('isssss', $idPermintaan, $namaLowongan, $deskripsi, $tanggalMulai, $tanggalSelesai, $uniqueFileName);
+    $stmtLowongan->bind_param('issss', $idPermintaan, $namaLowongan, $tanggalMulai, $tanggalSelesai, $uniqueFileName);
     $stmtLowongan->execute();
 
     // Get the inserted `lowongan` ID

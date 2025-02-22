@@ -9,7 +9,7 @@ if (!$id_lowongan) {
     header("Location: /pages/public/landing-page");
 }
 
-$getLowonganQueryStr = "SELECT nama_lowongan, deskripsi FROM lowongan LIMIT 1";
+$getLowonganQueryStr = "SELECT nama_lowongan FROM lowongan LIMIT 1";
 $getLowonganResult = $conn->query($getLowonganQueryStr);
 $lowongan = $getLowonganResult->fetch_assoc();
 ?>

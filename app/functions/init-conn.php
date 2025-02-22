@@ -1,13 +1,8 @@
 <?php
 
-require_once ('load-env.php');
+require_once('load-env.php');
 
-$servername = getenv('DB_HOST') ?? "127.0.0.1";
-$username = getenv('DB_USERNAME') ?? "root";
-$password = getenv('DB_PASSWORD') ?? "";
-$database = getenv('DB_DATABASE') ?? "sistem_penerimaan_karyawan";
-
-$conn = mysqli_connect($servername, $username, $password, $database);
+$conn = mysqli_connect(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT);
 
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());

@@ -29,7 +29,7 @@ require_once('./../../../functions/check-user-session.php');
                     <div class="d-flex flex-column align-items-center">
                         <div class="logo">
                             <img src="/assets/images/app-logo.png" alt="Logo"
-                                style="width: 100px; height: 100px; object-fit: cover;">
+                                style="width: 150px; height: 150px; object-fit: cover;">
                         </div>
                         <h5 class="card-title text-center">Login</h5>
                     </div>

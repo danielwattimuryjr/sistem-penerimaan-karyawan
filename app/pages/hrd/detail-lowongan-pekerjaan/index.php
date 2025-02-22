@@ -9,7 +9,7 @@ if (!$id_lowongan) {
     header("Location: /pages/hrd/beranda");
 }
 
-$getLowonganQueryStr = "SELECT id_lowongan, nama_lowongan, deskripsi, poster_lowongan FROM lowongan LIMIT 1";
+$getLowonganQueryStr = "SELECT id_lowongan, nama_lowongan, poster_lowongan FROM lowongan LIMIT 1";
 $getLowonganResult = $conn->query($getLowonganQueryStr);
 $lowongan = $getLowonganResult->fetch_assoc();
 
@@ -77,8 +77,6 @@ $persyaratan = $getPersyaratanResult->fetch_assoc();
 
                                     <div class="d-flex flex-column text-start">
                                         <h2><?= $lowongan['nama_lowongan'] ?></h2>
-                                        <h5>Deskripsi Pekerjaan :</h5>
-                                        <p><?= $lowongan['deskripsi'] ?></p>
 
                                         <h5>Persyaratan :</h5>
                                         <ul>

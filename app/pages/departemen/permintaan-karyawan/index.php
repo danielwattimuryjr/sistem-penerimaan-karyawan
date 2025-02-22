@@ -1,9 +1,6 @@
 <?php
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
-if (!$_SESSION['user']) {
-    header("Location: /pages/auth/sign-in");
-}
 
 $user = $_SESSION['user'];
 
@@ -39,7 +36,7 @@ $conn->close();
         type="image/x-icon">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
-    
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
@@ -51,7 +48,7 @@ $conn->close();
 </head>
 
 <body>
-    
+
     <!-- Start content here -->
 
     <div id="app">
@@ -96,52 +93,54 @@ $conn->close();
                                         <tbody>
                                             <?php $no = 1 ?>
                                             <?php foreach ($result as $res): ?>
-                                                    <?php
-                                                    $baseEditUrl = '/pages/departemen/form-edit-permintaan-karyawan';
-                                                    $baseDeleteUrl = '/pages/departemen/permintaan-karyawan/delete.php';
-                                                    $baseDetailUrl = '/pages/departemen/detail-permintaan';
-                                                    $params = ['id_permintaan' => $res['id_permintaan']];
-                                                    $editUrl = $baseEditUrl . '?' . http_build_query($params);
-                                                    $deleteUrl = $baseDeleteUrl . '?' . http_build_query($params);
-                                                    $detailUrl = $baseDetailUrl . '?' . http_build_query($params);
-                                                    ?>
-                                                    <tr>
-                                                        <td><?= $no++ ?></td>
-                                                        <td><?= $res['name'] ?></td>
-                                                        <td><?= $res['jumlah_permintaan'] ?></td>
-                                                        <td>
-                                                            <span
-                                                                class="badge
+                                                <?php
+                                                $baseEditUrl = '/pages/departemen/form-edit-permintaan-karyawan';
+                                                $baseDeleteUrl = '/pages/departemen/permintaan-karyawan/delete.php';
+                                                $baseDetailUrl = '/pages/departemen/detail-permintaan';
+                                                $params = ['id_permintaan' => $res['id_permintaan']];
+                                                $editUrl = $baseEditUrl . '?' . http_build_query($params);
+                                                $deleteUrl = $baseDeleteUrl . '?' . http_build_query($params);
+                                                $detailUrl = $baseDetailUrl . '?' . http_build_query($params);
+                                                ?>
+                                                <tr>
+                                                    <td><?= $no++ ?></td>
+                                                    <td><?= $res['name'] ?></td>
+                                                    <td><?= $res['jumlah_permintaan'] ?></td>
+                                                    <td>
+                                                        <span
+                                                            class="badge
                                                             <?= $res['status_permintaan'] === 'Disetujui' ? 'bg-success' : 'bg-danger'; ?>">
-                                                                <?= htmlspecialchars(ucfirst($res['status_permintaan'])); ?>
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            <?php if ($res['id_lowongan']): ?>
-                                                                    <a href="/pages/departemen/detail-lowongan-pekerjaan?id_lowongan=<?= $res['id_lowongan'] ?>">Lihat Lowongan</a>
-                                                            <?php else: ?>
-                                                                    <p>Belum ada lowongan</p>
-                                                            <?php endif; ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php if ($res['status_permintaan'] === 'Disetujui'): ?>
-                                                                                    <p class="text-success">Permintaan ini telah disetujui.</p>
-                                                                                    <a href="<?= $detailUrl ?>">Detail</a>
-                                                            <?php elseif ($res['status_permintaan'] === 'Ditolak'): ?>
-                                                                                    <p class="text-danger">Permintaan ini telah ditolak.</p>
-                                                                                    <a href="<?= $detailUrl ?>">Detail</a>
-                                                            <?php else: ?>
-                                                                                    <div class="btn-group">
-                                                                                        <a type="button" class="btn btn-sm btn-warning"
-                                                                                            href="<?= $editUrl ?>">Update</a>
-                                                                                        <a type="button" class="btn btn-sm btn-danger"
-                                                                                            href="<?= $deleteUrl ?>">Delete</a>
-                                                                                        <a type="button" class="btn btn-sm btn-primary"
-                                                                                            href="<?= $detailUrl ?>">Detail</a>
-                                                                                    </div>
-                                                            <?php endif; ?>
-                                                        </td>
-                                                    </tr>
+                                                            <?= htmlspecialchars(ucfirst($res['status_permintaan'])); ?>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <?php if ($res['id_lowongan']): ?>
+                                                            <a
+                                                                href="/pages/departemen/detail-lowongan-pekerjaan?id_lowongan=<?= $res['id_lowongan'] ?>">Lihat
+                                                                Lowongan</a>
+                                                        <?php else: ?>
+                                                            <p>Belum ada lowongan</p>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php if ($res['status_permintaan'] === 'Disetujui'): ?>
+                                                            <p class="text-success">Permintaan ini telah disetujui.</p>
+                                                            <a href="<?= $detailUrl ?>">Detail</a>
+                                                        <?php elseif ($res['status_permintaan'] === 'Ditolak'): ?>
+                                                            <p class="text-danger">Permintaan ini telah ditolak.</p>
+                                                            <a href="<?= $detailUrl ?>">Detail</a>
+                                                        <?php else: ?>
+                                                            <div class="btn-group">
+                                                                <a type="button" class="btn btn-sm btn-warning"
+                                                                    href="<?= $editUrl ?>">Update</a>
+                                                                <a type="button" class="btn btn-sm btn-danger"
+                                                                    href="<?= $deleteUrl ?>">Delete</a>
+                                                                <a type="button" class="btn btn-sm btn-primary"
+                                                                    href="<?= $detailUrl ?>">Detail</a>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                </tr>
                                             <?php endforeach; ?>
                                         </tbody>
                                     </table>
@@ -156,7 +155,7 @@ $conn->close();
     </div>
 
     <!-- End content -->
-    
+
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>

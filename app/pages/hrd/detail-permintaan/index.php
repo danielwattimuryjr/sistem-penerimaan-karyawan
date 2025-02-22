@@ -12,9 +12,10 @@ if (!$id_permintaan) {
     header("Location: /pages/departemen/beranda?type=$type&message=" . urlencode($message));
     exit();
 }
-$getPermintaanQueryStr = "SELECT p.id_permintaan, p.tanggal_permintaan, u.name, p.posisi, p.jumlah_permintaan, p.jenis_kelamin, p.status_kerja, p.tanggal_mulai, p.tanggal_selesai, p.status_permintaan
+$getPermintaanQueryStr = "SELECT p.id_permintaan, p.tanggal_permintaan, u.name, d.nama_divisi AS posisi, p.jumlah_permintaan, p.jenis_kelamin, p.status_kerja, p.tanggal_mulai, p.tanggal_selesai, p.status_permintaan
 FROM permintaan p
 JOIN user u ON p.id_user = u.id_user
+JOIN divisi d ON p.id_divisi = d.id_divisi
 WHERE p.id_permintaan = ?
 LIMIT 1";
 
@@ -35,7 +36,7 @@ $permintaan = $getPermintaanStmt->get_result()->fetch_assoc();
         type="image/x-icon">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
-    
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/scss/pages/sweetalert2.scss">
@@ -44,7 +45,7 @@ $permintaan = $getPermintaanStmt->get_result()->fetch_assoc();
 </head>
 
 <body>
-    
+
     <!-- Start content here -->
 
     <div id="app">
@@ -113,7 +114,7 @@ $permintaan = $getPermintaanStmt->get_result()->fetch_assoc();
     </div>
 
     <!-- End content -->
-    
+
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>

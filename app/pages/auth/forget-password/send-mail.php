@@ -6,19 +6,6 @@ require_once('./../../../functions/load-env.php');
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-$MAIL_MAILER = getenv('MAIL_MAILER');
-$MAIL_USERNAME = getenv('MAIL_USERNAME');
-$MAIL_PASSWORD = getenv('MAIL_PASSWORD');
-$MAIL_PORT = getenv('MAIL_PORT');
-$MAIL_EMAIL = getenv('MAIL_EMAIL');
-
-if (!$MAIL_MAILER || !$MAIL_USERNAME || !$MAIL_PASSWORD || !$MAIL_PORT || !$MAIL_EMAIL) {
-    $type = 'error';
-    $message = 'Mailer belum disetup';
-    header("Location: /pages/auth/forget-password?type=$type&message=" . urlencode($message));
-    exit();
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $emailTo = trim($_POST['email']);
 
@@ -43,14 +30,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
-            $mail->Host = $MAIL_MAILER;
+            $mail->Host = MAIL_HOST;
             $mail->SMTPAuth = true;
-            $mail->Username = $MAIL_EMAIL;
-            $mail->Password = $MAIL_PASSWORD;
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = $MAIL_PORT;
+            $mail->Username = MAIL_ADDRESS;
+            $mail->Password = MAIL_PASSWORD;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = MAIL_PORT;
 
-            $mail->setFrom($MAIL_EMAIL, $MAIL_USERNAME);
+            $mail->setFrom(MAIL_ADDRESS, MAIL_USERNAME);
             $mail->addAddress($emailTo);
 
             $mail->isHTML(true);

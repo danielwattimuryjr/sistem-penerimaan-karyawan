@@ -8,7 +8,7 @@ if (!$id_lowongan) {
     header("Location: /pages/public/landing-page");
 }
 
-$getLowonganQueryStr = "SELECT nama_lowongan, deskripsi, poster_lowongan, tanggal_mulai, u.name, p.jenis_kelamin FROM lowongan l JOIN permintaan p ON l.id_permintaan = p.id_permintaan JOIN user u ON p.id_user = u.id_user WHERE id_lowongan = ?";
+$getLowonganQueryStr = "SELECT nama_lowongan, poster_lowongan, tanggal_mulai, u.name, p.jenis_kelamin FROM lowongan l JOIN permintaan p ON l.id_permintaan = p.id_permintaan JOIN user u ON p.id_user = u.id_user WHERE id_lowongan = ?";
 $getLowonganStmt = $conn->prepare($getLowonganQueryStr);
 $getLowonganStmt->bind_param('i', $id_lowongan);
 $getLowonganStmt->execute();
@@ -116,8 +116,6 @@ $formPelamaranUrl = "/pages/public/form-pelamaran?id_lowongan=$id_lowongan";
                                         alt="" style="width: 300px">
                                 </div>
                                 <div class="col-12 col-lg-8">
-                                    <?= $lowongan['deskripsi'] ?>
-
                                     <h4 class="heading-level-4">Persyaratan :</h4>
                                     <ul class="article-list">
                                         <li><?= str_replace(',', ' atau ', $lowongan['jenis_kelamin']) ?>

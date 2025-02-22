@@ -2,15 +2,8 @@
 
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../vendor/autoload.php');
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-
-$MAIL_MAILER = getenv('MAIL_MAILER');
-$MAIL_USERNAME = getenv('MAIL_USERNAME');
-$MAIL_PASSWORD = getenv('MAIL_PASSWORD');
-$MAIL_PORT = getenv('MAIL_PORT');
-$MAIL_EMAIL = getenv('MAIL_EMAIL');
 
 function redirect($type, $message)
 {
@@ -18,75 +11,97 @@ function redirect($type, $message)
     exit();
 }
 
-if (!$MAIL_MAILER || !$MAIL_USERNAME || !$MAIL_PASSWORD || !$MAIL_PORT || !$MAIL_EMAIL) {
-    $type = 'error';
-    $message = 'Mailer belum disetup';
-    redirect($type, $message);
+function kirimEmail($toEmail, $subject, $message)
+{
+    $mail = new PHPMailer(true);
+    try {
+        //Server settings
+        $mail->isSMTP();
+        $mail->Host = MAIL_HOST;
+        $mail->SMTPAuth = true;
+        $mail->Username = MAIL_ADDRESS;
+        $mail->Password = MAIL_PASSWORD;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = MAIL_PORT;
+
+        //Recipients
+        $mail->setFrom(MAIL_ADDRESS, MAIL_USERNAME); // Sender's email
+        $mail->addAddress($toEmail); // Add recipient
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = $message;
+
+        // Send email
+        $mail->send();
+    } catch (Exception $e) {
+        // Log error if needed
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_hasil = $_POST['id_hasil'] ?? null;
     $status = $_POST['status'] ?? null;
-    $mail = new PHPMailer(true);
 
     if ($id_hasil && $status) {
-        $query = "UPDATE hasil SET status = ? WHERE id_hasil = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("si", $status, $id_hasil);
+        $conn->begin_transaction();
 
-        if ($stmt->execute()) {
-            // Get Email Pengguna
-            $pelamaranDataQuery = "SELECT
-                p.email,
-                l.nama_lowongan
-            FROM hasil h
-            JOIN pelamaran p ON h.id_pelamaran = p.id_pelamaran
-            JOIN lowongan l ON p.id_lowongan = l.id_lowongan   -- Perbaiki ini
-            WHERE h.id_hasil = ?;";
-            $pelamaranDataStmt = $conn->prepare($pelamaranDataQuery);
-            $pelamaranDataStmt->bind_param('i', $id_hasil);
-            $pelamaranDataStmt->execute();
-            $pelamaranData = $pelamaranDataStmt->get_result()->fetch_assoc();
-            $pelamaranDataStmt->execute();
-            if ($pelamaranData['email'] !== null) {
-                $emailTo = $pelamaranData['email'];
-                $lowonganName = $pelamaranData['nama_lowongan'];
-                try {
-                    $mail->isSMTP();
-                    $mail->Host = $MAIL_MAILER;
-                    $mail->SMTPAuth = true;
-                    $mail->Username = $MAIL_EMAIL;
-                    $mail->Password = $MAIL_PASSWORD;
-                    $mail->SMTPSecure = 'tls';
-                    $mail->Port = $MAIL_PORT;
+        try {
+            // Ambil ID divisi dari hasil pelamaran terkait
+            $sqlDivisi = "SELECT per.id_divisi
+                  FROM hasil h
+                  JOIN pelamaran pel ON h.id_pelamaran = pel.id_pelamaran
+                  JOIN lowongan l ON pel.id_lowongan = l.id_lowongan
+                  JOIN permintaan per ON l.id_permintaan = per.id_permintaan
+                  WHERE h.id_hasil = ?";
+            $stmt = $conn->prepare($sqlDivisi);
+            $stmt->bind_param("i", $id_hasil);
+            $stmt->execute();
+            $resultDivisi = $stmt->get_result();
+            $divisi = $resultDivisi->fetch_assoc();
+            $idDivisi = $divisi['id_divisi'];
 
-                    $mail->setFrom($MAIL_EMAIL, $MAIL_USERNAME);
-                    $mail->addAddress($emailTo);
+            // Ambil data pelamaran untuk dipindahkan ke karyawan
+            $sqlPelamaran = "SELECT * FROM pelamaran WHERE id_pelamaran = (SELECT id_pelamaran FROM hasil WHERE id_hasil = ?)";
+            $stmt = $conn->prepare($sqlPelamaran);
+            $stmt->bind_param("i", $id_hasil);
+            $stmt->execute();
+            $resultPelamaran = $stmt->get_result();
+            $pelamaran = $resultPelamaran->fetch_assoc();
 
-                    $mail->isHTML(true);
-                    $mail->Subject = 'Hasil Penilaian';
-                    $mail->Body = $status === 'Diterima'
-                        ? "<p><b>Selamat!</b> Anda telah <b>diterima</b> dalam lowongan <i>$lowonganName</i></p>"
-                        : "<p><b>Maaf,</b> Anda telah <b>ditolak</b> dalam lowongan <i>$lowonganName</i></p>";
+            // Ambil status pelamaran (misalnya "Diterima" atau "Ditolak")
+            $sqlStatus = "UPDATE hasil SET status = ? WHERE id_hasil = ?";
+            $stmt = $conn->prepare($sqlStatus);
+            $stmt->bind_param("si", $status, $id_hasil);
+            $stmt->execute();
+            if ($stmt->affected_rows > 0) {
+                if ($status === 'Diterima') {
+                    // Jika status diterima, pindahkan ke tabel karyawan
+                    $sqlInsertKaryawan = "INSERT INTO karyawan (id_divisi, name, email, tempat_lahir, tanggal_lahir, nomor_telepon, jenis_kelamin, pendidikan_terakhir, alamat)
+                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($sqlInsertKaryawan);
+                    $stmt->bind_param("issssssss", $idDivisi, $pelamaran['name'], $pelamaran['email'], $pelamaran['tempat_lahir'], $pelamaran['tanggal_lahir'], $pelamaran['nomor_telepon'], $pelamaran['jenis_kelamin'], $pelamaran['pendidikan_terakhir'], $pelamaran['alamat']);
+                    $stmt->execute();
 
-                    if ($mail->send()) {
-                        $type = 'success';
-                        $message = "Status hasil berhasil diperbarui.";
-                    } else {
-                        $type = 'error';
-                        $message = "Terjadi kesalahan saat mengirim email";
-                    }
-                } catch (Exception $e) {
-                    $type = 'error';
-                    $message = "Gagal mengirim email: {$mail->ErrorInfo}";
+                    // Kirim email (contoh email sukses)
+                    kirimEmail($pelamaran['email'], "Selamat, Anda Diterima", "Anda telah diterima sebagai karyawan. Selamat bergabung!");
+                } elseif ($status === 'Ditolak') {
+                    // Kirim email (contoh email ditolak)
+                    kirimEmail($pelamaran['email'], "Mohon Maaf, Anda Ditolak", "Kami mohon maaf, Anda tidak diterima untuk posisi yang Anda lamar.");
                 }
             }
-        } else {
-            $type = 'error';
-            $message = "Gagal memperbarui status: " . $stmt->error;
-        }
 
-        $stmt->close();
+            // Commit transaksi
+            $conn->commit();
+
+            redirect('success', 'Status berhasil diubah.');
+        } catch (Exception $e) {
+            // Jika terjadi error, rollback transaksi
+            $conn->rollback();
+            redirect('error', "Terjadi kesalahan: " . $e->getMessage());
+        }
     } else {
         $type = 'error';
         $message = "ID hasil atau status tidak valid.";

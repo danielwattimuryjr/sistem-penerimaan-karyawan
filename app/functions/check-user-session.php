@@ -13,11 +13,8 @@ if (isset($_SESSION['user'])) {
         case 'HRD':
             header("Location: /pages/hrd/beranda");
             break;
-        case 'Pelamar':
-            header("Location: /pages/public/landing-page");
-            break;
         default:
-            header("Location: /pages/auth/sign-in");
+            header("Location: /pages/public/landing-page");
             break;
     }
 }

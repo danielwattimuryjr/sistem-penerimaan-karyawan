@@ -22,7 +22,6 @@ $namaLowongan = trim($_POST['nama_lowongan'] ?? '');
 $tanggalMulai = trim($_POST['tanggal_mulai'] ?? '');
 $tanggalSelesai = trim($_POST['tanggal_selesai'] ?? '');
 $idPermintaan = intval($_POST['id_permintaan'] ?? 0);
-$deskripsi = trim($_POST['deskripsi'] ?? '');
 $umur = intval($_POST['umur'] ?? 0);
 $pendidikan = trim($_POST['pendidikan'] ?? '');
 $pengalamanKerja = trim($_POST['pengalaman_kerja'] ?? '');
@@ -100,13 +99,13 @@ try {
     // Update `lowongan` data
     $updateLowonganQuery = "
         UPDATE lowongan
-        SET nama_lowongan = ?, deskripsi = ?, tgl_mulai = ?, tgl_selesai = ?, id_permintaan = ? $posterUpdateQuery
+        SET nama_lowongan = ?, tgl_mulai = ?, tgl_selesai = ?, id_permintaan = ? $posterUpdateQuery
         WHERE id_lowongan = ?
     ";
     $stmtLowongan = $conn->prepare($updateLowonganQuery);
 
     $params = array_merge(
-        [$namaLowongan, $deskripsi, $tanggalMulai, $tanggalSelesai, $idPermintaan],
+        [$namaLowongan, $tanggalMulai, $tanggalSelesai, $idPermintaan],
         $posterUpdateParams,
         [$idLowongan]
     );

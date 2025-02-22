@@ -145,9 +145,10 @@ $conn->close();
 
                                     <div class="mb-3">
                                         <label class="form-label">Pengalaman Kerja</label>
-                                        <textarea name="pengalaman_kerja" id="test" cols="30" rows="5"
-                                            class="form-control" required><?= $dataPelamar['pengalaman_kerja'] ?>
-                    </textarea>
+                                        <div class="input-group">
+                                            <input type="number" name="pengalaman_kerja" id="" value="<?= $dataPelamar['pengalaman_kerja'] ?>" class="form-control" required disabled>
+                                            <span class="input-group-text" id="basic-addon2">Tahun</span>
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">

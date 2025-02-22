@@ -15,7 +15,7 @@ require_once('./../../../functions/page-protection.php');
         type="image/x-icon">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
-    
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/scss/pages/sweetalert2.scss">
@@ -24,7 +24,7 @@ require_once('./../../../functions/page-protection.php');
 </head>
 
 <body>
-    
+
     <!-- Start content here -->
 
     <div id="app">
@@ -57,7 +57,7 @@ require_once('./../../../functions/page-protection.php');
     </div>
 
     <!-- End content -->
-    
+
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>

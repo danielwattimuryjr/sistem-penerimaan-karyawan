@@ -15,16 +15,17 @@ $lowonganQuery = "SELECT
     l.nama_lowongan,
     l.poster_lowongan,
     l.id_permintaan,
-    l.deskripsi,
     l.tgl_mulai,
     l.tgl_selesai,
     l.id_permintaan,
     l.closed,
     p.jumlah_permintaan,
-    u.name
+    u.name,
+    d.nama_divisi
 FROM lowongan l
 JOIN permintaan p ON l.id_permintaan = p.id_permintaan
 JOIN user u ON p.id_user = u.id_user
+JOIN divisi d ON p.id_divisi = d.id_divisi
 WHERE l.id_lowongan = ?";
 $lowonganStmt = $conn->prepare($lowonganQuery);
 $lowonganStmt->bind_param('i', $idLowongan);
@@ -81,6 +82,9 @@ $faktorPenilaian = [
     'umur',
     'pengalaman_kerja'
 ];
+
+$today = date('Y-m-d'); // Current date
+$lastDayOfMonth = date('Y-m-t'); // Last day of the current month
 ?>
 
 <!DOCTYPE html>
@@ -134,27 +138,26 @@ $faktorPenilaian = [
                                     <input type="hidden" name="id_lowongan" value="<?= $lowonganData['id_lowongan'] ?>">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Nama Lowongan</label>
-                                        <input type="text" name="nama_lowongan" id="" class="form-control"
-                                            value="<?= $lowonganData['nama_lowongan'] ?>" required>
+                                        <input type="hidden" name="nama_lowongan" id="" class="form-control"
+                                            value="<?= $lowonganData['nama_lowongan'] ?>">
+                                        <input type="text" class="form-control" disabled required value="<?= $lowonganData['nama_divisi'] ?>">
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-12 col-lg-6">
-                                            <label for="" class="form-label">Tanggal Mulai</label>
-                                            <input type="date" name="tanggal_mulai" id="" class="form-control"
-                                                value="<?= $lowonganData['tgl_mulai'] ?>" required
-                                                min="<?php echo date('Y-m-d'); ?>">
+                                            <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
+                                            <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="form-control" required
+                                                min="<?= $today; ?>" max="<?= $lastDayOfMonth; ?>" value="<?= $lowonganData['tgl_mulai'] ?>">
                                         </div>
                                         <div class="col-12 col-lg-6">
-                                            <label for="" class="form-label">Tanggal Selesai</label>
-                                            <input type="date" name="tanggal_selesai" id="" class="form-control"
-                                                value="<?= $lowonganData['tgl_selesai'] ?>" required
-                                                min="<?php echo date('Y-m-d'); ?>">
+                                            <label for="tanggal_selesai" class="form-label">Tanggal Selesai</label>
+                                            <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="form-control" required
+                                                min="<?= $today; ?>" max="<?= $lastDayOfMonth; ?>" value="<?= $lowonganData['tgl_selesai'] ?>">
                                         </div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="" class="form-label">Permintaan</label>
                                         <input type="hidden" name="id_permintaan" value="<?= $lowonganData['id_permintaan'] ?>">
-                                        <input type="text" class="form-control" disabled required value="<?= $lowonganData['name'] . ' - ' . $lowonganData['jumlah_permintaan'] ?>">
+                                        <input type="text" class="form-control" disabled required value="Department: <?= $lowonganData['name'] ?>; Divisi: <?= $lowonganData['nama_divisi'] ?>; Jumlah: <?= $lowonganData['jumlah_permintaan'] ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label for="" class="form-label">Poster Lowongan</label>
@@ -162,11 +165,6 @@ $faktorPenilaian = [
                                         <div class="form-text">Poster saat ini: <a
                                                 href="/assets/uploads/poster/<?= $lowonganData['poster_lowongan'] ?>"
                                                 target="_blank"><?= $lowonganData['poster_lowongan'] ?></a></div>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="" class="form-label">Deskripsi Pekerjaan</label>
-                                        <textarea name="deskripsi" id="default" cols="30" rows="5"
-                                            class="form-control"><?= $lowonganData['deskripsi'] ?></textarea>
                                     </div>
 
                                     <p>Isi persyaratan untuk lowongan, pada bagian di bawah ini:</p>
@@ -221,16 +219,16 @@ $faktorPenilaian = [
                                             </thead>
                                             <tbody>
                                                 <?php foreach ($faktorPenilaian as $namaFaktor): ?>
-                                                                                <tr>
-                                                                                    <td><?= toTitleCase($namaFaktor) ?></td>
-                                                                                    <td>
-                                                                                        <input type="number" name="<?= "fp_$namaFaktor" ?>"
-                                                                                            class="form-control bobot-input" required
-                                                                                            data-index="<?= $index ?>"
-                                                                                            value="<?= $fpData[$namaFaktor] ?>" min="0" max="1"
-                                                                                            step="0.01">
-                                                                                    </td>
-                                                                                </tr>
+                                                                                                                                <tr>
+                                                                                                                                    <td><?= toTitleCase($namaFaktor) ?></td>
+                                                                                                                                    <td>
+                                                                                                                                        <input type="number" name="<?= "fp_$namaFaktor" ?>"
+                                                                                                                                            class="form-control bobot-input" required
+                                                                                                                                            data-index="<?= $index ?>"
+                                                                                                                                            value="<?= $fpData[$namaFaktor] ?>" min="0" max="1"
+                                                                                                                                            step="0.01">
+                                                                                                                                    </td>
+                                                                                                                                </tr>
                                                 <?php endforeach; ?>
                                             </tbody>
                                             <tfoot>

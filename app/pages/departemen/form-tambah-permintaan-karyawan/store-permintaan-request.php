@@ -1,10 +1,15 @@
 <?php
 require_once('./../../../functions/init-conn.php');
 
+// Log request data
+// file_put_contents('log_post.txt', print_r($_POST, true)); // Simpan di file untuk debugging
+// echo json_encode($_POST);
+// exit();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tanggal_permintaan = $_POST['tanggal_permintaan'] ?? null;
+    $id_user = $_POST['id_user'] ?? null;
     $id_divisi = $_POST['id_divisi'] ?? null;
-    $posisi = $_POST['posisi'] ?? null;
     $jumlah_permintaan = $_POST['jumlah_permintaan'] ?? null;
     $jenis_kelamin = $_POST['jenis_kelamin'] ?? null;
     $status_kerja = $_POST['status_kerja'] ?? null;
@@ -13,8 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (
         !$tanggal_permintaan &&
-        (!$id_divisi || is_null($id_divisi) || !is_numeric($id_divisi)) &&
-        !$posisi &&
+        (!$id_user || is_null($id_user) || !is_numeric($id_user)) &&
+        !$id_divisi &&
         (!$jumlah_permintaan || $jumlah_permintaan < 1 || !is_numeric($jumlah_permintaan)) &&
         is_null($jenis_kelamin) &&
         !$status_kerja &&
@@ -30,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query = "INSERT INTO permintaan (
             tanggal_permintaan,
             id_user,
-            posisi,
+            id_divisi,
             jumlah_permintaan,
             jenis_kelamin,
             status_kerja,
@@ -39,10 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ) VALUES (?,?,?,?,?,?,?,?)";
         $stmt = $conn->prepare($query);
         $stmt->bind_param(
-            "sisissss",
+            "siiissss",
             $tanggal_permintaan,
+            $id_user,
             $id_divisi,
-            $posisi,
             $jumlah_permintaan,
             $jenis_kelamin,
             $status_kerja,

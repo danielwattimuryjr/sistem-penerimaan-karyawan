@@ -31,10 +31,42 @@ CREATE TABLE IF NOT EXISTS user (
      ON UPDATE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS divisi (
+    id_divisi INT(11) AUTO_INCREMENT,
+    id_user INT(11),
+    nama_divisi VARCHAR(100),
+    jumlah_personil INT(11),
+    PRIMARY KEY (id_divisi),
+    CONSTRAINT fk_divisi_user
+     FOREIGN KEY (id_user)
+     REFERENCES user (id_user)
+     ON DELETE CASCADE
+     ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS karyawan (
+    id_karyawan INT(11) AUTO_INCREMENT,
+    id_divisi INT(11),
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    tempat_lahir VARCHAR(50) NOT NULL,
+    tanggal_lahir DATE NOT NULL,
+    nomor_telepon VARCHAR(13) NOT NULL,
+    jenis_kelamin BOOLEAN NOT NULL,
+    pendidikan_terakhir ENUM('SMA/SMK', 'Diploma', 'Sarjana') NOT NULL,
+    alamat TEXT NOT NULL,
+    PRIMARY KEY (id_karyawan),
+    CONSTRAINT fk_karyawan_divisi
+     FOREIGN KEY (id_divisi)
+     REFERENCES divisi (id_divisi)
+     ON DELETE CASCADE
+     ON UPDATE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS permintaan (
     id_permintaan INT(11) AUTO_INCREMENT,
     id_user INT(11),
-    posisi VARCHAR(50),
+    id_divisi INT(11),
     -- TRUE = PRIA
     -- FALSE = WANITA
     jenis_kelamin SET('Laki-laki', 'Perempuan') NOT NULL,
@@ -45,7 +77,8 @@ CREATE TABLE IF NOT EXISTS permintaan (
     status_permintaan ENUM('Pending', 'Disetujui', 'Ditolak') DEFAULT 'Pending',
     tanggal_permintaan DATE,
     PRIMARY KEY (id_permintaan),
-    CONSTRAINT fk_permintaan_user FOREIGN KEY (id_user) REFERENCES user (id_user) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT fk_permintaan_user FOREIGN KEY (id_user) REFERENCES user (id_user) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_permintaan_divisi FOREIGN KEY (id_divisi) REFERENCES divisi (id_divisi) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS lowongan (
@@ -53,7 +86,6 @@ CREATE TABLE IF NOT EXISTS lowongan (
     id_permintaan INT(11),
     nama_lowongan VARCHAR(100),
     poster_lowongan VARCHAR(255),
-    deskripsi LONGTEXT,
     tgl_mulai DATE,
     tgl_selesai DATE,
     closed BOOLEAN DEFAULT FALSE,
@@ -164,10 +196,9 @@ INSERT INTO user
 VALUES
     ('user.admin', 'admin@app.com', 'password', 'Admin', 'Admin'),
     ('user.hrd', 'hrd@app.com', 'password', 'HRD', 'HRD'),
-    ('user.general-manager', 'general-manager@app.com', 'password', 'General Manager', 'General Manager'),
-    ('user.pelamar', 'pelamar@app.com', 'password', 'Pelamar', 'Pelamar');
+    ('user.general-manager', 'general-manager@app.com', 'password', 'General Manager', 'General Manager');
 
-CREATE VIEW vektor_s_weighted_product AS
+CREATE OR REPLACE VIEW vektor_s_weighted_product AS
 SELECT
     l.id_lowongan,
     p.id_pelamaran,
@@ -222,7 +253,7 @@ JOIN faktor_penilaian fp ON l.id_lowongan = fp.id_lowongan
 LEFT JOIN penilaian pn ON p.id_pelamaran = pn.id_pelamaran AND fp.id_faktor = pn.id_faktor
 GROUP BY l.id_lowongan, p.id_pelamaran, p.name;
 
-CREATE VIEW vektor_v_weighted_product AS
+CREATE OR REPLACE VIEW vektor_v_weighted_product AS
 SELECT
     vswp.id_lowongan,
     p.id_pelamaran,
@@ -241,3 +272,20 @@ JOIN pelamaran p ON vswp.id_pelamaran = p.id_pelamaran
 LEFT JOIN hasil h ON p.id_pelamaran = h.id_pelamaran
 JOIN vektor_s_weighted_product vswp2 ON vswp.id_lowongan = vswp2.id_lowongan
 GROUP BY vswp.id_lowongan, p.id_pelamaran, h.id_hasil, p.name, vswp.vektor_s;
+
+CREATE OR REPLACE VIEW divisi_status AS
+SELECT 
+    u.id_user AS id_department,
+    u.name AS nama_department,
+    d.id_divisi,
+    d.nama_divisi,
+    d.jumlah_personil,
+    COUNT(k.id_karyawan) AS current_karyawan,
+    CASE 
+        WHEN COUNT(k.id_karyawan) < d.jumlah_personil THEN 1
+        ELSE 0
+    END AS isInNeed
+FROM divisi d
+LEFT JOIN user u ON d.id_user = u.id_user
+LEFT JOIN karyawan k ON d.id_divisi = k.id_divisi
+GROUP BY d.id_divisi, u.id_user, u.name, d.nama_divisi, d.jumlah_personil;
