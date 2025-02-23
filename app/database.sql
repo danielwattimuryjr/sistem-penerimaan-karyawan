@@ -184,19 +184,10 @@ CREATE TABLE IF NOT EXISTS password_resets (
      ON DELETE CASCADE
 );
 
-INSERT INTO jabatan
-(nama_jabatan)
-VALUES
-    ('J1'),
-    ('J2'),
-    ('J3');
-
 INSERT INTO user
     (user_name, email, password, role, name)
 VALUES
-    ('user.admin', 'admin@app.com', 'password', 'Admin', 'Admin'),
-    ('user.hrd', 'hrd@app.com', 'password', 'HRD', 'HRD'),
-    ('user.general-manager', 'general-manager@app.com', 'password', 'General Manager', 'General Manager');
+    ('user.admin', 'admin@app.com', 'password', 'Admin', 'Admin');
 
 CREATE OR REPLACE VIEW vektor_s_weighted_product AS
 SELECT

@@ -14,6 +14,27 @@ function redirectToHome($type, $message)
     exit();
 }
 
+/**
+ * Function untuk memasukkan user ke database.
+ */
+function insertUser($conn, $name, $username, $email, $role, $password)
+{
+    // Cek apakah email sudah ada di database
+    $stmt = $conn->prepare("SELECT id_user FROM user WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    if (!$result || !isset($result['id_user'])) {
+        // Insert user dengan role tertentu
+        $stmt = $conn->prepare("INSERT INTO user (name, user_name, email, role, password) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssss", $name, $username, $email, $role, $password);
+        $stmt->execute();
+        $stmt->close();
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file"])) {
     $file = $_FILES["file"]["tmp_name"];
 
@@ -102,6 +123,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file"])) {
             return strcmp($a["department"], $b["department"]);
         });
 
+        // header("Content-Type: application/json");
+        // echo json_encode($departments, JSON_PRETTY_PRINT);
+        // exit();
+
         mysqli_begin_transaction($conn);
         try {
             foreach ($departments as $dept) {
@@ -109,28 +134,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file"])) {
                 if (strtolower($dept["department"]) === "hrd") {
                     foreach ($dept["divisions"] as $division => $employees) {
                         foreach ($employees as $employee) {
-                            // Buat username dalam format "hrd.nama_dengan_snake_case"
-                            $username = "hrd." . strtolower(str_replace(" ", "_", $employee["name"]));
-                            $password = "password"; // Tidak di-hash sesuai permintaan
-
-                            // Cek apakah user sudah ada berdasarkan email
-                            $stmt = $conn->prepare("SELECT id_user FROM user WHERE email = ?");
-                            $stmt->bind_param("s", $employee["email"]);
-                            $stmt->execute();
-                            $result = $stmt->get_result()->fetch_assoc();
-                            $stmt->close();
-
-                            if (!$result || !isset($result['id_user'])) {
-                                // Insert user dengan role HRD
-                                $stmt = $conn->prepare("INSERT INTO user (name, user_name, email, role, password) VALUES (?, ?, ?, ?, ?)");
-                                $stmt->bind_param("sssss", $employee["name"], $username, $employee["email"], $role, $password);
-                                $role = "HRD"; // Set role HRD
-                                $stmt->execute();
-                                $stmt->close();
-                            }
+                            insertUser($conn, $employee["name"], "hrd." . strtolower(str_replace(" ", "_", $employee["name"])), $employee["email"], "HRD", "password");
                         }
                     }
-                    continue; // Skip proses insert department/division untuk HRD
+                    continue; // Skip insert department/division untuk HRD
+                }
+
+                // Cek apakah department ini adalah "A&G"
+                $isAGDepartment = strtolower($dept["department"]) === "a&g";
+
+                foreach ($dept["divisions"] as $division => $employees) {
+                    foreach ($employees as $employee) {
+                        // Pastikan key "position" ada sebelum mengaksesnya
+                        $position = isset($employee["position"]) ? strtolower(trim($employee["position"])) : null;
+
+                        // Jika departemen A&G dan General Manager, langsung masukkan ke tabel user
+                        if (strtolower($dept["department"]) === "a&g" && strtolower($division) === "general manager") {
+                            insertUser(
+                                $conn,
+                                $employee["name"],
+                                "gm." . strtolower(str_replace(" ", "_", $employee["name"])),
+                                $employee["email"],
+                                "General Manager",
+                                "password"
+                            );
+                            continue; // Lewati proses divisi untuk General Manager
+                        }
+
+                        // Jika key "position" tidak ada, skip untuk menghindari error
+                        if ($position === null) {
+                            continue;
+                        }
+
+                        // Proses insert divisi normal
+                        if (!isset($currentDepartment["divisions"][$division])) {
+                            $currentDepartment["divisions"][$division] = [];
+                        }
+                        $currentDepartment["divisions"][$division][] = $employee;
+                    }
                 }
 
                 // Cek apakah department sudah ada
