@@ -72,7 +72,7 @@ $formPelamaranUrl = "/pages/public/form-pelamaran?id_lowongan=$id_lowongan";
                 <nav class="navbar navbar-expand-lg">
                     <div class="d-flex align-items-center justify-content-center" style="width: 100%">
                         <a href="/pages/public/landing-page">
-                            <img src="/assets/images/app-logo.png" alt="logo" style="width: 150px;">
+                            <img src="/assets/images/app-logo.png" alt="logo" style="width: 200px;">
                         </a>
                     </div><!--//site-logo-->
                 </nav>
