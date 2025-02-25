@@ -4,6 +4,7 @@ require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
 
 $idLowongan = $_POST['id_lowongan'];
+$idUser = $_SESSION['user']['id_user'];
 $namaPelamar = $_POST['name'];
 $email = $_POST['email'];
 $tempatLahir = $_POST['tempat_lahir'];
@@ -54,9 +55,9 @@ if (!move_uploaded_file($fileTmp, $uploadPath)) {
 try {
     $conn->begin_transaction();
 
-    $query = "INSERT INTO pelamaran (name, email, tempat_lahir, tanggal_lahir, nomor_telepon, jenis_kelamin, pendidikan_terakhir, alamat, id_lowongan, pengalaman_kerja, curiculum_vitae) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+    $query = "INSERT INTO pelamaran (name, id_user, email, tempat_lahir, tanggal_lahir, nomor_telepon, jenis_kelamin, pendidikan_terakhir, alamat, id_lowongan, pengalaman_kerja, curiculum_vitae) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param('sssssissiis', $namaPelamar, $email, $tempatLahir, $tanggalLahir, $nomorTelepon, $jenisKelamin, $pendidikanTerakhir, $alamat, $idLowongan, $pengalamanKerja, $uniqueFileName);
+    $stmt->bind_param('sissssissiis', $namaPelamar, $idUser, $email, $tempatLahir, $tanggalLahir, $nomorTelepon, $jenisKelamin, $pendidikanTerakhir, $alamat, $idLowongan, $pengalamanKerja, $uniqueFileName);
 
     if (!$stmt->execute()) {
         throw new Exception("Gagal menyimpan data: " . $stmt->error);

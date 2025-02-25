@@ -2,16 +2,20 @@
 require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
 
-// Get id_lowongan
+$user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $id_lowongan = isset($_GET['id_lowongan']) ? $_GET['id_lowongan'] : null;
-//
+
 if (!$id_lowongan) {
     header("Location: /pages/public/landing-page");
 }
 
-$getLowonganQueryStr = "SELECT nama_lowongan FROM lowongan LIMIT 1";
-$getLowonganResult = $conn->query($getLowonganQueryStr);
-$lowongan = $getLowonganResult->fetch_assoc();
+$sql = "SELECT name, email FROM user WHERE id_user = ? AND role='Pelamar'";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $user['id_user']);
+$stmt->execute();
+$result = $stmt->get_result();
+$data = $result->fetch_assoc();
+$stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,12 +62,31 @@ $lowongan = $getLowonganResult->fetch_assoc();
 
         <header class="header">
             <div class="container">
-                <nav class="navbar navbar-expand-lg">
+                <nav class="navbar navbar-expand-lg" style="position: relative;">
                     <div class="d-flex align-items-center justify-content-center" style="width: 100%">
                         <a href="/pages/public/landing-page">
                             <img src="/assets/images/app-logo.png" alt="logo" style="width: 200px;">
                         </a>
                     </div><!--//site-logo-->
+
+                    <div style="position: absolute; top: 1em; right: 0;">
+                        <?php if (isset($_SESSION['user'])): ?>
+                            <div class="dropdown">
+                                <button class="btn" type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false"><?= $_SESSION['user']['name'] ?></button>
+
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/pages/public/history">History</a></li>
+                                    <li><a class="dropdown-item text-danger"
+                                            href="/pages/public/landing-page/logout.php">Logout</a></li>
+                                </ul>
+                            </div>
+                        <?php else: ?>
+                            <a class="btn btn-light" href="/pages/public/sign-in">
+                                Sign In
+                            </a>
+                        <?php endif; ?>
+                    </div>
                 </nav>
             </div><!--//container-->
         </header><!--//header-->
@@ -83,12 +106,14 @@ $lowongan = $getLowonganResult->fetch_assoc();
                                     <input type="hidden" name="id_lowongan" value="<?= $id_lowongan ?>">
                                     <div class="mb-3">
                                         <label class="form-label">Nama Lengkap</label>
-                                        <input type="text" class="form-control" name="name" required>
+                                        <input type="text" class="form-control" name="name" value="<?= $data['name'] ?>"
+                                            required>
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" name="email" required>
+                                        <input type="email" class="form-control" name="email"
+                                            value="<?= $data['email'] ?>" required>
                                     </div>
 
                                     <div class="mb-3">

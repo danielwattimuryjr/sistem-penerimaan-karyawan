@@ -1,5 +1,6 @@
 <?php
 require_once('./../../../functions/init-conn.php');
+require_once('./../../../functions/string-helpers.php');
 require_once('./../../../functions/init-session.php');
 
 $keyword = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -67,12 +68,31 @@ $result = $stmt->get_result();
 
         <header class="header">
             <div class="container">
-                <nav class="navbar navbar-expand-lg">
+                <nav class="navbar navbar-expand-lg" style="position: relative;">
                     <div class="d-flex align-items-center justify-content-center" style="width: 100%">
                         <a href="/pages/public/landing-page">
                             <img src="/assets/images/app-logo.png" alt="logo" style="width: 200px;">
                         </a>
                     </div><!--//site-logo-->
+
+                    <div style="position: absolute; top: 1em; right: 0;">
+                        <?php if (isset($_SESSION['user'])): ?>
+                            <div class="dropdown">
+                                <button class="btn" type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false"><?= $_SESSION['user']['name'] ?></button>
+
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/pages/public/history">History</a></li>
+                                    <li><a class="dropdown-item text-danger"
+                                            href="/pages/public/landing-page/logout.php">Logout</a></li>
+                                </ul>
+                            </div>
+                        <?php else: ?>
+                            <a class="btn btn-light" href="/pages/public/sign-in">
+                                Sign In
+                            </a>
+                        <?php endif; ?>
+                    </div>
                 </nav>
             </div><!--//container-->
         </header><!--//header-->
@@ -120,7 +140,7 @@ $result = $stmt->get_result();
                         <div class="item col-12 col-md-6 py-4 p-md-4">
                             <div class="item-inner shadow rounded-4 p-4">
                                 <a class="item-link" href="<?= $detailUrl ?>">
-                                    <h3 class="item-heading"><?= $l['nama_lowongan'] ?></h3>
+                                    <h3 class="item-heading"><?= toTitleCase($l['nama_lowongan']) ?></h3>
                                     <div class="item-desc"><?= $l['name'] ?></div>
                                 </a>
                             </div>

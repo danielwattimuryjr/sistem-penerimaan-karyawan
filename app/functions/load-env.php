@@ -21,6 +21,8 @@ if (file_exists($envFilePath)) {
     define('DB_PASSWORD', getenv('DB_PASSWORD'));
     define('DB_PORT', getenv('DB_PORT'));
     define('DB_DATABASE', getenv('DB_DATABASE'));
+
+    define('SITE_URL', getenv('SITE_URL'));
 } else {
     echo "Error: .env file not found!";
 }

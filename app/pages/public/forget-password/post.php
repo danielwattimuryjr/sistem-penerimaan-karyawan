@@ -2,7 +2,7 @@
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/send-mail.php');
 
-function redirectWithMessage($type, $message, $page = '/pages/auth/forget-password')
+function redirectWithMessage($type, $message, $page = '/pages/public/forget-password')
 {
     header("Location: $page?type=$type&message=" . urlencode($message));
     exit();
@@ -11,7 +11,7 @@ function redirectWithMessage($type, $message, $page = '/pages/auth/forget-passwo
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $emailTo = trim($_POST['email']);
 
-    $query = "SELECT id_user FROM user WHERE email = ? AND role != 'Pelamar'";
+    $query = "SELECT id_user FROM user WHERE email = ? AND role = 'Pelamar'";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $emailTo);
     $stmt->execute();
@@ -30,9 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
 
         try {
-            send($emailTo, 'Password Reset Request', "Klik tautan berikut untuk mereset password Anda:
-                <a href='" . SITE_URL . "/pages/auth/forget-password/reset-password.php?token=$token'>Reset Password</a>");
-            redirectWithMessage('success', 'Silahkan cek email untuk mendapatkan link reset password');
+            send($emailTo, 'Password reset request', "Klik tautan berikut untuk mereset password Anda:
+                    <a href='" . SITE_URL . "/pages/public/reset-password.php?token=$token'>Reset Password</a>");
+
+            redirectWithMessage('success', 'Silahkan cek email untuk melanjutkan proses reset password');
         } catch (\Throwable $th) {
             redirectWithMessage('error', 'Terjadi kesalahan saat mencoba mengirim email');
         }
@@ -40,5 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirectWithMessage('error', 'Email tidak ditemukan');
     }
 } else {
-    redirectWithMessage('error', 'Metode tidak valid');
+    redirectWithMessage('error', 'Method tidak valid');
 }
+?>

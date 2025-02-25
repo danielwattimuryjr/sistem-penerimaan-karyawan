@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS jabatan (
 CREATE TABLE IF NOT EXISTS user (
     id_user INT(11) AUTO_INCREMENT NOT NULL,
     jabatan INT(11),
-    user_name VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    role ENUM('General Manager', 'Departement', 'HRD', 'Admin') NOT NULL,
+    user_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    role ENUM('General Manager', 'Departement', 'HRD', 'Admin', 'Pelamar') NOT NULL,
     password VARCHAR(255) NOT NULL,
     name VARCHAR(100) NOT NULL,
     -- Optional Info
@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS user (
     tempat_lahir VARCHAR(50) NULL,
     tanggal_lahir DATE NULL,
     PRIMARY KEY (id_user),
+    UNIQUE KEY (user_name, role),
+    UNIQUE KEY (email, role),
     CONSTRAINT fk_user_jabatan
      FOREIGN KEY (jabatan)
      REFERENCES jabatan (id_jabatan)
@@ -125,6 +127,7 @@ CREATE TABLE IF NOT EXISTS persyaratan (
 
 CREATE TABLE IF NOT EXISTS pelamaran (
     id_pelamaran INT(11) AUTO_INCREMENT,
+    id_user INT(11),
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     tempat_lahir VARCHAR(50) NOT NULL,
@@ -140,6 +143,11 @@ CREATE TABLE IF NOT EXISTS pelamaran (
     CONSTRAINT fk_pelamaran_lowongan
      FOREIGN KEY (id_lowongan)
      REFERENCES lowongan (id_lowongan)
+     ON DELETE CASCADE
+     ON UPDATE CASCADE,
+    CONSTRAINT fk_pelamaran_user
+     FOREIGN KEY (id_user)
+     REFERENCES user (id_user)
      ON DELETE CASCADE
      ON UPDATE CASCADE
 );
@@ -280,3 +288,16 @@ FROM divisi d
 LEFT JOIN user u ON d.id_user = u.id_user
 LEFT JOIN karyawan k ON d.id_divisi = k.id_divisi
 GROUP BY d.id_divisi, u.id_user, u.name, d.nama_divisi, d.jumlah_personil;
+
+CREATE OR REPLACE VIEW view_pelamaran_status AS
+SELECT
+    p.id_user,
+    p.id_pelamaran,
+    l.nama_lowongan,
+    CASE
+        WHEN h.status = 'Diterima' THEN TRUE
+        ELSE NULL
+    END AS isApproved
+FROM pelamaran p
+LEFT JOIN lowongan l ON p.id_lowongan = l.id_lowongan
+LEFT JOIN hasil h ON p.id_pelamaran = h.id_pelamaran;

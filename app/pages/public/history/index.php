@@ -1,28 +1,23 @@
 <?php
 require_once('./../../../functions/init-conn.php');
-require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/string-helpers.php');
+require_once('./../../../functions/init-session.php');
 
-$id_lowongan = $_GET['id_lowongan'] ?? null;
-if (!$id_lowongan) {
-    header("Location: /pages/public/landing-page");
+$userSession = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+
+if (!$userSession) {
+    header("Location: /pages/public/landing-page?status=error&message=" . urlencode('Belum login'));
+    exit();
 }
 
-$getLowonganQueryStr = "SELECT nama_lowongan, poster_lowongan, tanggal_mulai, u.name, p.jenis_kelamin FROM lowongan l JOIN permintaan p ON l.id_permintaan = p.id_permintaan JOIN user u ON p.id_user = u.id_user WHERE id_lowongan = ?";
-$getLowonganStmt = $conn->prepare($getLowonganQueryStr);
-$getLowonganStmt->bind_param('i', $id_lowongan);
-$getLowonganStmt->execute();
-$getLowonganResult = $getLowonganStmt->get_result();
-$lowongan = $getLowonganResult->fetch_assoc();
-
-$getPersyaratanStr = "SELECT pengalaman_kerja, umur, pendidikan FROM persyaratan WHERE id_lowongan = ? LIMIT 1";
-$stmt = $conn->prepare($getPersyaratanStr);
-$stmt->bind_param("i", $id_lowongan);
+$sql = "SELECT vps.*, COALESCE(vvwp.vektor_y, '-') AS final_score, COALESCE(vvwp.peringkat, '-') AS peringkat FROM view_pelamaran_status vps JOIN vektor_v_weighted_product vvwp ON vps.id_pelamaran = vvwp.id_pelamaran WHERE vps.id_user = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $userSession['id_user']);
 $stmt->execute();
-$getPersyaratanResult = $stmt->get_result();
-$persyaratan = $getPersyaratanResult->fetch_assoc();
-
-$formPelamaranUrl = "/pages/public/form-pelamaran?id_lowongan=$id_lowongan";
+$result = $stmt->get_result();
+$historyData = $result->fetch_all(MYSQLI_ASSOC); // Fetch all rows
+$stmt->close();
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,6 +53,9 @@ $formPelamaranUrl = "/pages/public/form-pelamaran?id_lowongan=$id_lowongan";
         href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/scss/pages/sweetalert2.scss">
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/scss/pages/datatables.scss">
 </head>
 
 <body>
@@ -104,43 +102,41 @@ $formPelamaranUrl = "/pages/public/form-pelamaran?id_lowongan=$id_lowongan";
             <div class="row">
                 <div class="col">
                     <section class="main-section order-lg-last">
-                        <article class="help-article mb-5">
-                            <header class="article-header mb-5">
-                                <h1 class="heading-level-1 text-center mb-2">
-                                    <?= toTitleCase($lowongan['nama_lowongan']) ?>
-                                </h1>
-                                <div class="article-meta mx-auto d-flex justify-content-center align-items-center">
-                                    <div class="meta-info-wrapper text-center">
-                                        <div class="meta-author"><?= toTitleCase($lowongan['name']) ?></div>
-                                        <div class="meta-time">Tanggal Mulai:
-                                            <?= date('j F Y', strtotime($lowongan['tanggal_mulai'])) ?>
-                                        </div>
-                                    </div>
-                                </div><!--//article-meta-->
-                            </header>
-                            <div class="row">
-                                <div class="col-12 col-lg-4">
-                                    <img src="<?= '/assets/uploads/poster/' . $lowongan['poster_lowongan'] ?>" alt=""
-                                        style="width: 300px">
-                                </div>
-                                <div class="col-12 col-lg-8">
-                                    <h4 class="heading-level-4">Persyaratan :</h4>
-                                    <ul class="article-list">
-                                        <li><?= str_replace(',', ' atau ', $lowongan['jenis_kelamin']) ?>
-                                            usia minimal <?= $persyaratan['umur'] ?> tahun</li>
-                                        <li>Pendidikan minimal <?= $persyaratan['pendidikan'] ?></li>
-                                        <li>Memiliki pengalaman kerja selama <?= $persyaratan['pengalaman_kerja'] ?>
-                                            tahun</li>
-                                    </ul>
-
-                                    <?php if (isset($_SESSION['user'])): ?>
-                                        <a href="<?= $formPelamaranUrl ?>" class="btn btn-primary">Ajukan Lamaran</a>
-                                    <?php endif; ?>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive datatable-minimal">
+                                    <table class="table" id="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Nama Lowongan</th>
+                                                <th>Nilai Akhir</th>
+                                                <th>Peringkat</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php $no = 1; ?>
+                                            <?php foreach ($historyData as $res): ?>
+                                                <tr>
+                                                    <td><?= $no++ ?></td>
+                                                    <td><?= toTitleCase(htmlspecialchars($res['nama_lowongan'])) ?></td>
+                                                    <td><?= $res['final_score'] ?></td>
+                                                    <td><?= $res['peringkat'] ?></td>
+                                                    <td>
+                                                        <?php if ($res['isApproved']): ?>
+                                                            <p class="text-success">Diterima</p>
+                                                        <?php else: ?>
+                                                            <p class="text-secondary">Pending</p>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-
-                        </article><!--//help-article-->
-
+                        </div>
                     </section><!--//main-section-->
                 </div><!--//col-->
             </div><!--//row-->
@@ -154,6 +150,12 @@ $formPelamaranUrl = "/pages/public/form-pelamaran?id_lowongan=$id_lowongan";
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
     <script src="/assets/js/sweet-alert.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/jquery/jquery.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="/assets/js/data-table.js"></script>
 </body>
 
 </html>
