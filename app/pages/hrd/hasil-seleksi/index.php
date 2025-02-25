@@ -33,7 +33,7 @@ $conn->close();
         type="image/x-icon">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
-    
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
@@ -45,7 +45,7 @@ $conn->close();
 </head>
 
 <body>
-    
+
     <!-- Start content here -->
 
     <div id="app">
@@ -98,14 +98,6 @@ $conn->close();
                                                                         <button type="submit"
                                                                             class="btn btn-outline-success btn-sm">Terima</button>
                                                                     </form>
-                                                                    <form action="update-status.php" method="POST"
-                                                                        style="display: inline;">
-                                                                        <input type="hidden" name="id_hasil"
-                                                                            value="<?= htmlspecialchars($res['id_hasil']); ?>">
-                                                                        <input type="hidden" name="status" value="Ditolak">
-                                                                        <button type="submit"
-                                                                            class="btn btn-outline-danger btn-sm">Tolak</button>
-                                                                    </form>
                                                             <?php } else { ?>
                                                                     <span
                                                                         class="badge
@@ -129,7 +121,7 @@ $conn->close();
     </div>
 
     <!-- End content -->
-    
+
     <script
         src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>

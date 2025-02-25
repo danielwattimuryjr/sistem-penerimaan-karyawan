@@ -87,9 +87,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     // Kirim email (contoh email sukses)
                     kirimEmail($pelamaran['email'], "Selamat, Anda Diterima", "Anda telah diterima sebagai karyawan. Selamat bergabung!");
-                } elseif ($status === 'Ditolak') {
-                    // Kirim email (contoh email ditolak)
-                    kirimEmail($pelamaran['email'], "Mohon Maaf, Anda Ditolak", "Kami mohon maaf, Anda tidak diterima untuk posisi yang Anda lamar.");
                 }
             }
 
