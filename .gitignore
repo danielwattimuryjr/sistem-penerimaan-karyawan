@@ -11,7 +11,7 @@
 
 #!.yarn/cache
 .pnp.*
-
+vendor
 .env
 .DS_Store
 app/assets/uploads/cv/*

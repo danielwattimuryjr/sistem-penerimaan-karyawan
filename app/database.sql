@@ -48,13 +48,13 @@ CREATE TABLE IF NOT EXISTS karyawan (
     id_karyawan INT(11) AUTO_INCREMENT,
     id_divisi INT(11),
     name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    tempat_lahir VARCHAR(50) NOT NULL,
-    tanggal_lahir DATE NOT NULL,
-    nomor_telepon VARCHAR(13) NOT NULL,
-    jenis_kelamin BOOLEAN NOT NULL,
-    pendidikan_terakhir ENUM('SMA/SMK', 'Diploma', 'Sarjana') NOT NULL,
-    alamat TEXT NOT NULL,
+    email VARCHAR(100)  NOT NULL UNIQUE,
+    tempat_lahir VARCHAR(50),
+    tanggal_lahir DATE,
+    nomor_telepon VARCHAR(13),
+    jenis_kelamin BOOLEAN,
+    pendidikan_terakhir ENUM('SMA/SMK', 'Diploma', 'Sarjana'),
+    alamat TEXT,
     PRIMARY KEY (id_karyawan),
     CONSTRAINT fk_karyawan_divisi
      FOREIGN KEY (id_divisi)
@@ -184,19 +184,10 @@ CREATE TABLE IF NOT EXISTS password_resets (
      ON DELETE CASCADE
 );
 
-INSERT INTO jabatan
-(nama_jabatan)
-VALUES
-    ('J1'),
-    ('J2'),
-    ('J3');
-
 INSERT INTO user
     (user_name, email, password, role, name)
 VALUES
-    ('user.admin', 'admin@app.com', 'password', 'Admin', 'Admin'),
-    ('user.hrd', 'hrd@app.com', 'password', 'HRD', 'HRD'),
-    ('user.general-manager', 'general-manager@app.com', 'password', 'General Manager', 'General Manager');
+    ('user.admin', 'admin@app.com', 'password', 'Admin', 'Admin');
 
 CREATE OR REPLACE VIEW vektor_s_weighted_product AS
 SELECT
@@ -274,14 +265,14 @@ JOIN vektor_s_weighted_product vswp2 ON vswp.id_lowongan = vswp2.id_lowongan
 GROUP BY vswp.id_lowongan, p.id_pelamaran, h.id_hasil, p.name, vswp.vektor_s;
 
 CREATE OR REPLACE VIEW divisi_status AS
-SELECT 
+SELECT
     u.id_user AS id_department,
     u.name AS nama_department,
     d.id_divisi,
     d.nama_divisi,
     d.jumlah_personil,
     COUNT(k.id_karyawan) AS current_karyawan,
-    CASE 
+    CASE
         WHEN COUNT(k.id_karyawan) < d.jumlah_personil THEN 1
         ELSE 0
     END AS isInNeed

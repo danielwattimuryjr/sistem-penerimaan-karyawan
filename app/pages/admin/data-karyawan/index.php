@@ -1,17 +1,16 @@
 <?php
-require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 
-$queryStr = "
-SELECT
-    name,
-    email,
-    user_name,
-    id_user
-FROM user
-WHERE role = 'Departement'
-";
+$queryStr = "SELECT
+    k.id_karyawan,
+    k.name,
+    k.email,
+    d.nama_divisi,
+    u.name AS nama_department
+FROM karyawan k
+JOIN divisi d ON k.id_divisi = d.id_divisi
+JOIN user u ON d.id_user = u.id_user";
 
 $stmt = $conn->prepare($queryStr);
 $stmt->execute();
@@ -26,7 +25,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Department</title>
+    <title>Data Karyawan</title>
 
     <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
         type="image/x-icon">
@@ -59,63 +58,55 @@ $conn->close();
             </header>
             <!-- Content -->
             <div class="page-heading">
-                <h3>Daftar Department</h3>
+                <h3>Data Karyawan</h3>
             </div>
             <div class="page-content">
                 <section class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <div
-                                    class="d-flex flex-column flex-lg-row justify-content-start justify-content-lg-between align-items-start align-items-lg-center">
-                                    <h5 class="card-title">Daftar Departement</h5>
+                            <div
+                                class="card-header d-flex flex-column flex-md-row justify-content-start justify-content-md-between align-items-start align-items-md-center">
+                                <h5 class="card-title">Data Karyawan</h5>
 
-                                    <a href="<?= BASE_URL . '/form-create-departemen' ?>"
-                                        class="btn btn-sm btn-primary">
-                                        Tambah Departement
-                                    </a>
-                                </div>
+                                <a href="/pages/admin/form-create-karyawan" class="btn btn-sm btn-primary">
+                                    Tambah Karyawan
+                                </a>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive datatable-minimal">
                                     <table class="table" id="data-table">
                                         <thead>
                                             <tr>
-                                                <th>No</th>
-                                                <th>Nama</th>
-                                                <th>Alamat Email</th>
-                                                <th>Username</th>
-                                                <th>Aksi</th>
+                                                <td>No</td>
+                                                <td>Nama</td>
+                                                <td>Department</td>
+                                                <td>Divisi</td>
+                                                <td>Actions</td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php $no = 1 ?>
-                                            <?php foreach ($result as $res) { ?>
+                                            <?php foreach ($result as $row): ?>
                                                 <?php
-                                                $baseEditUrl = BASE_URL . '/form-edit-departemen';
-                                                $baseDeleteUrl = BASE_URL . '/data-departemen/delete.php';
-                                                $params = ['id_user' => $res['id_user']];
-                                                $editUrl = $baseEditUrl . '?' . http_build_query($params);
-                                                $deleteUrl = $baseDeleteUrl . '?' . http_build_query($params);
-                                                $divisiUrl = BASE_URL . '/data-divisi?' . http_build_query(['id_department' => $res['id_user']]);
+                                                $idKaryawan = $row['id_karyawan'];
+                                                $editUrl = "/pages/admin/form-edit-karyawan?id_karyawan=$idKaryawan";
+                                                $deleteUrl = "delete.php?id_karyawan=$idKaryawan";
                                                 ?>
                                                 <tr>
                                                     <td><?= $no++ ?></td>
-                                                    <td><?= htmlspecialchars($res['name']) ?></td>
-                                                    <td><?= htmlspecialchars($res['email']) ?></td>
-                                                    <td><?= htmlspecialchars($res['user_name']) ?></td>
+                                                    <td><strong><?= $row['name'] ?></strong><br><?= $row['email'] ?></td>
+                                                    <td><?= $row['nama_department'] ?></td>
+                                                    <td><?= $row['nama_divisi'] ?></td>
                                                     <td>
                                                         <div class="btn-group">
-                                                            <a type="button" class="btn btn-sm btn-warning"
-                                                                href="<?= $editUrl ?>">Update</a>
-                                                            <a type="button" class="btn btn-sm btn-primary"
-                                                                href="<?= $divisiUrl ?>">Lihat Divisi</a>
-                                                            <a type="button" class="btn btn-sm btn-danger"
-                                                                href="<?= $deleteUrl ?>">Delete</a>
+                                                            <a href="<?= $editUrl ?>"
+                                                                class="btn btn-sm btn-warning">Edit</a>
+                                                            <a href="<?= $deleteUrl ?>"
+                                                                class="btn btn-sm btn-danger">Hapus</a>
                                                         </div>
                                                     </td>
                                                 </tr>
-                                            <?php } ?>
+                                            <?php endforeach; ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -124,7 +115,6 @@ $conn->close();
                     </div>
                 </section>
             </div>
-            <!-- End Content -->
         </div>
     </div>
 

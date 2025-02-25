@@ -12749,7 +12749,7 @@ textarea.form-control-lg {
   }
 }
 /*************************** Theme Styles Section ****************************/
-/*!  
+/*!
  * DevDesk - Bootstrap Knowledge Base and Help Centre Template for Developers
  * Version: 1.0
  * Author: Xiaoying Riley
@@ -12929,7 +12929,7 @@ a.text-link:hover {
 }
 
 .theme-bg-dark {
-  background: #5236CB;
+  background: #3EB0A8;
 }
 
 .theme-section {
@@ -12996,7 +12996,7 @@ a.text-link:hover {
   line-height: 1.4;
 }
 .theme-list .theme-list-icon {
-  background: #5236CB;
+  background: #3EB0A8;
   font-size: 1rem;
   color: #4e6788;
   color: white;
@@ -13089,7 +13089,7 @@ a.text-link:hover {
 
 /* Header */
 .page-header-wrapper {
-  background: #5236CB;
+  background: #3EB0A8;
   color: white;
   position: relative;
 }
@@ -13242,7 +13242,7 @@ a.text-link:hover {
   background: #f5f7fa;
 }
 .navbar .dropdown-item:hover .theme-icon-holder, .navbar .dropdown-item:active .theme-icon-holder {
-  background: #5236CB;
+  background: #3EB0A8;
   color: #fff;
 }
 
@@ -13583,7 +13583,7 @@ a.text-link:hover {
 .help-content-wrapper .help-article ol.article-list-custom li:before {
   margin-right: 0.75rem;
   content: counter(item);
-  background: #5236CB;
+  background: #3EB0A8;
   color: white;
   border-radius: 50%;
   width: 2rem;

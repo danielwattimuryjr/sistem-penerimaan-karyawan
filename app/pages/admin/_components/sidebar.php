@@ -35,6 +35,20 @@ $menuItem = [
         'submenu' => [],
     ],
     [
+        'isTitle' => false,
+        'name' => 'Data Divisi',
+        'url' => '/data-divisi',
+        'icon' => 'newspaper',
+        'submenu' => [],
+    ],
+    [
+        'isTitle' => false,
+        'name' => 'Data Karyawan',
+        'url' => '/data-karyawan',
+        'icon' => 'newspaper',
+        'submenu' => [],
+    ],
+    [
         'isTitle' => true,
         'name' => 'Pengaturan'
     ],

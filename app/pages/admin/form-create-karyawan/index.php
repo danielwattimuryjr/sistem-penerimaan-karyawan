@@ -2,47 +2,42 @@
 require_once('./../../../functions/init-session.php');
 require_once('./../../../functions/init-conn.php');
 
-// Get id_lowongan
-$id_lowongan = isset($_GET['id_lowongan']) ? $_GET['id_lowongan'] : null;
-//
-if (!$id_lowongan) {
-    header("Location: /pages/public/landing-page");
-}
+$sql = "
+    SELECT
+        id_divisi,
+        nama_divisi,
+        nama_department,
+        jumlah_personil AS jumlah_max,
+        current_karyawan AS jumlah_saat_ini,
+        isInNeed
+    FROM divisi_status
+    HAVING jumlah_saat_ini < jumlah_max
+";
 
-$getLowonganQueryStr = "SELECT nama_lowongan FROM lowongan LIMIT 1";
-$getLowonganResult = $conn->query($getLowonganQueryStr);
-$lowongan = $getLowonganResult->fetch_assoc();
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
+$divisi = [];
+while ($row = $result->fetch_assoc()) {
+    $divisi[] = $row;
+}
+$stmt->close();
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Grand Pasundan Careers</title>
-
-    <!-- Meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Bootstrap Knowledge Base and Help Centre Template">
-    <meta name="author" content="Xiaoying Riley at 3rd Wave Media">
-    <link rel="shortcut icon" href="favicon.ico">
+    <title>Form Karyawan</title>
 
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500&display=swap"
-        rel="stylesheet">
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/svg/favicon.svg"
+        type="image/x-icon">
 
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
 
-    <!-- Plugin CSS -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark-reasonable.min.css">
-
-    <!-- Theme CSS -->
-    <link id="theme-style" rel="stylesheet" href="/assets/css/public.styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/scss/pages/sweetalert2.scss">
     <link rel="stylesheet"
@@ -50,37 +45,29 @@ $lowongan = $getLowonganResult->fetch_assoc();
 </head>
 
 <body>
-    <div class="page-header-wrapper">
-        <div class="page-header-bg-pattern-holder">
-            <div class="bg-pattern-top"></div>
-            <div class="bg-pattern-bottom"></div>
-        </div><!--//page-header-bg-pattern-holder-->
 
-        <header class="header">
-            <div class="container">
-                <nav class="navbar navbar-expand-lg">
-                    <div class="d-flex align-items-center justify-content-center" style="width: 100%">
-                        <a href="/pages/public/landing-page">
-                            <img src="/assets/images/app-logo.png" alt="logo" style="width: 200px;">
-                        </a>
-                    </div><!--//site-logo-->
-                </nav>
-            </div><!--//container-->
-        </header><!--//header-->
-    </div><!--//page-header-wrapper-->
+    <!-- Start content here -->
 
-    <div class="help-content-wrapper theme-section pt-4">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <section class="main-section order-lg-last">
+    <div id="app">
+        <div id="sidebar">
+            <?php require_once('./../_components/sidebar.php'); ?>
+        </div>
+        <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+            <!-- Content -->
+            <div class="page-heading">
+                <h5 class="card-title">Formulir Tambah Karyawan</h5>
+            </div>
+            <div class="page-content">
+                <section class="row">
+                    <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Form Pendaftaran</h3>
-                            </div>
                             <div class="card-body">
-                                <form action="post-lamaran-request.php" method="POST" enctype="multipart/form-data">
-                                    <input type="hidden" name="id_lowongan" value="<?= $id_lowongan ?>">
+                                <form action="post.php" method="POST">
                                     <div class="mb-3">
                                         <label class="form-label">Nama Lengkap</label>
                                         <input type="text" class="form-control" name="name" required>
@@ -149,33 +136,35 @@ $lowongan = $getLowonganResult->fetch_assoc();
                                     </div>
 
                                     <div class="mb-3">
-                                        <label class="form-label">Pengalaman Kerja</label>
-                                        <div class="input-group">
-                                            <input type="number" class="form-control" name="pengalaman_kerja">
-                                            <span class="input-group-text" id="basic-addon2">Tahun</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Curiculum Vitae (CV)</label>
-                                        <input type="file" name="curiculum_vitae" id="" class="form-control" required>
+                                        <label class="form-label">Divisi</label>
+                                        <select class="form-select" name="id_divisi" required>
+                                            <option selected disabled>-- PILIH DIVISI --
+                                            </option>
+                                            <?php foreach ($divisi as $d): ?>
+                                                <option value="<?= $d['id_divisi'] ?>">
+                                                    <?= htmlspecialchars($d['nama_department'] . ' - ' . $d['nama_divisi']) ?>
+                                                    (Max: <?= $d['jumlah_max'] ?>; Current <?= $d['jumlah_saat_ini'] ?>)
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                 </form>
                             </div>
                         </div>
+                    </div>
+                </section>
+            </div>
+            <!-- End Content -->
+        </div>
+    </div>
 
-                    </section><!--//main-section-->
-                </div><!--//col-->
-            </div><!--//row-->
+    <!-- End content -->
 
-        </div><!--//container-->
-    </div><!--//help-content-wrapper-->
-
-    <!-- Javascript -->
-    <script src="/assets/plugins/popper.min.js"></script>
-    <script src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/tinymce/tinymce.min.js"></script>
     <script src="/assets/js/tiny-mce.js"></script>
     <script
