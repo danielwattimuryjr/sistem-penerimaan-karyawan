@@ -6,7 +6,7 @@ $id_divisi = isset($_GET['id_divisi']) ? $_GET['id_divisi'] : null;
 if (!$id_divisi) {
     $type = 'error';
     $message = 'Data divisi tidak ditemukan';
-    header("Location: /pages/hrd/data-department?type=$type&message=" . urlencode($message));
+    header("Location: /pages/hrd/data-divisi?type=$type&message=" . urlencode($message));
     exit();
 }
 
@@ -28,6 +28,5 @@ if ($stmt->execute()) {
     $message = 'Gagal menghapus data divisi. Silakan coba lagi.';
 }
 
-header("Location: /pages/hrd/data-department?type=$type&message=" . urlencode($message));
+header("Location: /pages/hrd/data-divisi?type=$type&message=" . urlencode($message));
 exit();
-
