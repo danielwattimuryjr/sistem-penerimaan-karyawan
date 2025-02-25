@@ -83,7 +83,7 @@ $conn->close();
                       <?php foreach ($result as $row): ?>
                         <?php
                         $idDivisi = $row['id_divisi'];
-                        $formPermintaanUrl = $idDivisi ? "/pages/departemen/form-tambah-permintaan-karyawan?id_divisi=$idDivisi" : null;
+                        $formPermintaanUrl = $row['isInNeed'] ? "/pages/departemen/form-tambah-permintaan-karyawan?id_divisi=$idDivisi" : null;
                         ?>
                         <tr>
                           <td><?= $no++ ?></td>
