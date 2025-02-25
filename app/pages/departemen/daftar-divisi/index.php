@@ -4,7 +4,7 @@ require_once('./../../../functions/page-protection.php');
 
 $user = $_SESSION['user'];
 
-$queryStr = "SELECT 
+$queryStr = "SELECT
     id_divisi,
     nama_divisi,
     jumlah_personil AS jumlah_max,
@@ -65,14 +65,7 @@ $conn->close();
         <section class="row">
           <div class="col-12">
             <div class="card">
-              <div
-                class="card-header d-flex flex-column flex-md-row justify-content-start justify-content-md-between align-items-start align-items-md-center">
-                <h5 class="card-title">Daftar Divisi</h5>
-
-                <a href="/pages/departemen/form-create-divisi" class="btn btn-sm btn-primary">
-                  Tambah Divisi
-                </a>
-              </div>
+              <h5 class="card-title">Daftar Divisi</h5>
               <div class="card-body">
                 <div class="table-responsive datatable-minimal">
                   <table class="table" id="data-table">
@@ -90,9 +83,7 @@ $conn->close();
                       <?php foreach ($result as $row): ?>
                         <?php
                         $idDivisi = $row['id_divisi'];
-                        $editUrl = "/pages/departemen/form-edit-divisi?id_divisi=$idDivisi";
-                        $deleteUrl = "delete.php?id_divisi=$idDivisi";
-                        $formPermintaanUrl = $row['isInNeed'] ? "/pages/departemen/form-tambah-permintaan-karyawan?id_divisi=$idDivisi" : null;
+                        $formPermintaanUrl = $idDivisi ? "/pages/departemen/form-tambah-permintaan-karyawan?id_divisi=$idDivisi" : null;
                         ?>
                         <tr>
                           <td><?= $no++ ?></td>
@@ -100,13 +91,9 @@ $conn->close();
                           <td><?= $row['jumlah_max'] ?></td>
                           <td><?= $row['jumlah_saat_ini'] ?></td>
                           <td>
-                            <div class="btn-group">
-                              <a href="<?= $editUrl ?>" class="btn btn-sm btn-warning">Edit</a>
-                              <?php if ($formPermintaanUrl): ?>
-                                <a href="<?= $formPermintaanUrl ?>" class="btn btn-sm btn-primary">Request</a>
-                              <?php endif; ?>
-                              <a href="<?= $deleteUrl ?>" class="btn btn-sm btn-danger">Hapus</a>
-                            </div>
+                            <?php if ($formPermintaanUrl): ?>
+                              <a href="<?= $formPermintaanUrl ?>" class="btn btn-sm btn-primary">Request</a>
+                            <?php endif; ?>
                           </td>
                         </tr>
                       <?php endforeach; ?>

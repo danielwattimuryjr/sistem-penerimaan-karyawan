@@ -3,7 +3,7 @@ require_once('./../../../functions/init-conn.php');
 require_once('./../../../functions/page-protection.php');
 $user = $_SESSION['user'];
 
-$queryStr = "SELECT 
+$queryStr = "SELECT
     k.id_karyawan,
     k.name,
     k.email,
@@ -65,14 +65,7 @@ $conn->close();
         <section class="row">
           <div class="col-12">
             <div class="card">
-              <div
-                class="card-header d-flex flex-column flex-md-row justify-content-start justify-content-md-between align-items-start align-items-md-center">
-                <h5 class="card-title">Daftar Karyawan</h5>
-
-                <a href="/pages/departemen/form-create-karyawan" class="btn btn-sm btn-primary">
-                  Tambah Karyawan
-                </a>
-              </div>
+              <h5 class="card-title">Daftar Karyawan</h5>
               <div class="card-body">
                 <div class="table-responsive datatable-minimal">
                   <table class="table" id="data-table">
@@ -82,28 +75,16 @@ $conn->close();
                         <td>Nama</td>
                         <td>Divisi</td>
                         <td>Nomor Telepon</td>
-                        <td>Actions</td>
                       </tr>
                     </thead>
                     <tbody>
                       <?php $no = 1 ?>
                       <?php foreach ($result as $row): ?>
-                        <?php
-                        $idKaryawan = $row['id_karyawan'];
-                        $editUrl = "/pages/departemen/form-edit-karyawan?id_karyawan=$idKaryawan";
-                        $deleteUrl = "delete.php?id_karyawan=$idKaryawan";
-                        ?>
                         <tr>
                           <td><?= $no++ ?></td>
                           <td><strong><?= $row['name'] ?></strong><br><?= $row['email'] ?></td>
                           <td><?= $row['nama_divisi'] ?></td>
                           <td><?= $row['nomor_telepon'] ?></td>
-                          <td>
-                            <div class="btn-group">
-                              <a href="<?= $editUrl ?>" class="btn btn-sm btn-warning">Edit</a>
-                              <a href="<?= $deleteUrl ?>" class="btn btn-sm btn-danger">Hapus</a>
-                            </div>
-                          </td>
                         </tr>
                       <?php endforeach; ?>
                     </tbody>
